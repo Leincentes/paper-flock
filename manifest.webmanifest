@@ -1,0 +1,16 @@
+{
+  "name": "Paper Flock v0.11",
+  "short_name": "Paper Flock",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#151a32",
+  "theme_color": "#151a32",
+  "icons": [
+    {
+      "src": "./assets/paper-flock-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
