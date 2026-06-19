@@ -46,6 +46,8 @@ const playerModules = Object.freeze([
   "src/tutorial-core.js",
   "src/tutorial-player-ui.js",
   "src/game-core.js",
+  "src/campaign-core.js",
+  "src/achievement-core.js",
   "src/game-player-ui.js",
   "src/progress-core.js",
   "src/experience-core.js",
@@ -53,6 +55,7 @@ const playerModules = Object.freeze([
   "src/storage-player-core.js",
   "src/settings-core.js",
   "src/settings-ui.js",
+  "src/journal-ui.js",
   "src/app-platform-ui.js",
   "src/mobile-lifecycle-ui.js",
   "src/mobile-viewport-core.js",
@@ -107,7 +110,20 @@ const publicConfig = {
   automaticUploads: false,
   interactiveTutorialAvailable: true,
   mobileGameplayViewportLock: true,
-  productionSettingsAvailable: true
+  productionSettingsAvailable: true,
+  campaignLevels: 40,
+  campaignChapters: 2,
+  chapterTwoAvailable: true,
+  chapterTwoName: "Twilight Flock",
+  chapterProgressAvailable: true,
+  masteryGoalsAvailable: true,
+  validatedDailyCampaignPool: true,
+  achievementJournalAvailable: true,
+  achievementCount: 20,
+  lifetimePlayerStatistics: true,
+  replayGoalRecommendation: true,
+  streaksEnabled: false,
+  expiringRewardsEnabled: false
 };
 
 const publicBuildInfo = {
@@ -124,6 +140,18 @@ const publicBuildInfo = {
   interactiveFirstLaunchTutorial: true,
   mobileGameplayViewportLock: true,
   productionSettingsPage: true,
+  campaignLevelCount: 40,
+  campaignChapterCount: 2,
+  twilightFlockChapter: true,
+  levelSolverValidationConfigured: true,
+  duplicateLevelDetectionConfigured: true,
+  chapterProgressAndMastery: true,
+  v12SaveMigration: true,
+  achievementJournal: true,
+  achievementCount: 20,
+  playerStatisticsSchemaVersion: 1,
+  saveSchemaVersion: 12,
+  ethicalReplayGoals: true,
   productionRuntimeClean: true,
   internalToolsIncluded: false
 };
@@ -133,7 +161,7 @@ writeJson("build-info.json", publicBuildInfo);
 writeJson("known-issues.json", {
   product: "Paper Flock",
   buildVersion: String(buildInfo.buildVersion),
-  updatedAt: "2026-06-19",
+  updatedAt: "2026-06-20",
   issues: [
     {
       id: "PF-LOCAL-ONLY",
@@ -175,16 +203,48 @@ writeJson("release-notes.json", {
   currentVersion: String(buildInfo.buildVersion),
   releases: [
     {
+      version: "1.4.2",
+      date: "2026-06-20",
+      channel: "production-candidate",
+      changes: [
+        "Moved locked development dependencies to the public npm registry.",
+        "Pinned tmp 0.2.7 to remove the high-severity CI dependency advisory.",
+        "Made CodeQL and provenance evidence derive from completed GitHub jobs.",
+        "Aligned release-engineering and tester documentation.",
+        "Kept gameplay, achievements, save schema 12, and player progression unchanged."
+      ]
+    },
+    {
+      version: "1.4",
+      date: "2026-06-19",
+      channel: "production",
+      changes: [
+        "Added an Achievement Journal with twenty permanent milestones.",
+        "Added retroactive progress recognition for existing players.",
+        "Added lifetime puzzle statistics inside the local recoverable save.",
+        "Added a recommended next goal for campaign, mastery, or Daily Flock play.",
+        "Added accessible unlock notifications and mobile Journal support.",
+        "Kept streaks, expiring rewards, energy, and forced waiting disabled."
+      ]
+    },
+    {
+      version: "1.3",
+      date: "2026-06-19",
+      channel: "production",
+      changes: [
+        "Added Chapter 2: Twilight Flock with Levels 21–40.",
+        "Added chapter progress, mastery goals, two paper themes, and solver-backed level validation.",
+        "Preserved v1.2 progress and unlocked Level 21 for players who completed Level 20."
+      ]
+    },
+    {
       version: "1.2",
       date: "2026-06-19",
       channel: "production",
       changes: [
-        "Added a complete player-facing Settings page.",
-        "Added sound, haptic, effects, theme, and accessibility preferences.",
-        "Added player progress backup, restore, and reset.",
-        "Added install and update actions inside Settings.",
-        "Separated internal quality tools from the deployable player runtime.",
-        "Added a strict production allowlist that rejects internal tool leakage."
+        "Added the player-facing Settings page.",
+        "Added sound, haptics, effects, themes, accessibility, backup, restore, and reset.",
+        "Separated internal quality tools from the deployable player runtime."
       ]
     },
     {
@@ -192,9 +252,7 @@ writeJson("release-notes.json", {
       date: "2026-06-19",
       channel: "production",
       changes: [
-        "Added a first-launch interactive tutorial.",
-        "Added clear-path, blocked-path, rotation, and practice lessons.",
-        "Added replayable How to play guidance."
+        "Added the first-launch interactive tutorial."
       ]
     },
     {
@@ -202,8 +260,7 @@ writeJson("release-notes.json", {
       date: "2026-06-19",
       channel: "production",
       changes: [
-        "Published Paper Flock under Gamelo Studio.",
-        "Added offline installation, local saves, accessibility, and mobile viewport support."
+        "Published Paper Flock under Gamelo Studio."
       ]
     }
   ]

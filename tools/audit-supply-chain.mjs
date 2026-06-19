@@ -28,7 +28,13 @@ const dependencyWorkflow =
 const codeqlWorkflow =
   read(".github/workflows/codeql.yml");
 const dependabot = read(".github/dependabot.yml");
+const npmrc = read(".npmrc");
 const index = read("index.html");
+const resolvedUrls = Object.values(
+  packageLock.packages ?? {}
+)
+  .map((entry) => entry?.resolved)
+  .filter(Boolean);
 
 check(
   "lockfile-version",
@@ -39,6 +45,24 @@ check(
   "lockfile-package-version",
   packageLock.packages?.[""]?.version === packageJson.version,
   "Lockfile root version matches package.json."
+);
+check(
+  "public-npm-registry",
+  npmrc.includes("registry=https://registry.npmjs.org/") &&
+    resolvedUrls.length > 0 &&
+    resolvedUrls.every((url) =>
+      url.startsWith("https://registry.npmjs.org/")
+    ) &&
+    resolvedUrls.every((url) =>
+      !url.includes("openai.org")
+    ),
+  "The lockfile uses only the public npm registry and contains no internal registry URLs."
+);
+check(
+  "tmp-security-override",
+  packageJson.overrides?.tmp === "0.2.7" &&
+    packageLock.packages?.["node_modules/tmp"]?.version === "0.2.7",
+  "The tmp 0.2.7 security override is locked."
 );
 check(
   "exact-dev-dependencies",
@@ -104,10 +128,29 @@ check(
   fs.existsSync(path.join(root, "quality-evidence.schema.json")),
   "Quality evidence schema exists."
 );
+check(
+  "release-evidence-codeql-result",
+  /needs:[\s\S]*codeql-quality/.test(workflow) &&
+    /--codeql=\$\{\{ needs\.codeql-quality\.result == 'success' \}\}/.test(
+      workflow
+    ) &&
+    !/--codeql=true/.test(workflow),
+  "Release evidence derives CodeQL status from the completed CodeQL job."
+);
+check(
+  "release-evidence-provenance-result",
+  /provenance_created:/.test(workflow) &&
+    /steps\.provenance\.outcome/.test(workflow) &&
+    /--provenance=\$\{\{ needs\.static-quality\.outputs\.provenance_created \}\}/.test(
+      workflow
+    ) &&
+    !/--provenance=true/.test(workflow),
+  "Release evidence derives provenance status from the attestation step."
+);
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.2",
+  buildVersion: "1.4.2",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.2",
+  "buildVersion": "1.4.2",
   "releaseChannel": "production",
   "publisherName": "Gamelo Studio",
   "supportEmail": "leincentes@gmail.com",
@@ -12,5 +12,18 @@
   "automaticUploads": false,
   "interactiveTutorialAvailable": true,
   "mobileGameplayViewportLock": true,
-  "productionSettingsAvailable": true
+  "productionSettingsAvailable": true,
+  "campaignLevels": 40,
+  "campaignChapters": 2,
+  "chapterTwoAvailable": true,
+  "chapterTwoName": "Twilight Flock",
+  "chapterProgressAvailable": true,
+  "masteryGoalsAvailable": true,
+  "validatedDailyCampaignPool": true,
+  "achievementJournalAvailable": true,
+  "achievementCount": 20,
+  "lifetimePlayerStatistics": true,
+  "replayGoalRecommendation": true,
+  "streaksEnabled": false,
+  "expiringRewardsEnabled": false
 }

@@ -22,8 +22,8 @@
     },
     {
       "path": "app-config.json",
-      "bytes": 521,
-      "sha256": "cdac14921619ba420e7de405b3e54e5ace6256d1c8c8d7d46f165588e52c6b26"
+      "bytes": 947,
+      "sha256": "1209f1fa0175d21e1291e9dc19a3e5f7dae36e4dea65bc6f41ba13c717ade101"
     },
     {
       "path": "assets/paper-flock-icon-192.png",
@@ -57,8 +57,8 @@
     },
     {
       "path": "build-info.json",
-      "bytes": 485,
-      "sha256": "5729e7e5d7c4151a5ba3f174b9458f8a752d24a0d4657f7c9e915180914291b8"
+      "bytes": 882,
+      "sha256": "8cec9b75a516d8d1446413cbaf6d3a8afc855a2c60314b3567eb47a9961bc60b"
     },
     {
       "path": "credits.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 8582,
-      "sha256": "8c66bc0362faac1d5a1823ec4d9bf2c61181c15e00dfe3fc57d40dc9f3ee1971"
+      "bytes": 8705,
+      "sha256": "a338ce0d1d7f14e67acd8bb421240991cb2ae49ac14997d4f875314cdb930747"
     },
     {
       "path": "known-issues.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "known-issues.json",
-      "bytes": 1217,
-      "sha256": "d271f2cba356a9618439cf9e83772b466c49133d207f38af119a06f68e854e3b"
+      "bytes": 1219,
+      "sha256": "c4218d01c16a8d82adfb59aaf64aaf6f4a1dd0658a512d647618aad9a46c8d76"
     },
     {
       "path": "legal.css",
@@ -102,8 +102,8 @@
     },
     {
       "path": "release-notes.json",
-      "bytes": 1194,
-      "sha256": "07ab117fbbf10a4799943a0e4286823de1be0a7a45e1c0b49b6c168769008e81"
+      "bytes": 2279,
+      "sha256": "2dfff355f316ed158f24838072ddb2a09058d5d3c14744fd077d4ff85deaf6b5"
     },
     {
       "path": "robots.txt",
@@ -112,8 +112,8 @@
     },
     {
       "path": "service-worker.js",
-      "bytes": 4796,
-      "sha256": "94d5f8979dd2c9d2947650cd8979c3b3e5543d4549f7338f16b704b01dc2cfbe"
+      "bytes": 4882,
+      "sha256": "17e28282a0ce816bc79ca182a7d99b7d14cac7579ba7cfa9265922e5c7fe7ec5"
     },
     {
       "path": "sitemap.xml",
@@ -127,18 +127,28 @@
     },
     {
       "path": "src/accessibility-ui.js",
-      "bytes": 14410,
-      "sha256": "f78b4b21c9ac58e7af629aeb44dcf9b4913f59094befcfd41cfd98932c8076e3"
+      "bytes": 14412,
+      "sha256": "4ba3e7d33770fd6d2f274e3d0afc3d779ea67561cb9773fd8384245f550a85d8"
+    },
+    {
+      "path": "src/achievement-core.js",
+      "bytes": 17036,
+      "sha256": "cae2d6d79402566c3513cf1a5080cd709f4c9998f4b940c4b8b539c936ee4676"
     },
     {
       "path": "src/app-platform-ui.js",
-      "bytes": 3171,
-      "sha256": "5d65a87b4e473e28b012b91e7d2d4164cbb26aabc21158339bf0a7d4f429404b"
+      "bytes": 3173,
+      "sha256": "2db29000b1deb2f47589611a4c87f979824d32344eee51a76f05109b26915856"
     },
     {
       "path": "src/boot-guard.js",
-      "bytes": 4572,
-      "sha256": "9187c64da3047520e81b48f354598b20094db04e4a43705778d072a05363adba"
+      "bytes": 4574,
+      "sha256": "9f78f540d3005c2c1740f927a209b68628481eca0f583137445c817f2c5f1765"
+    },
+    {
+      "path": "src/campaign-core.js",
+      "bytes": 5845,
+      "sha256": "02e378d83a0a49b74439a8ebd683d79959628bab2f2303defb587428b7fec710"
     },
     {
       "path": "src/experience-core.js",
@@ -147,18 +157,23 @@
     },
     {
       "path": "src/game-core.js",
-      "bytes": 13354,
-      "sha256": "d9cca9e69356588868f9e0b39b73e4a242e11c146069ef44fd875149d3eeb16d"
+      "bytes": 18962,
+      "sha256": "f57f436f2eac35190efce815ac91a003a805c031e1786d5d54ba21e021c717a1"
     },
     {
       "path": "src/game-player-ui.js",
-      "bytes": 54434,
-      "sha256": "d463f5f4e89d86346a4426863cb0ae4c09a7e7834436c07b5a2622072ed82f31"
+      "bytes": 63066,
+      "sha256": "5aaf2458c2f1af9bc54591f2bb820d0b54241b6b9677c83ec15374ce370b024d"
+    },
+    {
+      "path": "src/journal-ui.js",
+      "bytes": 14792,
+      "sha256": "b6fc86fc4a87f10150b19195e416d16236931d3a7b8e85ee5729a50b9e5cc3bb"
     },
     {
       "path": "src/mastery-core.js",
-      "bytes": 3494,
-      "sha256": "c478d05279009c142f5e79c30f7640fd2e9a464822035526ff6ea0bf64994d9c"
+      "bytes": 3824,
+      "sha256": "8c4f359f3cc3b4e170dfdff522ed52a5420c0126b767058f7182999db940f1bb"
     },
     {
       "path": "src/mobile-lifecycle-ui.js",
@@ -172,8 +187,8 @@
     },
     {
       "path": "src/mobile-viewport-player-ui.js",
-      "bytes": 10203,
-      "sha256": "07a3c8aa22b54fd93a68f3f47456630ce6a575b2c162a79bc0d128335377f99a"
+      "bytes": 10297,
+      "sha256": "7e979d66d44e67a2f8039749468626b59a47381fd0ed4a88d12202caaa62f1ef"
     },
     {
       "path": "src/progress-core.js",
@@ -187,18 +202,18 @@
     },
     {
       "path": "src/settings-core.js",
-      "bytes": 4238,
-      "sha256": "2096d0ee39549e73399b4a6b15d976320574b5513b32bac6e67f4fd897264ea1"
+      "bytes": 4240,
+      "sha256": "6550290a1010eec5ceb6f12d71942d9d831fa834871b3b6832195cb3e33ae487"
     },
     {
       "path": "src/settings-ui.js",
-      "bytes": 21435,
-      "sha256": "c6f977eca411c96c3f22e44882af6176a24d41a84ace4c10c9ab2eef65d2b929"
+      "bytes": 21437,
+      "sha256": "bbf1f8a03508082ca572b11d475c41f30c57b22059fd876fc7f7b03c534be760"
     },
     {
       "path": "src/storage-player-core.js",
       "bytes": 8708,
-      "sha256": "6b81ae4112db9594cd90ead4fb608f5bc16ae2e7283eb6f4756f9da19deb223a"
+      "sha256": "d3f8325783a0684af10cd1b16422393392001baf03cbcfdce98327207982d1e2"
     },
     {
       "path": "src/tutorial-core.js",
@@ -207,13 +222,13 @@
     },
     {
       "path": "src/tutorial-player-ui.js",
-      "bytes": 17396,
-      "sha256": "287ef5e2450307e9b4c0e2707d84de1be0f7516a52a4ceac8ce32fabd3f7c463"
+      "bytes": 17398,
+      "sha256": "8ddd62704b8dbdfe5b7702a27170d2a998af6313f3dabbeef60aab27d0acf70d"
     },
     {
       "path": "styles.css",
-      "bytes": 118237,
-      "sha256": "79447b9181fb70908d7249b52489d60e2b2fa076c6a26ceed90f40a66df57d9a"
+      "bytes": 133667,
+      "sha256": "2d10dc1a41ce070b9396c83a7fc5151684aea4325af341e0b204a64e28573b01"
     },
     {
       "path": "support.html",

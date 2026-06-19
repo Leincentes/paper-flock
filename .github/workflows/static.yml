@@ -11,6 +11,7 @@ permissions:
   pages: write
   id-token: write
   attestations: write
+  security-events: write
 
 concurrency:
   group: paper-flock-pages-${{ github.ref }}
@@ -19,9 +20,11 @@ concurrency:
 jobs:
   static-quality:
     runs-on: ubuntu-latest
+    outputs:
+      provenance_created: ${{ steps.provenance-status.outputs.created }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -29,7 +32,13 @@ jobs:
           node-version: "24"
           package-manager-cache: false
 
-      - name: Install development quality tools
+      - name: Confirm public npm registry policy
+        run: |
+          test "$(npm config get registry)" = "https://registry.npmjs.org/"
+          ! grep -R "openai.org" \
+            package-lock.json .npmrc
+
+      - name: Install locked development quality tools
         run: npm ci --no-audit --no-fund
 
       - name: Audit installed dependencies
@@ -47,6 +56,9 @@ jobs:
       - name: Audit accessibility and security hardening
         run: npm run audit:hardening
 
+      - name: Audit software supply chain
+        run: npm run audit:supply-chain
+
       - name: Build deterministic release directory
         run: npm run build
 
@@ -56,22 +68,37 @@ jobs:
       - name: Generate CycloneDX dependency SBOM
         run: |
           mkdir -p release-bundle
-          npm sbom --sbom-format=cyclonedx --package-lock-only             > release-bundle/sbom.cdx.json
+          npm sbom --sbom-format=cyclonedx --package-lock-only \
+            > release-bundle/sbom.cdx.json
+          ! grep -R "openai.org" \
+            release-bundle/sbom.cdx.json
 
       - name: Create deterministic release archive
         run: python3 tools/package-release.py
 
       - name: Attest release archive and SBOM
+        id: provenance
         if: github.event_name != 'pull_request' && github.event.repository.private == false
         uses: actions/attest@v4
         with:
-          subject-path: release-bundle/paper-flock-v1.2-release.zip
+          subject-path: release-bundle/paper-flock-v1.4.2-release.zip
           sbom-path: release-bundle/sbom.cdx.json
+
+      - name: Record attestation status
+        id: provenance-status
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.provenance.outcome }}" == "success" ]]; then
+            echo "created=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "created=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload provenance-ready release bundle
         uses: actions/upload-artifact@v5
         with:
-          name: paper-flock-v1.2-release-bundle
+          name: paper-flock-v1.4.2-release-bundle
           path: release-bundle
           if-no-files-found: error
           retention-days: 30
@@ -88,7 +115,7 @@ jobs:
     needs: static-quality
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -122,13 +149,38 @@ jobs:
             lighthouse-report
           if-no-files-found: ignore
 
+  codeql-quality:
+    name: CodeQL JavaScript and workflow analysis
+    runs-on: ubuntu-latest
+    needs: static-quality
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+          - actions
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
+
   deploy:
     if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [static-quality, browser-quality]
+    needs: [static-quality, browser-quality, codeql-quality]
     outputs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
@@ -156,7 +208,7 @@ jobs:
     needs: deploy
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -171,13 +223,13 @@ jobs:
             --retries=8 \
             --delay=4000
 
-
   release-evidence:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     needs:
       - static-quality
       - browser-quality
+      - codeql-quality
       - deploy
       - post-deployment-audit
     steps:
@@ -196,28 +248,28 @@ jobs:
       - name: Download release bundle
         uses: actions/download-artifact@v5
         with:
-          name: paper-flock-v1.2-release-bundle
+          name: paper-flock-v1.4.2-release-bundle
           path: release-bundle
 
-      - name: Generate importable CI evidence
+      - name: Generate importable CI evidence from completed jobs
         run: |
           node tools/create-quality-evidence.mjs \
-            --unit-tests=true \
-            --package-audit=true \
-            --dependency-audit=true \
-            --release-audit=true \
-            --browser-tests=true \
-            --lighthouse=true \
-            --codeql=true \
-            --deployment-audit=true \
-            --sbom=true \
-            --provenance=true \
-            --output=paper-flock-v1.2-quality-evidence.json
+            --unit-tests=${{ needs.static-quality.result == 'success' }} \
+            --package-audit=${{ needs.static-quality.result == 'success' }} \
+            --dependency-audit=${{ needs.static-quality.result == 'success' }} \
+            --release-audit=${{ needs.static-quality.result == 'success' }} \
+            --browser-tests=${{ needs.browser-quality.result == 'success' }} \
+            --lighthouse=${{ needs.browser-quality.result == 'success' }} \
+            --codeql=${{ needs.codeql-quality.result == 'success' }} \
+            --deployment-audit=${{ needs.post-deployment-audit.result == 'success' }} \
+            --sbom=${{ needs.static-quality.result == 'success' }} \
+            --provenance=${{ needs.static-quality.outputs.provenance_created }} \
+            --output=paper-flock-v1.4.2-quality-evidence.json
 
       - name: Upload quality evidence
         uses: actions/upload-artifact@v5
         with:
-          name: paper-flock-v1.2-quality-evidence
-          path: paper-flock-v1.2-quality-evidence.json
+          name: paper-flock-v1.4.2-quality-evidence
+          path: paper-flock-v1.4.2-quality-evidence.json
           if-no-files-found: error
           retention-days: 90

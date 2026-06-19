@@ -1,47 +1,41 @@
-# Paper Flock v0.16 — Operations Runbook
+# Paper Flock v1.4.2 — Operations Runbook
+
+## Release
+
+1. Export a player backup.
+2. Run the complete local verification sequence in `README.md`.
+3. Push the reviewed source package to `main`.
+4. Require static, dependency, browser, Lighthouse, CodeQL, deployment, SBOM,
+   and provenance checks to pass.
+5. Download and retain the release bundle and quality-evidence artifacts.
+6. Complete Android and iPhone Journal verification.
+7. Record final human approval before announcing production availability.
 
 ## Update
 
-1. Export a creator backup.
-2. Run all automated tests and package verification.
-3. Deploy to the existing HTTPS origin.
-4. Verify the post-deployment audit.
-5. Finish an active puzzle before applying **Update ready**.
-6. Confirm exact resume and offline launch.
+1. Confirm the live version and last known-good commit.
+2. Deploy through the release workflow only.
+3. Wait for the post-deployment HTTPS audit.
+4. Finish any active puzzle, apply **Update ready**, and confirm exact resume.
+5. Test one online launch and one offline launch.
 
 ## Rollback
 
-1. Identify the last known-good Git commit.
-2. Revert the faulty deployment commit.
-3. Push the revert to `main`.
-4. Wait for the Pages workflow and deployment audit.
-5. Open the game online and apply **Update ready**.
-6. Confirm local progress remains.
+1. Pause new invitations and record the defect.
+2. Revert to the last known-good commit.
+3. Push the revert and require the deployment audit to pass.
+4. Apply the update on Android and iPhone.
+5. Confirm progress, Journal state, and offline launch remain intact.
 
 ## Critical defect
 
-A critical defect includes progress loss, repeated blank screen, unplayable
-offline installation, inaccessible core controls, or a crash blocking play.
+Progress loss, repeated blank screens, inaccessible core controls, broken
+offline installation, or a crash blocking play is critical. Preserve an
+affected backup, reproduce without deleting player data, fix and test the
+problem, and complete a physical-device rollback rehearsal before closing it.
 
-1. Pause new beta invitations.
-2. Publish the issue in `known-issues.json`.
-3. Ask affected testers for feedback JSON, diagnostics, and a backup.
-4. Reproduce without deleting their local data.
-5. Fix, test, deploy, and complete a rollback rehearsal.
-6. Mark the issue resolved only after physical-device verification.
+## Evidence handling
 
-## Feedback handling
-
-- Import JSON reports into the creator dashboard.
-- Review critical and major reports first.
-- Do not publish free-text reports without checking for accidental personal
-  information.
-- Delete reports that are no longer needed.
-
-
-## Accessibility regression
-
-Treat loss of keyboard access, invisible focus, a modal focus escape,
-unreadable forced-color content, or inaccessible core gameplay as a major or
-critical defect depending on whether play is blocked. Pause broad invitations
-when core play is blocked.
+Keep CI artifacts, device checklists, and tester observations separate.
+AI-simulated reactions are hypotheses only and must never be recorded as
+real-user evidence.

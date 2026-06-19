@@ -1,4 +1,4 @@
-const CACHE_NAME = "paper-flock-static-v1.2";
+const CACHE_NAME = "paper-flock-static-v1.4.2";
 const CACHE_PREFIX = "paper-flock-static-";
 const APP_STATIC_RESOURCES = Object.freeze([
   "./",
@@ -15,6 +15,8 @@ const APP_STATIC_RESOURCES = Object.freeze([
   "./src/tutorial-core.js",
   "./src/tutorial-player-ui.js",
   "./src/game-core.js",
+  "./src/campaign-core.js",
+  "./src/achievement-core.js",
   "./src/game-player-ui.js",
   "./src/progress-core.js",
   "./src/experience-core.js",
@@ -22,6 +24,7 @@ const APP_STATIC_RESOURCES = Object.freeze([
   "./src/storage-player-core.js",
   "./src/settings-core.js",
   "./src/settings-ui.js",
+  "./src/journal-ui.js",
   "./src/app-platform-ui.js",
   "./src/mobile-lifecycle-ui.js",
   "./src/mobile-viewport-core.js",

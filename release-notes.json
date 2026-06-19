@@ -1,7 +1,48 @@
 {
   "product": "Paper Flock",
-  "currentVersion": "1.2",
+  "currentVersion": "1.4.2",
   "releases": [
+    {
+      "version": "1.4.2",
+      "date": "2026-06-20",
+      "channel": "production-candidate",
+      "changes": [
+        "Fixed a startup crash caused by the missing mastery-goal HUD element.",
+        "Added a defensive runtime guard so a missing optional HUD node cannot stop startup.",
+        "Added startup DOM-contract regression tests covering every required player element.",
+        "Retained the public npm registry lock, dependency override, CodeQL gate, and provenance evidence hardening from v1.4.1.",
+        "Kept gameplay rules, achievements, save schema 12, and player progression unchanged."
+      ]
+    },
+    {
+      "version": "1.4",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added the local Achievement Journal with twenty permanent milestones.",
+        "Added retroactive achievement evaluation for existing campaign progress, feathers, Daily Flocks, and paper themes.",
+        "Added lifetime puzzle statistics stored inside the recoverable player save.",
+        "Added a recommended next goal for campaign continuation, mastery replay, or Daily Flock.",
+        "Added accessible achievement notifications, category filters, and mobile internal scrolling.",
+        "Added explicit production metadata confirming that streaks and expiring rewards are disabled.",
+        "Advanced the player save schema to version 12 while preserving v1.3 progress."
+      ]
+    },
+    {
+      "version": "1.3",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added Chapter 2: Twilight Flock with Levels 21–40.",
+        "Added chapter progress, completion percentage, and mastery totals.",
+        "Added optional mastery guidance using the existing feather system.",
+        "Added the Twilight visual atmosphere and two new paper themes.",
+        "Added chapter-complete and full-campaign celebrations.",
+        "Added automatic Level 21 access for players who completed v1.2 Level 20.",
+        "Moved Daily Flock to the solver-validated campaign pool.",
+        "Added solver, duplicate, difficulty-band, migration, and production-boundary tests."
+      ]
+    },
     {
       "version": "1.2",
       "date": "2026-06-19",

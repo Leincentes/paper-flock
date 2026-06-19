@@ -5,7 +5,7 @@ import {
   viewportHeightClass
 } from "./mobile-viewport-core.js";
 
-const BUILD_VERSION = "1.2";
+const BUILD_VERSION = "1.4.2";
 const MOBILE_QUERY =
   "(max-width: 760px), (display-mode: standalone)";
 const media = globalThis.matchMedia(MOBILE_QUERY);
@@ -99,6 +99,7 @@ function elements() {
     journey: document.querySelector(".journey-strip"),
     journeyRail: document.querySelector(".journey-rail"),
     personalBest: document.querySelector(".personal-best"),
+    masteryGoal: document.querySelector(".mastery-goal"),
     boardWrap: document.querySelector(".board-wrap"),
     controls: document.querySelector(".controls"),
     more: document.querySelector("#mobile-game-menu-button"),
@@ -352,7 +353,8 @@ function fitBoard(viewport) {
   const journeyHeight =
     outerHeight(el.journey) +
     outerHeight(el.journeyRail) +
-    outerHeight(el.personalBest);
+    outerHeight(el.personalBest) +
+    outerHeight(el.masteryGoal);
 
   const fixedHeight = estimateFixedGameplayHeight({
     hero: outerHeight(el.hero),

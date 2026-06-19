@@ -1,46 +1,41 @@
-# Paper Flock v0.17 — Security Notes
+# Paper Flock v1.4.2 — Security Notes
 
 ## Runtime model
 
 Paper Flock is a static, local-first web application. It has no application
 server, account system, advertising SDK, analytics SDK, or automatic feedback
-upload.
+upload. The player build has no third-party runtime dependency.
 
 ## Browser policy
 
-Every public HTML page supplies:
+Every public HTML page supplies a self-only Content Security Policy,
+`object-src 'none'`, `base-uri 'none'`, `form-action 'self'`, and a
+no-referrer policy. Inline styles remain allowed because board positioning and
+animation variables are applied through element style properties.
 
-- a self-only Content Security Policy
-- `object-src 'none'`
-- `base-uri 'none'`
-- `form-action 'self'`
-- a no-referrer policy
+## Dependency policy
 
-`styles.css` still permits inline styles because the board renderer sets
-position and animation variables through element style properties.
+Development tools install only from the public npm registry. The committed
+lockfile is exact, CI runs `npm ci`, and high or critical audit findings block
+the release. The locked `tmp` override is `0.2.7`.
 
-## Static audit
-
-Run:
+## Verification
 
 ```bash
+npm audit --audit-level=high
+npm audit --omit=dev
 npm run audit:hardening
+npm run audit:supply-chain
 ```
 
-The audit checks public pages, CSP, referrer policy, inline scripts, focus
-styles, forced colors, text scaling, reduced motion, control targets,
-dangerous JavaScript execution APIs, and third-party runtime dependencies.
+`npm audit --omit=dev` should report no production dependency vulnerabilities.
 
 ## Hosting limitation
 
-GitHub Pages does not provide project-controlled response headers through this
-repository. The build therefore uses supported HTML policies where possible.
-A future custom host may add HTTP response headers such as
-`Content-Security-Policy`, `Permissions-Policy`, and
-`X-Content-Type-Options`.
+GitHub Pages cannot apply the repository `_headers` file as response headers.
+The app therefore supplies supported HTML policies. A future host that supports
+`_headers` should additionally verify CSP, Permissions Policy,
+`X-Content-Type-Options`, and frame protection at the HTTP layer.
 
-## Reporting
-
-Configure a public support contact in `app-config.json` before broad release.
-Do not publish security reports or diagnostic exports without checking them for
-accidental personal information.
+Report security concerns through the configured support contact. Remove
+personal information from diagnostic or feedback exports before sharing them.

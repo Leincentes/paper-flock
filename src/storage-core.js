@@ -1,4 +1,4 @@
-export const STORAGE_SCHEMA_VERSION = 10;
+export const STORAGE_SCHEMA_VERSION = 12;
 export const ENVELOPE_VERSION = 1;
 
 export const STORAGE_KEYS = Object.freeze({

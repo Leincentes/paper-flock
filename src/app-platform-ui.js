@@ -1,4 +1,4 @@
-const BUILD_VERSION = "1.2";
+const BUILD_VERSION = "1.4.2";
 const state = {
   deferredPrompt: null,
   registration: null,

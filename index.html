@@ -1,6 +1,4 @@
 <!doctype html>
-<!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -9,7 +7,7 @@
 <meta content="#151a32" name="theme-color"/>
 <meta content="no-referrer" name="referrer"/>
 <meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" http-equiv="Content-Security-Policy"/>
-<title>Paper Flock v1.2 — Origami Puzzle Game</title>
+<title>Paper Flock v1.4.2 — Achievement Journal</title>
 <link href="https://leincentes.github.io/paper-flock/" rel="canonical"/>
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./assets/paper-flock-icon.svg" rel="icon" type="image/svg+xml"/>
@@ -43,7 +41,6 @@
 </div>
 </div>
 </header>
-
 <section aria-label="Paper Flock puzzle" class="game-card">
 <div aria-label="Puzzle status" class="hud">
 <div class="metric">
@@ -79,6 +76,9 @@
 <p class="personal-best" id="best-feathers">
           Complete the flock to earn up to three feathers.
         </p>
+<p class="mastery-goal" id="mastery-goal">
+          Mastery goal: complete a clean flight.
+        </p>
 <div class="board-wrap">
 <span aria-hidden="true" class="board-sheen"></span>
 <div aria-describedby="message" aria-label="Origami bird grid" class="board" id="board" role="group"></div>
@@ -107,7 +107,7 @@
 <span aria-hidden="true">→</span>
 </button>
 </nav>
-<div aria-label="Feedback settings" class="settings-entry"><span class="settings-entry-placeholder">Settings</span></div>
+<div aria-label="Player tools" class="settings-entry"><span class="settings-entry-placeholder">Settings</span></div>
 <div aria-label="Puzzle selection" class="mode-actions">
 <button class="mode-button" id="open-map-button" type="button">
 <span aria-hidden="true" class="mode-icon">⌘</span>
@@ -185,12 +185,8 @@
 </section>
 </div>
 </section>
-
-
-
-
 <footer class="app-footer">
-<span>Paper Flock v1.2 · Gamelo Studio</span>
+<span>Paper Flock v1.4.2 · Gamelo Studio</span>
 <nav aria-label="Game information and support">
 <a href="./privacy.html">Privacy</a>
 <a href="./terms.html">Terms</a>
@@ -199,25 +195,9 @@
 <a href="./known-issues.html">Known issues</a>
 <a href="./accessibility.html">Accessibility</a>
 <a href="./credits.html">Credits</a>
-
 </nav>
 </footer>
 </main>
 <div aria-hidden="true" class="celebration" id="celebration"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script src="./src/boot-guard.js" type="module"></script><script src="./src/tutorial-player-ui.js" type="module"></script><script src="./src/game-player-ui.js" type="module"></script><script src="./src/app-platform-ui.js" type="module"></script><script src="./src/mobile-lifecycle-ui.js" type="module"></script><script src="./src/mobile-viewport-player-ui.js" type="module"></script><script src="./src/accessibility-ui.js" type="module"></script><script src="./src/settings-ui.js" type="module"></script></body>
+<script src="./src/boot-guard.js" type="module"></script><script src="./src/tutorial-player-ui.js" type="module"></script><script src="./src/game-player-ui.js" type="module"></script><script src="./src/app-platform-ui.js" type="module"></script><script src="./src/mobile-lifecycle-ui.js" type="module"></script><script src="./src/mobile-viewport-player-ui.js" type="module"></script><script src="./src/accessibility-ui.js" type="module"></script><script src="./src/settings-ui.js" type="module"></script><script src="./src/journal-ui.js" type="module"></script></body>
 </html>

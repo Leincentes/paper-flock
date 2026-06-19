@@ -44,7 +44,7 @@ export function normalizePlayerSettings(value = {}) {
 }
 
 export function createPlayerBackup({
-  buildVersion = "1.2",
+  buildVersion = "1.4.2",
   exportedAt = new Date().toISOString(),
   storageValues = {}
 } = {}) {

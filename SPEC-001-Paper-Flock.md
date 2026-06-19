@@ -1,6 +1,6 @@
 # SPEC-001-Paper-Flock
 
-**Current validation build:** v1.2
+**Current validation build:** v1.4.2
 
 ## Background
 
@@ -476,3 +476,23 @@ internal filenames, module references, query modes, or prototype wording.
 
 Player backups use a dedicated storage-key allowlist. They cannot contain
 research, certification, quality-evidence, or unrelated local-storage values.
+
+
+## v1.4 Achievement Journal
+
+The player profile remains local and anonymous. `achievement-core.js` is a
+pure domain module that reconstructs retroactive milestones from the existing
+campaign save, records new lifetime counters, and recommends the next
+meaningful action.
+
+Achievement definitions are explicit and versioned. Each definition contains
+an ID, category, visible title, visible description, target, and metric.
+Requirements are never hidden or randomized.
+
+The save schema stores unlock timestamps and seen IDs inside the existing
+recoverable envelope. The Journal emits no network request. Normal Settings
+backup and restore therefore include the complete Journal state.
+
+The production artifact explicitly declares `streaksEnabled: false` and
+`expiringRewardsEnabled: false`. Internal QA modules remain outside the player
+allowlist.

@@ -1,37 +1,52 @@
-# Paper Flock v0.20 — Software Supply Chain
+# Paper Flock v1.4.2 — Software Supply Chain
 
-## Locked builds
+## Locked public-registry build
 
-`package-lock.json` records the exact development dependency tree. CI uses
-`npm ci`, which fails when `package.json` and the lockfile disagree.
+`package-lock.json` records the exact development tree. Every resolved tarball
+uses `https://registry.npmjs.org/`; `.npmrc` fixes the same registry for local
+and CI installs. The supply-chain audit rejects internal registry URLs.
 
-## Dependency protection
+CI uses:
 
-- `npm audit --audit-level=high` blocks high and critical advisories.
-- Dependency Review examines package changes in pull requests.
-- Dependabot checks npm and GitHub Actions weekly.
+```bash
+npm ci --no-audit --no-fund
+npm audit --audit-level=high
+```
+
+The `tmp` transitive dependency is overridden and locked to `0.2.7`, removing
+the previously observed high-severity advisory. Moderate development-tool
+findings remain visible but do not pass the configured high-severity failure
+threshold. The player runtime has no third-party production dependency.
+
+## Automated protection
+
+- Dependency Review blocks high-severity pull-request dependency changes.
+- Dependabot monitors npm and GitHub Actions.
 - CodeQL scans JavaScript and workflow files.
+- the static build uses a strict player-runtime allowlist
+- the SBOM and release archive are checked for internal registry leakage
 
 ## Release inventory
 
-The release workflow generates:
+The workflow generates:
 
-- `asset-manifest.json` for runtime files
-- `release.json` for build metadata
-- `sbom.cdx.json` for npm dependencies
+- `asset-manifest.json`
+- `release.json`
+- `sbom.cdx.json`
 - `release-checksums.txt`
-- `paper-flock-v0.20-release.zip`
+- `paper-flock-v1.4.2-release.zip`
+- `paper-flock-v1.4.2-quality-evidence.json`
 
-## Provenance
+## Evidence integrity
 
-For public repositories, GitHub Actions uses `actions/attest@v4` to create
-signed provenance for the release ZIP and its CycloneDX SBOM.
+CodeQL is a job in the release-gate workflow. The evidence job reads the
+completed CodeQL job result rather than passing a literal success value.
+Provenance status is taken from the actual `actions/attest` step outcome.
 
-Verify a downloaded release with GitHub CLI:
+For a public repository, verify the downloaded archive with GitHub CLI:
 
 ```bash
-gh attestation verify paper-flock-v0.20-release.zip \
-  -R OWNER/REPOSITORY
+gh attestation verify paper-flock-v1.4.2-release.zip -R OWNER/REPOSITORY
 ```
 
-The local checksum remains useful even when GitHub attestation is unavailable.
+Also compare the archive against `release-checksums.txt`.

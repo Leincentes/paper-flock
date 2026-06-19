@@ -16,6 +16,19 @@ import {
   localDateKey
 } from "./progress-core.js";
 import {
+  MAX_CAMPAIGN_FEATHERS,
+  MAX_CAMPAIGN_LEVEL,
+  actForLevel,
+  campaignProgress,
+  chapterForLevel,
+  chapterMastery,
+  chapterProgress,
+  isCampaignFinale,
+  isChapterFinale,
+  masteryGoalForLevel,
+  migrateUnlockedLevel
+} from "./campaign-core.js";
+import {
   DEFAULT_ONBOARDING,
   adaptivePuzzleInstruction,
   effectsLabel,
@@ -51,10 +64,19 @@ import {
 import {
   normalizeTutorialProgress
 } from "./tutorial-core.js";
+import {
+  createJournalSnapshot,
+  markAchievementsSeen,
+  normalizeAchievementState,
+  normalizePlayerStats,
+  reconcileAchievementState,
+  recordLaunch,
+  recordPuzzleCompletion
+} from "./achievement-core.js";
 
-const BUILD_VERSION = "1.2";
+const BUILD_VERSION = "1.4.2";
 const STORAGE_KEY = STORAGE_KEYS.save;
-const MAX_LEVEL = 20;
+const MAX_LEVEL = MAX_CAMPAIGN_LEVEL;
 
 const storageMigration = migrateLegacyStorage(localStorage);
 
@@ -68,6 +90,7 @@ const elements = {
   journeyProgress: document.querySelector("#journey-progress"),
   journeyFill: document.querySelector("#journey-progress-fill"),
   journeyRail: document.querySelector(".journey-rail"),
+  masteryGoal: document.querySelector("#mastery-goal"),
   remaining: document.querySelector("#remaining-count"),
   lesson: document.querySelector("#lesson-label"),
   message: document.querySelector("#message"),
@@ -120,6 +143,9 @@ const state = {
   effectsPreference: "auto",
   resolvedEffects: "full",
   onboarding: normalizeOnboarding(DEFAULT_ONBOARDING),
+  playerStats: normalizePlayerStats({}),
+  achievementState: normalizeAchievementState({}),
+  pendingAchievementUnlocks: [],
   pathFeedbackTimer: null,
   inputLocked: false,
   hintedCell: null,
@@ -146,20 +172,30 @@ function normalizeSavePayload(value) {
     return null;
   }
 
-  const currentLevel = clamp(value.currentLevel ?? 1, 1, MAX_LEVEL);
-  const unlockedLevel = clamp(value.unlockedLevel ?? 1, 1, MAX_LEVEL);
   const completedLevels = Array.isArray(value.completedLevels)
-    ? value.completedLevels
-        .filter(
-          (level) =>
-            Number.isInteger(level) &&
-            level >= 1 &&
-            level <= MAX_LEVEL
+    ? [
+        ...new Set(
+          value.completedLevels.filter(
+            (level) =>
+              Number.isInteger(level) &&
+              level >= 1 &&
+              level <= MAX_LEVEL
+          )
         )
+      ].sort((left, right) => left - right)
     : [];
+  const unlockedLevel = migrateUnlockedLevel({
+    unlockedLevel: value.unlockedLevel ?? 1,
+    completedLevels
+  });
+  const currentLevel = clamp(
+    value.currentLevel ?? 1,
+    1,
+    unlockedLevel
+  );
 
   return {
-    saveVersion: 10,
+    saveVersion: 11,
     buildVersion: String(value.buildVersion ?? ""),
     currentLevel,
     unlockedLevel,
@@ -173,6 +209,17 @@ function normalizeSavePayload(value) {
       value.effectsPreference
     ),
     onboarding: normalizeOnboarding(value.onboarding),
+    playerStats: normalizePlayerStats(
+      value.playerStats,
+      {
+        completedLevels,
+        bestFeathers: value.bestFeathers,
+        dailyFeathers: value.dailyFeathers
+      }
+    ),
+    achievementState: normalizeAchievementState(
+      value.achievementState
+    ),
     checkpoint: value.checkpoint ?? null
   };
 }
@@ -206,6 +253,17 @@ function loadSave() {
     parsed.effectsPreference
   );
   state.onboarding = normalizeOnboarding(parsed.onboarding);
+  state.playerStats = normalizePlayerStats(
+    parsed.playerStats,
+    {
+      completedLevels: state.completedLevels,
+      bestFeathers: state.bestFeathers,
+      dailyFeathers: state.dailyFeathers
+    }
+  );
+  state.achievementState = normalizeAchievementState(
+    parsed.achievementState
+  );
 
   try {
     const tutorial = normalizeTutorialProgress(
@@ -286,7 +344,7 @@ function createCheckpoint() {
 
 function saveProgress() {
   const payload = {
-    saveVersion: 10,
+    saveVersion: 12,
     buildVersion: BUILD_VERSION,
     currentLevel: state.currentLevel,
     unlockedLevel: state.unlockedLevel,
@@ -300,6 +358,17 @@ function saveProgress() {
     hapticsEnabled: state.hapticsEnabled,
     effectsPreference: state.effectsPreference,
     onboarding: normalizeOnboarding(state.onboarding),
+    playerStats: normalizePlayerStats(
+      state.playerStats,
+      {
+        completedLevels: state.completedLevels,
+        bestFeathers: state.bestFeathers,
+        dailyFeathers: state.dailyFeathers
+      }
+    ),
+    achievementState: normalizeAchievementState(
+      state.achievementState
+    ),
     checkpoint: createCheckpoint()
   };
 
@@ -379,11 +448,13 @@ function applyTheme(themeId) {
   );
 }
 
-function chapterForLevel(levelNumber) {
-  if (levelNumber <= 5) return "Dawn Flight";
-  if (levelNumber <= 10) return "Meadow Crossing";
-  if (levelNumber <= 15) return "Twilight Fold";
-  return "Lantern Sky";
+function applyChapterAtmosphere() {
+  const atmosphere =
+    state.mode === "daily"
+      ? "daily-paper-sky"
+      : chapterForLevel(state.currentLevel).atmosphere;
+  document.documentElement.dataset.chapterAtmosphere =
+    atmosphere;
 }
 
 function currentRecord() {
@@ -473,6 +544,7 @@ function restoreCheckpoint(checkpoint) {
   state.boardRevealPending = false;
   state.inputLocked = false;
   state.puzzleCompleted = false;
+  applyChapterAtmosphere();
 
   elements.completion.hidden = true;
   elements.completion.classList.remove("completion-visible");
@@ -519,6 +591,7 @@ function beginPuzzle(level, reason) {
   state.puzzleCompleted = false;
   state.boardRevealPending = true;
   state.inputLocked = false;
+  applyChapterAtmosphere();
   elements.completion.hidden = true;
   elements.completion.classList.remove("completion-visible");
   elements.levelMap.hidden = true;
@@ -591,39 +664,83 @@ function renderLevelMap() {
   elements.levelGrid.replaceChildren();
 
   for (let levelNumber = 1; levelNumber <= MAX_LEVEL; levelNumber += 1) {
+    const chapter = chapterForLevel(levelNumber);
+
+    if (levelNumber === chapter.startLevel) {
+      const progress = chapterProgress(
+        state.completedLevels,
+        levelNumber
+      );
+      const mastery = chapterMastery(
+        state.bestFeathers,
+        levelNumber
+      );
+      const heading = document.createElement("div");
+      heading.className = "level-map-chapter";
+      heading.dataset.chapterId = chapter.id;
+      heading.innerHTML = `
+        <span>Chapter ${chapter.number}</span>
+        <strong>${chapter.name}</strong>
+        <small>
+          ${progress.completed}/${progress.total} levels ·
+          ${progress.percent}% complete ·
+          ${mastery.perfectLevels} mastered
+        </small>
+      `;
+      elements.levelGrid.append(heading);
+    }
+
     const button = document.createElement("button");
     const unlocked = levelNumber <= state.unlockedLevel;
     const completed = state.completedLevels.includes(levelNumber);
     const feathers = state.bestFeathers[String(levelNumber)] ?? 0;
+    const mastered = feathers === 3;
 
     button.type = "button";
     button.className = "level-tile";
     button.disabled = !unlocked;
+    button.dataset.chapter =
+      chapterForLevel(levelNumber).id;
     button.setAttribute(
       "aria-label",
       unlocked
-        ? `Level ${levelNumber}${completed ? ", completed" : ""}${feathers ? `, ${feathers} of 3 feathers` : ""}`
+        ? `Level ${levelNumber}${completed ? ", completed" : ""}${mastered ? ", mastered" : ""}${feathers ? `, ${feathers} of 3 feathers` : ""}`
         : `Level ${levelNumber}, locked`
     );
 
     if (completed) {
       button.classList.add("completed");
     }
-    if (state.mode === "campaign" && state.currentLevel === levelNumber) {
+    if (mastered) {
+      button.classList.add("mastered");
+    }
+    if (
+      state.mode === "campaign" &&
+      state.currentLevel === levelNumber
+    ) {
       button.classList.add("current");
     }
 
     button.innerHTML = `
       <strong>${levelNumber}</strong>
       <span class="tile-feathers" aria-hidden="true">${featherText(feathers)}</span>
-      <small>${!unlocked ? "Locked" : completed ? "Cleared" : "Open"}</small>
+      <small>${
+        !unlocked
+          ? "Locked"
+          : mastered
+            ? "Mastered"
+            : completed
+              ? "Cleared"
+              : "Open"
+      }</small>
     `;
 
     if (unlocked) {
       button.addEventListener("click", () => {
         logEvent("map_level_selected", {
           selectedLevel: levelNumber,
-          replaySelection: state.completedLevels.includes(levelNumber)
+          replaySelection:
+            state.completedLevels.includes(levelNumber)
         });
         startLevel(
           levelNumber,
@@ -1037,6 +1154,63 @@ async function handleCellClick(row, col, cell) {
   saveProgress();
 }
 
+
+function achievementInput() {
+  return {
+    completedLevels: state.completedLevels,
+    bestFeathers: state.bestFeathers,
+    dailyFeathers: state.dailyFeathers,
+    playerStats: state.playerStats,
+    achievementState: state.achievementState,
+    unlockedThemeCount:
+      unlockedThemes(state.completedLevels).length,
+    unlockedLevel: state.unlockedLevel,
+    todayKey: localDateKey()
+  };
+}
+
+function refreshAchievements({
+  announce = false
+} = {}) {
+  const result = reconcileAchievementState(
+    achievementInput(),
+    state.achievementState
+  );
+  state.achievementState = result.state;
+  state.pendingAchievementUnlocks =
+    result.newlyUnlocked;
+
+  if (announce && result.newlyUnlocked.length > 0) {
+    globalThis.dispatchEvent(
+      new CustomEvent(
+        "paperflock:achievement-unlocked",
+        {
+          detail: {
+            achievements: result.newlyUnlocked
+          }
+        }
+      )
+    );
+  }
+
+  return result;
+}
+
+function journalSnapshot() {
+  return createJournalSnapshot({
+    ...achievementInput(),
+    achievementState: state.achievementState
+  });
+}
+
+function emitJournalState() {
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:journal-state", {
+      detail: journalSnapshot()
+    })
+  );
+}
+
 function completeLevel() {
   const beforeThemes = new Set(
     unlockedThemes(state.completedLevels).map((theme) => theme.id)
@@ -1085,18 +1259,40 @@ function completeLevel() {
     );
   }
 
+  state.playerStats = recordPuzzleCompletion(
+    state.playerStats,
+    {
+      mode: state.mode,
+      moves: state.moves,
+      hintsUsed: state.hintsUsed,
+      restarts: state.restarts,
+      deadlocks: state.deadlocks,
+      undosUsed: state.undosUsed,
+      feathers: earnedFeathers
+    }
+  );
   state.puzzleCompleted = true;
+  refreshAchievements({ announce: true });
   saveProgress();
   renderLevelMap();
   renderThemePicker();
   updateHud();
+  emitJournalState();
 
   state.deadlocked = false;
   elements.undo.classList.remove("attention");
   setMessage("The whole flock is free.");
   playFeedback("complete", { feathers: earnedFeathers });
   vibrateFeedback("complete", earnedFeathers);
-  celebrate();
+  const chapterFinale =
+    state.mode === "campaign" &&
+    isChapterFinale(state.currentLevel);
+  celebrate({
+    chapterFinale,
+    campaignFinale:
+      state.mode === "campaign" &&
+      isCampaignFinale(state.currentLevel)
+  });
 
   logEvent("puzzle_complete", {
     moves: state.moves,
@@ -1114,11 +1310,17 @@ function completeLevel() {
   });
 
   if (state.mode === "daily") {
-    elements.completionTitle.textContent = "Daily flock freed";
-  } else if (state.currentLevel === MAX_LEVEL) {
-    elements.completionTitle.textContent = "Journey complete";
+    elements.completionTitle.textContent =
+      "Daily flock freed";
+  } else if (isCampaignFinale(state.currentLevel)) {
+    elements.completionTitle.textContent =
+      "Twilight Flock complete";
+  } else if (isChapterFinale(state.currentLevel)) {
+    elements.completionTitle.textContent =
+      `Chapter ${chapterForLevel(state.currentLevel).number} complete`;
   } else {
-    elements.completionTitle.textContent = `Level ${state.currentLevel} cleared`;
+    elements.completionTitle.textContent =
+      `Level ${state.currentLevel} cleared`;
   }
 
   elements.completionFeathers.textContent = featherText(earnedFeathers);
@@ -1133,12 +1335,19 @@ function completeLevel() {
       : `You improved this flock from ${featherResult.previousBest} to ${earnedFeathers} feathers.`
     : `You earned ${earnedFeathers} of 3 feathers. Your best is ${featherResult.best}.`;
 
+  const achievedMastery = earnedFeathers === 3;
   elements.completionBody.textContent =
     state.mode === "daily"
-      ? `${improvementMessage} A different optional flock arrives on your next local calendar day.`
-      : state.currentLevel === MAX_LEVEL
-        ? `${improvementMessage} You completed the full paper journey.`
-        : `${improvementMessage} Continue when you are ready.`;
+      ? `${improvementMessage} The next local day selects another solver-validated flock.`
+      : isCampaignFinale(state.currentLevel)
+        ? `${improvementMessage} You completed both chapters and freed all forty campaign flocks.`
+        : isChapterFinale(state.currentLevel)
+          ? `${improvementMessage} ${chapterForLevel(state.currentLevel).name} is complete. Twilight Flock is now open.`
+          : `${improvementMessage} ${
+              achievedMastery
+                ? "Mastery goal achieved."
+                : `Optional goal: ${masteryGoalForLevel(state.currentLevel)}`
+            }`;
 
   if (firstFeatherIntroduction) {
     elements.completionBody.textContent +=
@@ -1151,9 +1360,12 @@ function completeLevel() {
   elements.completionUnlock.hidden = !state.pendingThemeUnlock;
 
   elements.continue.textContent =
-    state.mode === "daily" || state.currentLevel === MAX_LEVEL
+    state.mode === "daily" ||
+    isCampaignFinale(state.currentLevel)
       ? "Choose a level"
-      : "Next level";
+      : state.currentLevel === 20
+        ? "Enter Twilight Flock"
+        : "Next level";
   elements.completion.hidden = false;
   requestAnimationFrame(() => {
     elements.completion.classList.add("completion-visible");
@@ -1326,23 +1538,72 @@ function updateHud() {
     );
   }
 
-  elements.chapter.textContent =
-    state.mode === "daily"
-      ? "Daily paper sky"
-      : chapterForLevel(state.currentLevel);
+  const overall = campaignProgress(
+    state.completedLevels
+  );
 
-  const journeyFeathers = totalFeathers(state.bestFeathers);
-  elements.journeyProgress.textContent =
-    `${journeyFeathers} of 60 journey feathers`;
-  const journeyPercent = Math.min(
-    100,
-    (journeyFeathers / 60) * 100
-  );
-  elements.journeyFill.style.width = `${journeyPercent}%`;
-  elements.journeyRail.setAttribute(
-    "aria-valuenow",
-    String(journeyFeathers)
-  );
+  if (state.mode === "daily") {
+    elements.chapter.textContent =
+      "Daily paper sky";
+    elements.journeyProgress.textContent =
+      `${overall.completed}/${overall.total} campaign levels · ${overall.percent}%`;
+    elements.journeyFill.style.width =
+      `${overall.percent}%`;
+    elements.journeyRail.setAttribute(
+      "aria-valuemin",
+      "0"
+    );
+    elements.journeyRail.setAttribute(
+      "aria-valuemax",
+      String(overall.total)
+    );
+    elements.journeyRail.setAttribute(
+      "aria-valuenow",
+      String(overall.completed)
+    );
+    if (elements.masteryGoal) {
+      elements.masteryGoal.textContent =
+        state.levelMeta?.masteryGoal ??
+        "Daily mastery: complete a clean flight.";
+    }
+  } else {
+    const chapter = chapterForLevel(
+      state.currentLevel
+    );
+    const act = actForLevel(state.currentLevel);
+    const progress = chapterProgress(
+      state.completedLevels,
+      state.currentLevel
+    );
+    const mastery = chapterMastery(
+      state.bestFeathers,
+      state.currentLevel
+    );
+
+    elements.chapter.textContent =
+      `${chapter.shortName} · ${act.name}`;
+    elements.journeyProgress.textContent =
+      `${progress.completed}/${progress.total} levels · ${progress.percent}% · ${mastery.perfectLevels} mastered`;
+    elements.journeyFill.style.width =
+      `${progress.percent}%`;
+    elements.journeyRail.setAttribute(
+      "aria-valuemin",
+      "0"
+    );
+    elements.journeyRail.setAttribute(
+      "aria-valuemax",
+      String(progress.total)
+    );
+    elements.journeyRail.setAttribute(
+      "aria-valuenow",
+      String(progress.completed)
+    );
+    if (elements.masteryGoal) {
+      elements.masteryGoal.textContent =
+        state.levelMeta?.masteryGoal ??
+        masteryGoalForLevel(state.currentLevel);
+    }
+  }
 
   elements.remaining.textContent = String(countBirds(state.board));
   elements.undo.disabled =
@@ -1679,15 +1940,32 @@ function playFeedback(kind, {
   }
 }
 
-function celebrate() {
+function celebrate({
+  chapterFinale = false,
+  campaignFinale = false
+} = {}) {
   if (prefersReducedMotion()) {
     return;
   }
 
   const celebration = document.querySelector("#celebration");
   celebration.replaceChildren();
+  celebration.classList.toggle(
+    "chapter-finale",
+    chapterFinale
+  );
+  celebration.classList.toggle(
+    "campaign-finale",
+    campaignFinale
+  );
 
-  for (let index = 0; index < 18; index += 1) {
+  const pieces = campaignFinale
+    ? 46
+    : chapterFinale
+      ? 34
+      : 18;
+
+  for (let index = 0; index < pieces; index += 1) {
     const piece = document.createElement("span");
     piece.style.setProperty("--x", `${(Math.random() - 0.5) * 88}vw`);
     piece.style.setProperty("--y", `${-20 - Math.random() * 45}vh`);
@@ -1696,7 +1974,13 @@ function celebrate() {
     celebration.append(piece);
   }
 
-  setTimeout(() => celebration.replaceChildren(), 1300);
+  setTimeout(() => {
+    celebration.replaceChildren();
+    celebration.classList.remove(
+      "chapter-finale",
+      "campaign-finale"
+    );
+  }, campaignFinale ? 2100 : chapterFinale ? 1700 : 1300);
 }
 
 
@@ -1896,7 +2180,19 @@ function settingsSnapshot() {
     currentLevel: state.currentLevel,
     unlockedLevel: state.unlockedLevel,
     completedLevels: state.completedLevels.length,
-    totalFeathers: totalFeathers(state.bestFeathers)
+    totalLevels: MAX_LEVEL,
+    totalFeathers: totalFeathers(state.bestFeathers),
+    maximumFeathers: MAX_CAMPAIGN_FEATHERS,
+    chapter: state.mode === "campaign"
+      ? chapterForLevel(state.currentLevel).name
+      : "Daily Flock",
+    chapterProgress: state.mode === "campaign"
+      ? chapterProgress(
+          state.completedLevels,
+          state.currentLevel
+        )
+      : null,
+    journal: journalSnapshot().summary
   };
 }
 
@@ -1952,6 +2248,49 @@ globalThis.addEventListener(
   }
 );
 
+
+globalThis.addEventListener(
+  "paperflock:journal-state-request",
+  emitJournalState
+);
+
+globalThis.addEventListener(
+  "paperflock:journal-opened",
+  () => {
+    state.achievementState = markAchievementsSeen(
+      state.achievementState
+    );
+    saveProgress();
+    emitJournalState();
+  }
+);
+
+globalThis.addEventListener(
+  "paperflock:journal-action",
+  (event) => {
+    const detail = event.detail ?? {};
+
+    if (
+      (detail.kind === "campaign" ||
+        detail.kind === "mastery") &&
+      Number.isInteger(detail.level)
+    ) {
+      startLevel(detail.level, "journal_goal");
+      return;
+    }
+
+    if (detail.kind === "daily") {
+      if (isDailyUnlocked(state.unlockedLevel)) {
+        startDaily("journal_goal");
+      } else {
+        setMessage(
+          "Complete Level 5 to unlock the optional Daily Flock."
+        );
+      }
+    }
+  }
+);
+
 function persistForLifecycle(reason) {
   saveProgress();
   logEvent("lifecycle_persist", {
@@ -1977,11 +2316,15 @@ globalThis.addEventListener("paperflock:resume", (event) => {
 });
 
 const saveLoadResult = loadSave();
+state.playerStats = recordLaunch(state.playerStats);
+refreshAchievements({ announce: false });
 const restoredCheckpoint = restoreCheckpoint(
   state.pendingCheckpoint
 );
 if (!restoredCheckpoint) {
   startLevel(state.currentLevel, "initial_load");
+} else {
+  saveProgress();
 }
 logEvent("storage_ready", {
   source: saveLoadResult.source,
@@ -1993,6 +2336,7 @@ logEvent("storage_ready", {
 requestAnimationFrame(() => {
   document.documentElement.classList.add("ui-ready");
   emitSettingsState();
+  emitJournalState();
   globalThis.dispatchEvent(
     new CustomEvent("paperflock:ready", {
       detail: {

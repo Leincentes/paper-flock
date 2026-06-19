@@ -1,41 +1,27 @@
-# Paper Flock v0.19 — Production Hosting
+# Paper Flock v1.4.2 — Production Hosting
 
-## Public beta
+## Current candidate host
 
-The existing GitHub Pages deployment can continue serving the controlled beta.
-It supplies HTTPS and the existing GitHub Actions release process.
+GitHub Pages is the configured zero-cost host. It supplies HTTPS and is wired
+to the qualified `dist/` artifact produced by `.github/workflows/static.yml`.
 
-## Recommended production host
+## Broader production option
 
-Use a static host that applies the included `_headers` file when moving to a
-broad production release. This allows response-level:
+A static host that applies the included `_headers` file can provide
+response-level CSP, clickjacking protection, MIME-sniffing prevention,
+browser-feature restrictions, and explicit service-worker cache behavior.
+Cloudflare Pages and Netlify support this style of headers file.
 
-- Content Security Policy
-- clickjacking protection
-- MIME-sniffing prevention
-- browser-feature restrictions
-- explicit service-worker cache behavior
-- cross-origin opener isolation
+Use this build command:
 
-Cloudflare Pages and Netlify understand this file format. Keep the same
-production origin after launch so installed-app storage and updates remain
+```bash
+npm ci --no-audit --no-fund && npm run verify:candidate
+```
+
+Use `dist` as the output directory and Node.js 24. Keep the same production
+origin after launch so installed-app storage and service-worker updates remain
 stable.
 
-## Cloudflare Pages outline
-
-1. Connect the existing GitHub repository.
-2. Set the build command to `npm install && npm run verify:candidate`.
-3. Set the output directory to `dist`.
-4. Use Node.js 24.
-5. Deploy a preview.
-6. Confirm `_headers`, `release.json`, and `asset-manifest.json` are present.
-7. Configure and verify the custom domain.
-8. Update `app-config.json` with the final HTTPS canonical URL.
-9. Run the production configuration workflow.
-10. Complete one installed-app update and rollback drill on Android and iPhone.
-
-## GitHub Pages limitation
-
-GitHub Pages continues to use the HTML security policies in the application.
-Project-controlled response headers should be verified on the final production
-host.
+Before switching hosts, verify the canonical URL, support contact, all response
+headers, installed-app update behavior, backup/restore, and rollback on Android
+and iPhone.

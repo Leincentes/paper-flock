@@ -27,7 +27,19 @@ export const THEMES = Object.freeze([
     id: "aurora",
     name: "Aurora Flight",
     requirement: 20,
-    description: "Cool luminous paper for completing the full journey."
+    description: "Cool luminous paper for completing the first journey."
+  }),
+  Object.freeze({
+    id: "moonlit",
+    name: "Moonlit Wash",
+    requirement: 25,
+    description: "Indigo, silver, and violet paper from the Twilight Flock."
+  }),
+  Object.freeze({
+    id: "midnight",
+    name: "Midnight Crown",
+    requirement: 40,
+    description: "A deep luminous sky for completing both chapters."
   })
 ]);
 
@@ -111,7 +123,7 @@ export function totalFeathers(records) {
 export function unlockedThemes(completedLevels = []) {
   const count = new Set(
     completedLevels.filter(
-      (level) => Number.isInteger(level) && level >= 1 && level <= 20
+      (level) => Number.isInteger(level) && level >= 1 && level <= 40
     )
   ).size;
 

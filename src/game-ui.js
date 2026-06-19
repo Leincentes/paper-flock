@@ -61,11 +61,11 @@ import {
   normalizeTutorialProgress
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.2";
+const BUILD_VERSION = "1.4.2";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const EVENT_KEY = STORAGE_KEYS.events;
 const RESEARCH_KEY = STORAGE_KEYS.research;
-const MAX_LEVEL = 20;
+const MAX_LEVEL = 40;
 
 const storageMigration = migrateLegacyStorage(localStorage);
 
@@ -506,7 +506,11 @@ function chapterForLevel(levelNumber) {
   if (levelNumber <= 5) return "Dawn Flight";
   if (levelNumber <= 10) return "Meadow Crossing";
   if (levelNumber <= 15) return "Twilight Fold";
-  return "Lantern Sky";
+  if (levelNumber <= 20) return "Lantern Sky";
+  if (levelNumber <= 25) return "Evening Arrival";
+  if (levelNumber <= 30) return "Moonlit Turns";
+  if (levelNumber <= 35) return "Inked Constellations";
+  return "Midnight Mastery";
 }
 
 function currentRecord() {
@@ -1456,10 +1460,10 @@ function updateHud() {
 
   const journeyFeathers = totalFeathers(state.bestFeathers);
   elements.journeyProgress.textContent =
-    `${journeyFeathers} of 60 journey feathers`;
+    `${journeyFeathers} of 120 journey feathers`;
   const journeyPercent = Math.min(
     100,
-    (journeyFeathers / 60) * 100
+    (journeyFeathers / 120) * 100
   );
   elements.journeyFill.style.width = `${journeyPercent}%`;
   elements.journeyRail.setAttribute(
@@ -2057,7 +2061,7 @@ function exportEventLog() {
 
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v1.2 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all local Paper Flock v1.4.2 progress, onboarding, feedback settings, feathers, themes, and test events?"
   );
   if (!confirmed) {
     return;

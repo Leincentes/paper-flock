@@ -1,4 +1,8 @@
 import { dailySeed } from "./progress-core.js";
+import {
+  MAX_CAMPAIGN_LEVEL,
+  masteryGoalForLevel
+} from "./campaign-core.js";
 
 export const EMPTY = -1;
 
@@ -77,7 +81,189 @@ const GENERATED_LEVELS = Object.freeze({
   17: Object.freeze({ size: 5, targetBirds: 17, seed: 2502917069, difficulty: "Tricky" }),
   18: Object.freeze({ size: 5, targetBirds: 18, seed: 3665837911, difficulty: "Tricky" }),
   19: Object.freeze({ size: 5, targetBirds: 19, seed: 394418690, difficulty: "Expert" }),
-  20: Object.freeze({ size: 5, targetBirds: 20, seed: 535272574, difficulty: "Expert" })
+  20: Object.freeze({ size: 5, targetBirds: 20, seed: 535272574, difficulty: "Expert" }),
+
+  21: Object.freeze({
+    size: 5,
+    targetBirds: 12,
+    seed: 15210000,
+    difficulty: "Twilight warm-up",
+    title: "Evening arrival",
+    instruction:
+      "Return gently. Read the wider board and free the calm outer paths first."
+  }),
+  22: Object.freeze({
+    size: 5,
+    targetBirds: 13,
+    seed: 15283352,
+    difficulty: "Twilight warm-up",
+    title: "Soft horizon",
+    instruction:
+      "Compare several safe exits before choosing which rotation to begin."
+  }),
+  23: Object.freeze({
+    size: 5,
+    targetBirds: 14,
+    seed: 15285433,
+    difficulty: "Twilight warm-up",
+    title: "Dusk crossing",
+    instruction:
+      "Keep the center open while the edge birds turn into new lanes."
+  }),
+  24: Object.freeze({
+    size: 5,
+    targetBirds: 15,
+    seed: 15240000,
+    difficulty: "Measured twilight",
+    title: "First moon",
+    instruction:
+      "Plan two moves ahead and protect the route that the first fold creates."
+  }),
+  25: Object.freeze({
+    size: 5,
+    targetBirds: 16,
+    seed: 15250000,
+    difficulty: "Measured twilight",
+    title: "Quiet lanterns",
+    instruction:
+      "Finish the re-entry flock without spending the future escape lane."
+  }),
+  26: Object.freeze({
+    size: 5,
+    targetBirds: 17,
+    seed: 13260000,
+    difficulty: "Moonlit",
+    title: "Turning tide",
+    instruction:
+      "Use one escape to prepare a second rotation chain."
+  }),
+  27: Object.freeze({
+    size: 5,
+    targetBirds: 17,
+    seed: 13270000,
+    difficulty: "Moonlit",
+    title: "Silver thread",
+    instruction:
+      "Follow the changing beaks through two connected regions."
+  }),
+  28: Object.freeze({
+    size: 5,
+    targetBirds: 18,
+    seed: 13280000,
+    difficulty: "Moonlit",
+    title: "Folded orbit",
+    instruction:
+      "Choose an opening that keeps more than one safe continuation."
+  }),
+  29: Object.freeze({
+    size: 5,
+    targetBirds: 18,
+    seed: 13290000,
+    difficulty: "Moonlit challenge",
+    title: "Violet current",
+    instruction:
+      "Several exits are possible. Prefer the one that improves the next board."
+  }),
+  30: Object.freeze({
+    size: 5,
+    targetBirds: 19,
+    seed: 13300000,
+    difficulty: "Moonlit challenge",
+    title: "Half-moon gate",
+    instruction:
+      "One tempting opening closes the flock. Verify the following lane first."
+  }),
+  31: Object.freeze({
+    size: 5,
+    targetBirds: 19,
+    seed: 13310000,
+    difficulty: "Constellation",
+    title: "Ink stars",
+    instruction:
+      "Balance the upper and lower groups as their directions change."
+  }),
+  32: Object.freeze({
+    size: 5,
+    targetBirds: 20,
+    seed: 13320000,
+    difficulty: "Constellation",
+    title: "Night geometry",
+    instruction:
+      "Read the whole shape before committing to a long rotation sequence."
+  }),
+  33: Object.freeze({
+    size: 5,
+    targetBirds: 20,
+    seed: 13330000,
+    difficulty: "Constellation",
+    title: "Quiet constellation",
+    instruction:
+      "Preserve a late-game edge while clearing the brighter early routes."
+  }),
+  34: Object.freeze({
+    size: 5,
+    targetBirds: 21,
+    seed: 13347919,
+    difficulty: "Constellation challenge",
+    title: "Crossing comets",
+    instruction:
+      "Coordinate several active lanes without exhausting the center."
+  }),
+  35: Object.freeze({
+    size: 5,
+    targetBirds: 21,
+    seed: 13350000,
+    difficulty: "Constellation challenge",
+    title: "Deep indigo",
+    instruction:
+      "A longer search rewards careful comparison of each legal opening."
+  }),
+  36: Object.freeze({
+    size: 5,
+    targetBirds: 21,
+    seed: 13367919,
+    difficulty: "Midnight",
+    title: "Midnight entrance",
+    instruction:
+      "Treat each clear path as a commitment to the next two folds."
+  }),
+  37: Object.freeze({
+    size: 5,
+    targetBirds: 22,
+    seed: 13370000,
+    difficulty: "Midnight",
+    title: "Shadow lattice",
+    instruction:
+      "Keep a narrow edge route alive while the interior flock turns."
+  }),
+  38: Object.freeze({
+    size: 5,
+    targetBirds: 22,
+    seed: 13380000,
+    difficulty: "Midnight",
+    title: "Moonless bridge",
+    instruction:
+      "Separate safe choices from choices that only appear immediately useful."
+  }),
+  39: Object.freeze({
+    size: 5,
+    targetBirds: 23,
+    seed: 13405838,
+    difficulty: "Midnight expert",
+    title: "Last starlight",
+    instruction:
+      "Manage a dense board and protect the final escape lane from early folds."
+  }),
+  40: Object.freeze({
+    size: 5,
+    targetBirds: 23,
+    seed: 13400000,
+    difficulty: "Midnight finale",
+    title: "Twilight ascension",
+    instruction:
+      "Use everything you learned to free the final flock with deliberate rotations."
+  })
+
 });
 
 export function createEmptyBoard(size) {
@@ -410,20 +596,24 @@ function tutorialDefinition(levelNumber) {
 }
 
 export function levelDefinition(levelNumber) {
-  const level = Math.max(1, Math.min(20, Number(levelNumber) || 1));
+  const level = Math.max(1, Math.min(MAX_CAMPAIGN_LEVEL, Number(levelNumber) || 1));
   return (
     tutorialDefinition(level) ?? {
       ...GENERATED_LEVELS[level],
-      title: `${GENERATED_LEVELS[level].difficulty} flock`,
+      title:
+        GENERATED_LEVELS[level].title ??
+        `${GENERATED_LEVELS[level].difficulty} flock`,
       instruction:
+        GENERATED_LEVELS[level].instruction ??
         "Free every bird. Read the beaks and predict each clockwise turn.",
+      masteryGoal: masteryGoalForLevel(level),
       tutorial: false
     }
   );
 }
 
 export function createLevel(levelNumber) {
-  const level = Math.max(1, Math.min(20, Number(levelNumber) || 1));
+  const level = Math.max(1, Math.min(MAX_CAMPAIGN_LEVEL, Number(levelNumber) || 1));
   const tutorial = TUTORIAL_LEVELS[level];
 
   if (tutorial) {
@@ -449,9 +639,13 @@ export function createLevel(levelNumber) {
   const definition = GENERATED_LEVELS[level];
   return {
     levelNumber: level,
-    title: `${definition.difficulty} flock`,
+    title:
+      definition.title ??
+      `${definition.difficulty} flock`,
     instruction:
+      definition.instruction ??
       "Free every bird. Read the beaks and predict each clockwise turn.",
+    masteryGoal: masteryGoalForLevel(level),
     tutorial: false,
     difficulty: definition.difficulty,
     ...generateSolvableBoard(
@@ -464,16 +658,38 @@ export function createLevel(levelNumber) {
 
 export function createDailyLevel(dateKey) {
   const seed = dailySeed(dateKey);
-  const targetBirds = 14 + (seed % 5);
+  const validatedPool = Object.keys(GENERATED_LEVELS)
+    .map(Number)
+    .filter(
+      (level) =>
+        level >= 6 &&
+        level <= MAX_CAMPAIGN_LEVEL
+    );
+  const sourceLevel =
+    validatedPool[seed % validatedPool.length];
+  const definition = GENERATED_LEVELS[sourceLevel];
+
   return {
     levelNumber: null,
+    sourceLevel,
     dateKey,
     title: "Daily Flock",
     instruction:
-      "One new flock for today. Solve it at your pace; there is no streak or timer.",
+      "Today’s optional flock comes from the solver-validated campaign pool. There is no streak or timer.",
     tutorial: false,
-    difficulty: targetBirds >= 17 ? "Daily challenge" : "Daily",
-    ...generateSolvableBoard(5, targetBirds, seed)
+    difficulty:
+      sourceLevel >= 35
+        ? "Daily expert"
+        : sourceLevel >= 26
+          ? "Daily challenge"
+          : "Daily",
+    masteryGoal:
+      "Daily mastery: finish without a hint, restart, or dead end.",
+    ...generateSolvableBoard(
+      definition.size,
+      definition.targetBirds,
+      definition.seed
+    )
   };
 }
 

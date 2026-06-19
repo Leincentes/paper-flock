@@ -67,7 +67,7 @@ test("player backup contains only player-facing storage keys", () => {
   values["paper-flock-research"] = "internal";
 
   const backup = createPlayerBackup({
-    buildVersion: "1.2",
+    buildVersion: "1.4.2",
     exportedAt: "2026-06-19T00:00:00.000Z",
     storageValues: values
   });
@@ -158,7 +158,8 @@ test("production index loads only player-facing runtime modules", () => {
     "mobile-lifecycle-ui.js",
     "mobile-viewport-player-ui.js",
     "accessibility-ui.js",
-    "settings-ui.js"
+    "settings-ui.js",
+    "journal-ui.js"
   ]) {
     assert.equal(
       html.includes(`./src/${module}`),

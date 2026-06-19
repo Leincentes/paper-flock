@@ -111,7 +111,7 @@ for (const required of [
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.2",
+  buildVersion: "1.4.2",
   passed: failures.length === 0,
   failures,
   sizes,

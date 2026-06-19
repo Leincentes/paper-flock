@@ -48,7 +48,7 @@ function cleanText(value, maximum = 2000) {
 
 export function createBetaDisclosure({
   acceptedAt = new Date().toISOString(),
-  buildVersion = "1.2"
+  buildVersion = "1.4.2"
 } = {}) {
   return {
     schemaVersion: 1,
@@ -69,7 +69,7 @@ export function isBetaDisclosureAccepted(payload) {
 
 export function createFeedbackReport({
   reportId,
-  buildVersion = "1.2",
+  buildVersion = "1.4.2",
   createdAt = new Date().toISOString(),
   category,
   severity,
@@ -246,7 +246,7 @@ export function normalizeOperationalChecks(value = {}) {
 }
 
 export function createOperationsState({
-  buildVersion = "1.2",
+  buildVersion = "1.4.2",
   updatedAt = new Date().toISOString(),
   checks = {}
 } = {}) {

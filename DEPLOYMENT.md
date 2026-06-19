@@ -1,73 +1,50 @@
-# Paper Flock v0.12 — Zero-Cost Deployment
+# Paper Flock v1.4.2 — GitHub Pages Deployment
 
-## Recommended host: GitHub Pages
+## Workflow
 
-The repository contains `.github/workflows/deploy-pages.yml`.
+The release workflow is `.github/workflows/static.yml`, named
+**Test, qualify, deploy, and audit Paper Flock**.
 
-### Steps
+It installs the locked public-registry dependency tree, blocks high or critical
+advisories, runs unit and package audits, builds `dist/`, runs Chromium,
+WebKit, and Lighthouse, performs CodeQL analysis, deploys the qualified
+artifact, audits the live HTTPS site, generates the SBOM and provenance, and
+creates importable quality evidence from actual job results.
 
-1. Create a new GitHub repository.
-2. Upload the contents of this project folder to the repository root.
+## First deployment
+
+1. Create or open the GitHub repository.
+2. Put the contents of this source package at the repository root.
 3. Use `main` as the default branch.
-4. Open **Settings → Pages**.
-5. Set the source to **GitHub Actions**.
-6. Open the **Actions** tab and run **Test and deploy Paper Flock**, or push a
-   commit to `main`.
-7. Open the URL shown by the deployment job.
+4. In **Settings → Pages**, select **GitHub Actions** as the source.
+5. Push the v1.4.2 commit to `main`.
+6. Require all jobs in the release workflow to pass.
+7. Download and retain the v1.4.2 release bundle and quality-evidence artifacts.
+8. Open the URL emitted by the deployment job.
+9. Complete the physical Android and iPhone verification before final approval.
 
-The workflow:
-
-- runs `npm test`
-- copies only runtime files into `_site`
-- publishes through GitHub Pages
-- uses HTTPS, which is required for install and offline service workers
-
-## Tester links
-
-Normal game:
+Normal player URL:
 
 ```text
 https://YOUR-NAME.github.io/YOUR-REPOSITORY/
 ```
 
-Self-guided field test:
+Internal query-mode test interfaces are intentionally absent from the
+production artifact.
 
-```text
-https://YOUR-NAME.github.io/YOUR-REPOSITORY/?fieldtest=1
-```
+## Update
 
-Moderated tactile test:
-
-```text
-https://YOUR-NAME.github.io/YOUR-REPOSITORY/?tactiletest=1
-```
-
-Visual test:
-
-```text
-https://YOUR-NAME.github.io/YOUR-REPOSITORY/?visualtest=1
-```
-
-## Update procedure
-
-1. Back up any creator-side imported research sessions.
-2. Replace the repository files with the new build.
-3. Commit and push to `main`.
-4. Confirm the automated tests pass.
-5. Let testers finish their current puzzle before choosing **Update ready**.
-6. Re-run one offline smoke test after deployment.
+1. Export a player backup from the current production build.
+2. Push the reviewed source change.
+3. Confirm dependency, static, browser, CodeQL, deployment, SBOM, and
+   provenance jobs are green.
+4. Apply the in-app update only after the deployment audit succeeds.
+5. Confirm exact resume and offline launch.
 
 ## Rollback
 
-GitHub Pages deploys from version-controlled commits. To roll back:
-
-1. Revert the faulty commit.
-2. Push the revert to `main`.
-3. Wait for the Pages deployment to finish.
-4. Open the app online and choose **Update ready**.
-
-## Privacy
-
-The deployment is static. GitHub serves the files, but Paper Flock itself has
-no analytics endpoint and does not automatically upload progress, diagnostics,
-or participant results.
+1. Identify the last known-good commit.
+2. Revert the faulty deployment commit.
+3. Push the revert to `main`.
+4. Require the Pages deployment and post-deployment audit to pass.
+5. Open Paper Flock online, apply the update, and verify saved progress.

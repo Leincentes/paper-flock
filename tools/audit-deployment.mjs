@@ -155,7 +155,8 @@ const requiredModules = [
   "mobile-lifecycle-ui.js",
   "mobile-viewport-player-ui.js",
   "accessibility-ui.js",
-  "settings-ui.js"
+  "settings-ui.js",
+  "journal-ui.js"
 ];
 
 for (const module of requiredModules) {
@@ -328,8 +329,8 @@ const serviceWorkerSource =
 checks.push(
   check(
     "service-worker-version",
-    /paper-flock-static-v1\.2/.test(serviceWorkerSource),
-    "The v1.2 service worker is deployed."
+    /paper-flock-static-v1\.4/.test(serviceWorkerSource),
+    "The v1.4.2 service worker is deployed."
   )
 );
 checks.push(
@@ -358,7 +359,7 @@ const buildInfo = await (
 checks.push(
   check(
     "build-version",
-    buildInfo.buildVersion === "1.2",
+    buildInfo.buildVersion === "1.4.2",
     `Deployed build version: ` +
       `${buildInfo.buildVersion ?? "missing"}`
   )
@@ -370,6 +371,28 @@ checks.push(
       buildInfo.productionRuntimeClean === true &&
       buildInfo.internalToolsIncluded === false,
     "Build metadata confirms a clean production runtime."
+  )
+);
+checks.push(
+  check(
+    "campaign-build-metadata",
+    buildInfo.campaignLevelCount === 40 &&
+      buildInfo.campaignChapterCount === 2 &&
+      buildInfo.twilightFlockChapter === true &&
+      buildInfo.levelSolverValidationConfigured === true &&
+      buildInfo.duplicateLevelDetectionConfigured === true,
+    "Build metadata confirms the validated forty-level campaign."
+  )
+);
+checks.push(
+  check(
+    "achievement-build-metadata",
+    buildInfo.achievementJournal === true &&
+      buildInfo.achievementCount === 20 &&
+      buildInfo.playerStatisticsSchemaVersion === 1 &&
+      buildInfo.saveSchemaVersion === 12 &&
+      buildInfo.ethicalReplayGoals === true,
+    "Build metadata confirms the Achievement Journal and v12 player save."
   )
 );
 
@@ -387,6 +410,29 @@ checks.push(
       appConfig.advertisingEnabled === false &&
       appConfig.automaticUploads === false,
     "Public configuration is production and local-first."
+  )
+);
+checks.push(
+  check(
+    "campaign-config",
+    appConfig.campaignLevels === 40 &&
+      appConfig.campaignChapters === 2 &&
+      appConfig.chapterTwoAvailable === true &&
+      appConfig.chapterTwoName === "Twilight Flock" &&
+      appConfig.validatedDailyCampaignPool === true,
+    "Public configuration exposes Chapter 2 and the validated Daily pool."
+  )
+);
+checks.push(
+  check(
+    "achievement-config",
+    appConfig.achievementJournalAvailable === true &&
+      appConfig.achievementCount === 20 &&
+      appConfig.lifetimePlayerStatistics === true &&
+      appConfig.replayGoalRecommendation === true &&
+      appConfig.streaksEnabled === false &&
+      appConfig.expiringRewardsEnabled === false,
+    "Public configuration exposes permanent goals without streak pressure."
   )
 );
 
@@ -415,6 +461,21 @@ const forbiddenPathFragments = [
   "production-release"
 ];
 
+checks.push(
+  check(
+    "campaign-module-deployed",
+    releasePaths.includes("src/campaign-core.js"),
+    "The campaign progression model is deployed."
+  )
+);
+checks.push(
+  check(
+    "achievement-modules-deployed",
+    releasePaths.includes("src/achievement-core.js") &&
+      releasePaths.includes("src/journal-ui.js"),
+    "The player achievement domain and Journal interface are deployed."
+  )
+);
 checks.push(
   check(
     "asset-manifest-clean",
@@ -458,7 +519,7 @@ const requiredFailures = checks.filter(
 
 const report = {
   product: "Paper Flock",
-  buildVersion: "1.2",
+  buildVersion: "1.4.2",
   auditedAt: new Date().toISOString(),
   url: baseUrl.href,
   passed: requiredFailures.length === 0,

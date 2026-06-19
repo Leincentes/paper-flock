@@ -1,75 +1,58 @@
-# Paper Flock 1.2 — Production Settings and Clean Player Release
+# Paper Flock 1.4.2 — Release-Hygiene Candidate
 
-Paper Flock 1.2 adds a complete player-facing Settings experience and a strict
-production build boundary.
+Paper Flock v1.4.2 preserves the v1.4 Achievement Journal release while
+hardening the dependency, CI-evidence, packaging, and deployment path.
 
-## Production Settings
+## Player features
 
-### Game
+- twenty permanent, retroactive achievements
+- lifetime player statistics stored in save schema 12
+- campaign, mastery, Daily Flock, and collection categories
+- accessible unlock notifications and a mobile-safe Journal
+- a recommended next meaningful goal
+- local backup and restore
 
-- Sound effects
-- Haptic feedback
-- Automatic, Full, Lite, and Minimal visual effects
-- Unlocked paper-theme selection
-- Replay How to play
+Gameplay and save behavior are unchanged from v1.4.
 
-### Accessibility
+## Release-engineering changes
 
-- Standard, Large, and Extra large text
-- Automatic or always-high contrast
-- Automatic or reduced motion
-- Link to the accessibility statement
+- all lockfile tarballs resolve through `https://registry.npmjs.org/`
+- `.npmrc` fixes the CI registry to the public npm registry
+- `tmp` is overridden to version `0.2.7`
+- CodeQL runs in the release-gate workflow
+- quality evidence derives CodeQL and provenance status from completed jobs
+- release bundle names use v1.4.2
+- deployment and tester documentation is aligned with the actual workflow
 
-### App and data
+## Ethical engagement boundary
 
-- Online/offline and installed-app status
-- Install app when the browser supports installation
-- Install a waiting app update
-- Export a player progress backup
-- Restore a player progress backup
-- Reset player progress, tutorial completion, and preferences
+Paper Flock has no streaks, expiring rewards, energy system, loot boxes,
+forced advertisements, push-notification pressure, paid progression, or
+artificial waiting.
 
-### About
-
-- Version
-- Publisher
-- Public support contact
-- Privacy, terms, support, release notes, known issues, and credits
-
-## Clean production boundary
-
-The source repository retains unit tests, browser tests, audits, certification
-domains, and release-evidence tooling for developers and GitHub Actions.
-
-The deployed `dist/` directory and `paper-flock-v1.2-release.zip` contain only
-the player runtime. They do not contain:
-
-- prototype or beta operations panels
-- research-session functionality
-- visual or tactile test modes
-- mobile or accessibility certification collectors
-- installation audit screens
-- production-evidence import controls
-- performance diagnostic collectors
-- diagnostic query switches
-
-`tools/build-release.mjs` uses an explicit player-module allowlist and fails the
-build when an internal filename or marker is detected.
-
-## Validate
+## Local verification
 
 ```bash
+npm ci --no-audit --no-fund
+npm audit --audit-level=high
 npm test
+npm run analyze:levels
 npm run verify
 npm run validate:production
 npm run build
 npm run audit:release
+npm sbom --sbom-format=cyclonedx --package-lock-only > release-bundle/sbom.cdx.json
+python3 tools/package-release.py
 ```
 
-## Deploy
+## Production boundary
 
-Push the complete source project to `main`. GitHub Actions builds and deploys
-only `dist/`.
+The deployable artifact contains only the player runtime. Internal tests,
+audits, evidence tools, research interfaces, and certification collectors are
+not copied into `dist/`.
 
-Do not configure GitHub Pages to publish the repository root directly. The
-production workflow must remain the deployment source.
+## Release status
+
+v1.4.2 is a production candidate, not a production-approved release. Push the
+complete source package to `main`, require every GitHub job to pass, then
+complete the Android and iPhone Journal verification and final human sign-off.

@@ -7,7 +7,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 BUNDLE = ROOT / "release-bundle"
-VERSION = "1.2"
+VERSION = "1.4.2"
 
 if not DIST.exists():
     raise SystemExit("Run npm run build first.")
@@ -19,6 +19,17 @@ sbom_path = BUNDLE / "sbom.cdx.json"
 
 if not sbom_path.exists():
     raise SystemExit("Generate release-bundle/sbom.cdx.json first.")
+
+sbom_bytes = sbom_path.read_bytes()
+if b"openai.org" in sbom_bytes:
+    raise SystemExit("SBOM contains an internal registry URL.")
+
+sbom = json.loads(sbom_bytes)
+component = sbom.get("metadata", {}).get("component", {})
+if component.get("version") != VERSION:
+    raise SystemExit(
+        f"SBOM component version {component.get('version')!r} does not match {VERSION}."
+    )
 
 fixed_time = (2026, 1, 1, 0, 0, 0)
 if archive_path.exists():
@@ -51,7 +62,7 @@ with zipfile.ZipFile(
     )
     info.compress_type = zipfile.ZIP_DEFLATED
     info.external_attr = 0o644 << 16
-    archive.writestr(info, sbom_path.read_bytes())
+    archive.writestr(info, sbom_bytes)
 
 digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
 checksum_path.write_text(

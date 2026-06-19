@@ -11,7 +11,7 @@ import {
   STORAGE_KEYS
 } from "./storage-player-core.js";
 
-const BUILD_VERSION = "1.2";
+const BUILD_VERSION = "1.4.2";
 const PUBLISHER = "Gamelo Studio";
 const SUPPORT_EMAIL = "leincentes@gmail.com";
 

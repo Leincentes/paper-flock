@@ -1,8 +1,15 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.2",
-  "updatedAt": "2026-06-19",
+  "buildVersion": "1.4.2",
+  "updatedAt": "2026-06-20",
   "issues": [
+    {
+      "id": "PF-STARTUP-MASTERY-DOM",
+      "title": "v1.4.1 could enter startup recovery because the mastery-goal HUD node was absent",
+      "severity": "critical",
+      "status": "resolved-in-1.4.2",
+      "workaround": "Deploy v1.4.2. Existing schema-12 saves and backups remain compatible."
+    },
     {
       "id": "PF-LOCAL-ONLY",
       "title": "Progress is stored only on the current device and browser",
@@ -15,7 +22,7 @@
       "title": "iPhone and iPad installation uses Safari Add to Home Screen",
       "severity": "low",
       "status": "platform-limitation",
-      "workaround": "Open in Safari, then Share \u2192 Add to Home Screen."
+      "workaround": "Open in Safari, then Share → Add to Home Screen."
     },
     {
       "id": "PF-FEEDBACK-MANUAL",
@@ -47,10 +54,10 @@
     },
     {
       "id": "PF-CI-EVIDENCE",
-      "title": "Paper Flock 1.0 production approval requires CI evidence from the 1.0 build",
+      "title": "Paper Flock 1.4.2 production approval requires matching CI and device evidence",
       "severity": "high",
       "status": "open",
-      "workaround": "Run the v1.0 workflow, download its quality-evidence artifact, import it, and complete final sign-off."
+      "workaround": "Push v1.4.2, require the release workflow and CodeQL jobs to pass, import the v1.4.2 quality-evidence artifact, complete Android and iPhone Journal verification, and perform final human sign-off."
     },
     {
       "id": "PF-MOBILE-BROWSER-CHROME",
@@ -65,6 +72,20 @@
       "severity": "informational",
       "status": "by-design",
       "workaround": "Open More and choose How to play, or add ?tutorial=1 to the game URL."
+    },
+    {
+      "id": "PF-DAILY-VALIDATED-POOL",
+      "title": "Daily Flock rotates through validated campaign layouts",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Daily Flock may revisit a campaign layout on a later date; its progress and feathers remain separate."
+    },
+    {
+      "id": "PF-JOURNAL-STATS",
+      "title": "Detailed move and hint totals begin with v1.4",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Campaign, mastery, feather, theme, and Daily milestones are reconstructed from existing saves; detailed lifetime interaction totals accumulate from v1.4 onward."
     }
   ]
 }

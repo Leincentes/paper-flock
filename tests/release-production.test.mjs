@@ -139,7 +139,20 @@ test("quality workflow gates deploy on browser testing", () => {
   );
   assert.match(workflow, /npm run test:e2e/);
   assert.match(workflow, /npm run test:lighthouse/);
-  assert.match(workflow, /needs: \[static-quality, browser-quality\]/);
+  assert.match(
+    workflow,
+    /needs: \[static-quality, browser-quality, codeql-quality\]/
+  );
+  assert.match(
+    workflow,
+    /--codeql=\$\{\{ needs\.codeql-quality\.result == 'success' \}\}/
+  );
+  assert.doesNotMatch(workflow, /--codeql=true/);
+  assert.match(
+    workflow,
+    /--provenance=\$\{\{ needs\.static-quality\.outputs\.provenance_created \}\}/
+  );
+  assert.doesNotMatch(workflow, /--provenance=true/);
 });
 
 test("Cloudflare-compatible response header template blocks framing and sniffing", () => {

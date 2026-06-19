@@ -28,6 +28,8 @@ const css = read("styles.css");
 const worker = read("service-worker.js");
 const buildTool = read("tools/build-release.mjs");
 const settingsUi = read("src/settings-ui.js");
+const journalUi = read("src/journal-ui.js");
+const achievementCore = read("src/achievement-core.js");
 const playerGame = read("src/game-player-ui.js");
 const appConfig = JSON.parse(read("app-config.json"));
 const buildInfo = JSON.parse(read("build-info.json"));
@@ -42,7 +44,8 @@ const requiredScripts = [
   "mobile-lifecycle-ui.js",
   "mobile-viewport-player-ui.js",
   "accessibility-ui.js",
-  "settings-ui.js"
+  "settings-ui.js",
+  "journal-ui.js"
 ];
 
 for (const script of requiredScripts) {
@@ -110,6 +113,30 @@ check(
     /event\.key !== "Tab"/.test(settingsUi),
   "Settings handles Escape and trapped Tab navigation."
 );
+
+check(
+  "achievement-journal",
+  /class="journal-page"/.test(journalUi) &&
+    /journal-stat-grid/.test(journalUi) &&
+    /achievement-grid/.test(journalUi) &&
+    /journal-goal-button/.test(journalUi),
+  "Production Achievement Journal provides goals, statistics, and milestones."
+);
+check(
+  "achievement-domain",
+  /ACHIEVEMENT_DEFINITIONS/.test(achievementCore) &&
+    /recordPuzzleCompletion/.test(achievementCore) &&
+    /recommendNextGoal/.test(achievementCore) &&
+    /achievementCount/.test(buildTool),
+  "Achievement and player-statistics domains are wired into the release."
+);
+check(
+  "ethical-engagement",
+  appConfig.streaksEnabled === false &&
+    appConfig.expiringRewardsEnabled === false &&
+    appConfig.achievementCount === 20,
+  "Journal progression has no streak or expiring-reward pressure."
+);
 check(
   "player-game-no-research",
   !/researchActive|participantCode|\?research=1|research-core\.js/.test(
@@ -121,6 +148,8 @@ check(
   "service-worker-player-runtime",
   /game-player-ui\.js/.test(worker) &&
     /settings-ui\.js/.test(worker) &&
+    /journal-ui\.js/.test(worker) &&
+    /achievement-core\.js/.test(worker) &&
     /app-platform-ui\.js/.test(worker),
   "Service worker caches the player runtime."
 );
@@ -158,18 +187,18 @@ check(
   "production-gate",
   buildInfo.productionApproved === false &&
     buildInfo.productionGate ===
-      "v1.2-ci-evidence-import-and-final-human-signoff-required",
+      "v1.4.2-ci-evidence-import-and-final-human-signoff-required",
   "Production approval remains evidence- and sign-off-gated."
 );
 check(
   "release-notes-current",
-  releaseNotes.currentVersion === "1.2",
-  "Current release notes report v1.2."
+  releaseNotes.currentVersion === "1.4.2",
+  "Current release notes report v1.4.2."
 );
 check(
   "known-issues-current",
-  knownIssues.buildVersion === "1.2",
-  "Known-issues register reports v1.2."
+  knownIssues.buildVersion === "1.4.2",
+  "Known-issues register reports v1.4.2."
 );
 check(
   "settings-styles",
@@ -213,7 +242,7 @@ for (const file of [
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.2",
+  buildVersion: "1.4.2",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

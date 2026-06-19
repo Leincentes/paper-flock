@@ -1,9 +1,14 @@
 {
   "summary": {
-    "generatedAt": "2026-06-19T05:04:38.659Z",
-    "levels": 20,
-    "solvable": 20,
-    "flaggedLevels": [
+    "generatedAt": "2026-06-19T16:16:35.522Z",
+    "levels": 40,
+    "chapters": 2,
+    "solvable": 40,
+    "uniqueBoards": 40,
+    "duplicateBoards": [],
+    "intendedDifficultyPassed": 40,
+    "criticalFindings": [],
+    "diagnosticFlags": [
       {
         "level": 10,
         "flags": [
@@ -34,14 +39,83 @@
         "flags": [
           "high-search-complexity"
         ]
+      },
+      {
+        "level": 29,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 30,
+        "flags": [
+          "contains-opening-trap"
+        ]
+      },
+      {
+        "level": 32,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 33,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 34,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 35,
+        "flags": [
+          "high-branching",
+          "high-search-complexity"
+        ]
+      },
+      {
+        "level": 36,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 37,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 38,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 39,
+        "flags": [
+          "high-branching"
+        ]
+      },
+      {
+        "level": 40,
+        "flags": [
+          "high-branching"
+        ]
       }
     ],
     "qualityBands": {
       "tutorial": 5,
       "gentle": 3,
-      "steady": 5,
-      "tricky": 7
-    }
+      "steady": 8,
+      "tricky": 14,
+      "expert": 10
+    },
+    "passed": true
   },
   "metrics": [
     {
@@ -67,7 +141,12 @@
       "forcedSteps": 3,
       "choiceSteps": 0,
       "qualityBand": "tutorial",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tutorial"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 2,
@@ -92,7 +171,12 @@
       "forcedSteps": 4,
       "choiceSteps": 0,
       "qualityBand": "tutorial",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tutorial"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 3,
@@ -117,7 +201,12 @@
       "forcedSteps": 5,
       "choiceSteps": 0,
       "qualityBand": "tutorial",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tutorial"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 4,
@@ -143,7 +232,12 @@
       "forcedSteps": 1,
       "choiceSteps": 3,
       "qualityBand": "tutorial",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tutorial"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 5,
@@ -168,7 +262,12 @@
       "forcedSteps": 1,
       "choiceSteps": 4,
       "qualityBand": "tutorial",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tutorial"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 6,
@@ -193,7 +292,13 @@
       "forcedSteps": 1,
       "choiceSteps": 6,
       "qualityBand": "gentle",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "gentle",
+        "steady"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 7,
@@ -218,7 +323,13 @@
       "forcedSteps": 2,
       "choiceSteps": 6,
       "qualityBand": "gentle",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "gentle",
+        "steady"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 8,
@@ -243,7 +354,13 @@
       "forcedSteps": 5,
       "choiceSteps": 4,
       "qualityBand": "gentle",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "gentle",
+        "steady"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 9,
@@ -268,7 +385,13 @@
       "forcedSteps": 1,
       "choiceSteps": 9,
       "qualityBand": "steady",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 10,
@@ -295,7 +418,13 @@
       "qualityBand": "steady",
       "flags": [
         "contains-opening-trap"
-      ]
+      ],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 11,
@@ -320,7 +449,13 @@
       "forcedSteps": 3,
       "choiceSteps": 9,
       "qualityBand": "steady",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 12,
@@ -345,7 +480,13 @@
       "forcedSteps": 1,
       "choiceSteps": 12,
       "qualityBand": "steady",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 13,
@@ -372,7 +513,13 @@
       "qualityBand": "tricky",
       "flags": [
         "contains-opening-trap"
-      ]
+      ],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 14,
@@ -397,7 +544,13 @@
       "forcedSteps": 1,
       "choiceSteps": 13,
       "qualityBand": "steady",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "steady",
+        "tricky"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 15,
@@ -422,7 +575,13 @@
       "forcedSteps": 1,
       "choiceSteps": 14,
       "qualityBand": "tricky",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 16,
@@ -447,7 +606,13 @@
       "forcedSteps": 1,
       "choiceSteps": 15,
       "qualityBand": "tricky",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 17,
@@ -475,7 +640,13 @@
       "flags": [
         "contains-opening-trap",
         "high-search-complexity"
-      ]
+      ],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 18,
@@ -502,7 +673,13 @@
       "qualityBand": "tricky",
       "flags": [
         "high-search-complexity"
-      ]
+      ],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 19,
@@ -529,11 +706,17 @@
       "qualityBand": "tricky",
       "flags": [
         "high-search-complexity"
-      ]
+      ],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     },
     {
       "level": 20,
-      "concept": "Full-system mastery finale",
+      "concept": "First chapter mastery finale",
       "patternTags": [
         "finale",
         "expert"
@@ -554,7 +737,673 @@
       "forcedSteps": 1,
       "choiceSteps": 19,
       "qualityBand": "tricky",
-      "flags": []
+      "flags": [],
+      "chapter": "The First Flight",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 21,
+      "concept": "Re-enter on a calm twelve-bird board",
+      "patternTags": [
+        "chapter-2",
+        "re-entry",
+        "steady"
+      ],
+      "targetBirds": 12,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 12,
+      "solverNodes": 12,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 4,
+      "safeOpenings": 4,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 3.33,
+      "peakLegalChoices": 4,
+      "forcedSteps": 1,
+      "choiceSteps": 11,
+      "qualityBand": "steady",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "steady"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 22,
+      "concept": "Compare safe dusk openings",
+      "patternTags": [
+        "chapter-2",
+        "choice",
+        "steady"
+      ],
+      "targetBirds": 13,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 13,
+      "solverNodes": 13,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 5,
+      "safeOpenings": 5,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 3.92,
+      "peakLegalChoices": 6,
+      "forcedSteps": 1,
+      "choiceSteps": 12,
+      "qualityBand": "steady",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "steady"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 23,
+      "concept": "Preserve the center during re-entry",
+      "patternTags": [
+        "chapter-2",
+        "center",
+        "steady"
+      ],
+      "targetBirds": 14,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 14,
+      "solverNodes": 14,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 3.64,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 13,
+      "qualityBand": "steady",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "steady"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 24,
+      "concept": "Prepare a two-step moonlit lane",
+      "patternTags": [
+        "chapter-2",
+        "sequence",
+        "tricky"
+      ],
+      "targetBirds": 15,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 15,
+      "solverNodes": 15,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 4,
+      "safeOpenings": 4,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 4.33,
+      "peakLegalChoices": 6,
+      "forcedSteps": 1,
+      "choiceSteps": 14,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 25,
+      "concept": "Complete the twilight warm-up",
+      "patternTags": [
+        "chapter-2",
+        "lane",
+        "tricky"
+      ],
+      "targetBirds": 16,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 16,
+      "solverNodes": 16,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 3.88,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 15,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 26,
+      "concept": "Begin a connected rotation chain",
+      "patternTags": [
+        "chapter-2",
+        "cascade",
+        "tricky"
+      ],
+      "targetBirds": 17,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 17,
+      "solverNodes": 17,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 6,
+      "safeOpenings": 6,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 4.24,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 16,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 27,
+      "concept": "Connect two active regions",
+      "patternTags": [
+        "chapter-2",
+        "split-board",
+        "tricky"
+      ],
+      "targetBirds": 17,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 17,
+      "solverNodes": 38,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 4.88,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 16,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 28,
+      "concept": "Preserve multiple continuations",
+      "patternTags": [
+        "chapter-2",
+        "branching",
+        "tricky"
+      ],
+      "targetBirds": 18,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 18,
+      "solverNodes": 18,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 6,
+      "safeOpenings": 6,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.22,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 17,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 29,
+      "concept": "Evaluate a high-choice opening",
+      "patternTags": [
+        "chapter-2",
+        "branching",
+        "expert"
+      ],
+      "targetBirds": 18,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 18,
+      "solverNodes": 26,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.56,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 17,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 30,
+      "concept": "Reject a misleading moonlit opening",
+      "patternTags": [
+        "chapter-2",
+        "trap",
+        "tricky"
+      ],
+      "targetBirds": 19,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 19,
+      "solverNodes": 672,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 6,
+      "safeOpenings": 5,
+      "immediateDeadEnds": 1,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 3.89,
+      "peakLegalChoices": 6,
+      "forcedSteps": 1,
+      "choiceSteps": 18,
+      "qualityBand": "tricky",
+      "flags": [
+        "contains-opening-trap"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 31,
+      "concept": "Balance an inked constellation",
+      "patternTags": [
+        "chapter-2",
+        "balance",
+        "tricky"
+      ],
+      "targetBirds": 19,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 19,
+      "solverNodes": 128,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.32,
+      "peakLegalChoices": 7,
+      "forcedSteps": 1,
+      "choiceSteps": 18,
+      "qualityBand": "tricky",
+      "flags": [],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 32,
+      "concept": "Read a dense whole-board pattern",
+      "patternTags": [
+        "chapter-2",
+        "dense",
+        "expert"
+      ],
+      "targetBirds": 20,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 20,
+      "solverNodes": 20,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 6,
+      "safeOpenings": 6,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.8,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 19,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 33,
+      "concept": "Protect a late-game constellation lane",
+      "patternTags": [
+        "chapter-2",
+        "lane",
+        "expert"
+      ],
+      "targetBirds": 20,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 20,
+      "solverNodes": 20,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 6,
+      "safeOpenings": 6,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 6.2,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 19,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 34,
+      "concept": "Coordinate several live escape lanes",
+      "patternTags": [
+        "chapter-2",
+        "branching",
+        "expert"
+      ],
+      "targetBirds": 21,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 21,
+      "solverNodes": 215,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 8,
+      "safeOpenings": 8,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.86,
+      "peakLegalChoices": 9,
+      "forcedSteps": 1,
+      "choiceSteps": 20,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 35,
+      "concept": "Plan through deeper search complexity",
+      "patternTags": [
+        "chapter-2",
+        "search",
+        "expert"
+      ],
+      "targetBirds": 21,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 21,
+      "solverNodes": 2120,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.67,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 20,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching",
+        "high-search-complexity"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 36,
+      "concept": "Enter midnight with deliberate commitments",
+      "patternTags": [
+        "chapter-2",
+        "midnight",
+        "expert"
+      ],
+      "targetBirds": 21,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 21,
+      "solverNodes": 38,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 8,
+      "safeOpenings": 8,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 4.29,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 20,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 37,
+      "concept": "Preserve a narrow shadow route",
+      "patternTags": [
+        "chapter-2",
+        "lane",
+        "expert"
+      ],
+      "targetBirds": 22,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 22,
+      "solverNodes": 22,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 7,
+      "safeOpenings": 7,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.55,
+      "peakLegalChoices": 9,
+      "forcedSteps": 1,
+      "choiceSteps": 21,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 38,
+      "concept": "Separate immediate and future value",
+      "patternTags": [
+        "chapter-2",
+        "planning",
+        "expert"
+      ],
+      "targetBirds": 22,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 22,
+      "solverNodes": 297,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 8,
+      "safeOpenings": 8,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.77,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 21,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 39,
+      "concept": "Control a near-full expert board",
+      "patternTags": [
+        "chapter-2",
+        "dense",
+        "expert"
+      ],
+      "targetBirds": 23,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 23,
+      "solverNodes": 23,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 8,
+      "safeOpenings": 8,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 5.83,
+      "peakLegalChoices": 9,
+      "forcedSteps": 1,
+      "choiceSteps": 22,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
+    },
+    {
+      "level": 40,
+      "concept": "Complete the Twilight Flock finale",
+      "patternTags": [
+        "chapter-2",
+        "finale",
+        "expert"
+      ],
+      "targetBirds": 23,
+      "boardSize": 5,
+      "tutorial": false,
+      "solutionDepth": 23,
+      "solverNodes": 23,
+      "solverExhausted": false,
+      "solvable": true,
+      "openingMoves": 5,
+      "safeOpenings": 5,
+      "immediateDeadEnds": 0,
+      "exhaustedOpenings": 0,
+      "averageLegalChoices": 6.26,
+      "peakLegalChoices": 8,
+      "forcedSteps": 1,
+      "choiceSteps": 22,
+      "qualityBand": "expert",
+      "flags": [
+        "high-branching"
+      ],
+      "chapter": "Twilight Flock",
+      "expectedBands": [
+        "tricky",
+        "expert"
+      ],
+      "intendedBandPassed": true
     }
   ]
 }

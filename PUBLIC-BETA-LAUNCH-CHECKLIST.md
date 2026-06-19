@@ -1,65 +1,41 @@
-# Paper Flock v0.16 — Public Beta Launch Checklist
+# Paper Flock v1.4.2 — Controlled Beta Launch Checklist
 
-## Before deployment
+## Before push
 
-- Configure `supportEmail` or `supportUrl` in `app-config.json`.
-- Review `privacy.html`.
-- Review `known-issues.json`.
-- Confirm the current version in `release-notes.json`.
-- Run `npm run verify`.
-- Back up creator-side research and certification data.
+- Confirm `package.json` and `package-lock.json` both report 1.4.2.
+- Confirm every lockfile URL uses the public npm registry.
+- Run `npm audit --audit-level=high`.
+- Run unit, syntax, package, hardening, supply-chain, build, and release audits.
+- Generate the CycloneDX SBOM and deterministic archive.
+- Confirm no internal registry hostname appears in source or release artifacts.
 
-## After deployment
+## GitHub qualification
 
-- Confirm all GitHub Actions jobs are green.
-- Open Privacy, Support, Release notes, and Known issues from the game footer.
-- Submit one test feedback report and import it on the creator device.
-- Install and launch on Android Chrome.
-- Install and launch on iPhone/iPad Safari.
-- Test offline launch and exact resume.
-- Complete backup-and-restore and rollback drills.
-- Export the production-readiness report.
+- Static quality passes.
+- Chromium and WebKit tests pass.
+- Lighthouse budgets pass.
+- CodeQL JavaScript and workflow matrices pass.
+- Dependency Review has no blocking finding.
+- GitHub Pages deploys `dist/`, not the repository root.
+- The post-deployment HTTPS audit passes.
+- The v1.4.2 SBOM and archive attestation are created.
+- Quality evidence reports actual job outcomes.
 
-## Controlled public beta
+## Physical-device qualification
 
-Invite a limited group first. Tell testers:
+Use `V1.4-JOURNAL-VERIFICATION-GUIDE.md` on at least one Android phone and one
+iPhone. Verify migration, focus trap and restoration, internal scrolling,
+exact-once statistics, achievement persistence, next-goal navigation, update,
+backup/restore, and offline launch.
 
-- this is a beta
-- progress is local
-- nothing uploads automatically
-- feedback downloads as a file
-- they should not enter personal details in free text
+## Real-user validation
 
-## Production candidate
+Run a controlled beta with real participants. Keep AI-simulated observations
+labeled as hypotheses. Do not claim retention, enjoyment, accessibility, or
+willingness-to-pay evidence without actual participant behavior.
 
-Do not call the build production-ready until the dashboard reports:
+## Approval rule
 
-```text
-PRODUCTION CANDIDATE READY FOR FINAL REVIEW
-```
-
-Then perform a final human review of privacy, support, field evidence, critical
-defects, rollback readiness, and public messaging.
-
-
-## Accessibility and security hardening
-
-- Run `npm run audit:hardening`.
-- Complete keyboard-only navigation.
-- Complete VoiceOver verification.
-- Complete TalkBack verification.
-- Test large and extra-large text.
-- Test increased contrast or forced colors.
-- Confirm modal focus trapping and restoration.
-- Review the deployed Content Security Policy and no-referrer metadata.
-
-
-## Accessibility evidence files
-
-- Export AC-KEYBOARD.
-- Export AC-VOICEOVER.
-- Export AC-TALKBACK.
-- Export AC-TEXT.
-- Export AC-CONTRAST.
-- Import all five reports.
-- Export combined accessibility JSON and CSV.
+Do not mark v1.4.2 production-approved until CI evidence, both physical-device
+reports, critical-defect review, rollback readiness, privacy/support review,
+and final human sign-off are complete.

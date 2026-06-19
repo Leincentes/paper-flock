@@ -41,12 +41,23 @@ async function openSettings(page) {
   await expect(page.locator("#settings-page")).toBeVisible();
 }
 
+async function openJournal(page) {
+  const journal = page.locator("#journal-button");
+  if (!(await journal.isVisible())) {
+    await page.locator("#mobile-game-menu-button").click();
+  }
+  await journal.click();
+  await expect(
+    page.locator("#achievement-journal")
+  ).toBeVisible();
+}
+
 test("game starts without uncaught page errors", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
   await openReturningPlayerGame(page);
-  await expect(page).toHaveTitle(/Paper Flock v1\.2/);
+  await expect(page).toHaveTitle(/Paper Flock v1\.4/);
   await expect(
     page.locator(".cell:not(.empty)").first()
   ).toBeVisible();
@@ -159,7 +170,7 @@ test("manifest and release metadata are valid production JSON", async ({
   const release = await request.get("/release.json");
   expect(release.ok()).toBeTruthy();
   const releasePayload = await release.json();
-  expect(releasePayload.buildVersion).toBe("1.2");
+  expect(releasePayload.buildVersion).toBe("1.4.2");
   expect(releasePayload.releaseChannel).toBe("production");
 
   const config = await request.get("/app-config.json");
@@ -622,4 +633,367 @@ test("mobile tutorial stays inside the visible viewport", async ({
   expect(result.documentScrollHeight).toBeLessThanOrEqual(
     result.documentClientHeight + 1
   );
+});
+
+
+test("completed v1.2 players automatically receive Level 21 access", async ({
+  page
+}) => {
+  await resetPlayerStorage(page);
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "paper-flock-save",
+      JSON.stringify({
+        saveVersion: 10,
+        buildVersion: "1.2",
+        currentLevel: 20,
+        unlockedLevel: 20,
+        completedLevels: Array.from(
+          { length: 20 },
+          (_, index) => index + 1
+        ),
+        bestFeathers: Object.fromEntries(
+          Array.from(
+            { length: 20 },
+            (_, index) => [String(index + 1), 2]
+          )
+        ),
+        dailyFeathers: {},
+        selectedTheme: "aurora",
+        soundEnabled: false,
+        hapticsEnabled: true,
+        effectsPreference: "auto",
+        onboarding: {},
+        checkpoint: null
+      })
+    );
+    localStorage.setItem(
+      "paper-flock-tutorial",
+      JSON.stringify({
+        schemaVersion: 1,
+        status: "completed",
+        lastStepId: "practice",
+        replayCount: 0
+      })
+    );
+  });
+
+  await page.goto("/");
+  await page.locator("#open-map-button").click();
+
+  await expect(
+    page.locator(".level-map-chapter")
+  ).toHaveCount(2);
+  await expect(
+    page.locator(
+      '.level-tile strong',
+      { hasText: "21" }
+    )
+  ).toBeVisible();
+
+  const level21 = page.locator(
+    '.level-tile[data-chapter="twilight-flock"]'
+  ).first();
+  await expect(level21).toBeEnabled();
+  await level21.click();
+
+  await expect(page.locator("#level-number")).toHaveText("21");
+  await expect(page.locator("#chapter-name")).toContainText(
+    "Twilight Flock"
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-chapter-atmosphere",
+    "twilight-flock"
+  );
+});
+
+test("Chapter 2 exposes progress percentage and mastery guidance", async ({
+  page
+}) => {
+  await resetPlayerStorage(page);
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "paper-flock-save",
+      JSON.stringify({
+        saveVersion: 11,
+        buildVersion: "1.4.2",
+        currentLevel: 23,
+        unlockedLevel: 24,
+        completedLevels: [
+          ...Array.from(
+            { length: 20 },
+            (_, index) => index + 1
+          ),
+          21,
+          22,
+          23
+        ],
+        bestFeathers: {
+          21: 3,
+          22: 2,
+          23: 3
+        },
+        dailyFeathers: {},
+        selectedTheme: "aurora",
+        soundEnabled: false,
+        hapticsEnabled: true,
+        effectsPreference: "auto",
+        onboarding: {},
+        checkpoint: null
+      })
+    );
+    localStorage.setItem(
+      "paper-flock-tutorial",
+      JSON.stringify({
+        schemaVersion: 1,
+        status: "completed",
+        lastStepId: "practice",
+        replayCount: 0
+      })
+    );
+  });
+
+  await page.goto("/");
+
+  await expect(
+    page.locator("#journey-progress")
+  ).toContainText("3/20 levels");
+  await expect(
+    page.locator("#journey-progress")
+  ).toContainText("15%");
+  await expect(
+    page.locator("#journey-progress")
+  ).toContainText("2 mastered");
+  await expect(
+    page.locator("#mastery-goal")
+  ).toContainText("Twilight warm-up");
+});
+
+test("production metadata advertises the forty-level campaign", async ({
+  request
+}) => {
+  const config = await (
+    await request.get("/app-config.json")
+  ).json();
+  const build = await (
+    await request.get("/build-info.json")
+  ).json();
+
+  expect(config.campaignLevels).toBe(40);
+  expect(config.campaignChapters).toBe(2);
+  expect(config.chapterTwoName).toBe("Twilight Flock");
+  expect(build.campaignLevelCount).toBe(40);
+  expect(build.levelSolverValidationConfigured).toBe(true);
+  expect(build.duplicateLevelDetectionConfigured).toBe(true);
+});
+
+
+test("Achievement Journal exposes statistics, milestones, and a replay goal", async ({
+  page
+}) => {
+  await openReturningPlayerGame(page);
+  await openJournal(page);
+
+  await expect(
+    page.locator("#journal-summary-value")
+  ).toContainText("/20");
+  await expect(
+    page.locator("#journal-stat-grid .journal-stat")
+  ).toHaveCount(10);
+  await expect(
+    page.locator("#achievement-grid .achievement-card")
+  ).toHaveCount(20);
+  await expect(
+    page.locator("#journal-goal-title")
+  ).toContainText("Level 1");
+  await expect(
+    page.locator(".journal-header")
+  ).toContainText("No streaks or expiring rewards");
+});
+
+test("Achievement Journal derives milestones from an existing save", async ({
+  page
+}) => {
+  await resetPlayerStorage(page);
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "paper-flock-save",
+      JSON.stringify({
+        saveVersion: 11,
+        buildVersion: "1.3",
+        currentLevel: 21,
+        unlockedLevel: 21,
+        completedLevels: Array.from(
+          { length: 20 },
+          (_, index) => index + 1
+        ),
+        bestFeathers: Object.fromEntries(
+          Array.from(
+            { length: 10 },
+            (_, index) => [String(index + 1), 3]
+          )
+        ),
+        dailyFeathers: {
+          "2026-06-17": 2,
+          "2026-06-18": 3
+        },
+        selectedTheme: "aurora",
+        soundEnabled: false,
+        hapticsEnabled: true,
+        effectsPreference: "auto",
+        onboarding: {},
+        checkpoint: null
+      })
+    );
+    localStorage.setItem(
+      "paper-flock-tutorial",
+      JSON.stringify({
+        schemaVersion: 1,
+        status: "completed",
+        lastStepId: "practice",
+        replayCount: 0
+      })
+    );
+  });
+
+  await page.goto("/");
+  await openJournal(page);
+
+  await expect(
+    page.locator("#journal-summary-value")
+  ).not.toHaveText("0/20");
+  await expect(
+    page.locator(".achievement-card.unlocked")
+  ).toHaveCount(9);
+  await expect(
+    page.locator("#journal-stat-grid")
+  ).toContainText("20/40");
+  await expect(
+    page.locator("#journal-stat-grid")
+  ).toContainText("10/40");
+});
+
+test("recommended Journal goal opens the correct campaign level", async ({
+  page
+}) => {
+  await resetPlayerStorage(page);
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "paper-flock-save",
+      JSON.stringify({
+        saveVersion: 12,
+        buildVersion: "1.4.2",
+        currentLevel: 4,
+        unlockedLevel: 4,
+        completedLevels: [1, 2, 3],
+        bestFeathers: {
+          1: 2,
+          2: 3,
+          3: 2
+        },
+        dailyFeathers: {},
+        selectedTheme: "dawn",
+        soundEnabled: false,
+        hapticsEnabled: true,
+        effectsPreference: "auto",
+        onboarding: {},
+        playerStats: {},
+        achievementState: {},
+        checkpoint: null
+      })
+    );
+    localStorage.setItem(
+      "paper-flock-tutorial",
+      JSON.stringify({
+        schemaVersion: 1,
+        status: "completed",
+        lastStepId: "practice",
+        replayCount: 0
+      })
+    );
+  });
+
+  await page.goto("/");
+  await openJournal(page);
+  await expect(
+    page.locator("#journal-goal-title")
+  ).toHaveText("Continue Level 4");
+  await page.locator("#journal-goal-button").click();
+
+  await expect(page.locator("#achievement-journal")).toBeHidden();
+  await expect(page.locator("#level-number")).toHaveText("4");
+});
+
+test("Journal state persists in the recoverable player save", async ({
+  page
+}) => {
+  await openReturningPlayerGame(page);
+  await openJournal(page);
+  await page.locator("#journal-close-button").click();
+
+  const saved = await page.evaluate(() => {
+    const raw = localStorage.getItem("paper-flock-save");
+    const envelope = JSON.parse(raw);
+    return {
+      saveVersion: envelope.payload.saveVersion,
+      stats: envelope.payload.playerStats,
+      achievements: envelope.payload.achievementState
+    };
+  });
+
+  expect(saved.saveVersion).toBe(12);
+  expect(saved.stats.launches).toBeGreaterThanOrEqual(1);
+  expect(saved.achievements.schemaVersion).toBe(1);
+  expect(Array.isArray(saved.achievements.seen)).toBe(true);
+});
+
+test("mobile Journal scrolls internally while gameplay remains locked", async ({
+  page,
+  isMobile
+}) => {
+  test.skip(!isMobile, "Mobile Journal viewport test.");
+
+  await openReturningPlayerGame(page);
+  await openJournal(page);
+
+  const result = await page.evaluate(() => {
+    const content = document.querySelector(".journal-content");
+    content.scrollTop = content.scrollHeight;
+    return {
+      pageScroll: document.documentElement.scrollTop,
+      contentOverflowY: getComputedStyle(content).overflowY,
+      panelBottom:
+        document
+          .querySelector(".journal-panel")
+          .getBoundingClientRect().bottom,
+      viewportHeight:
+        window.visualViewport?.height ?? window.innerHeight
+    };
+  });
+
+  expect(result.pageScroll).toBe(0);
+  expect(result.contentOverflowY).toBe("auto");
+  expect(result.panelBottom).toBeLessThanOrEqual(
+    result.viewportHeight + 1
+  );
+});
+
+test("production metadata advertises ethical achievement progression", async ({
+  request
+}) => {
+  const config = await (
+    await request.get("/app-config.json")
+  ).json();
+  const build = await (
+    await request.get("/build-info.json")
+  ).json();
+
+  expect(config.achievementJournalAvailable).toBe(true);
+  expect(config.achievementCount).toBe(20);
+  expect(config.lifetimePlayerStatistics).toBe(true);
+  expect(config.streaksEnabled).toBe(false);
+  expect(config.expiringRewardsEnabled).toBe(false);
+  expect(build.saveSchemaVersion).toBe(12);
+  expect(build.achievementJournal).toBe(true);
+  expect(build.ethicalReplayGoals).toBe(true);
 });

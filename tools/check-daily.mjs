@@ -1,0 +1,1 @@
+import {createDailyLevel} from "../src/game-core.js"; const s=new Set(); const levels=new Set(); for(let day=1;day<=365;day++){const d=new Date(Date.UTC(2026,0,day)).toISOString().slice(0,10);const l=createDailyLevel(d);s.add(l.board.map(r=>r.join(",")).join(";"));levels.add(l.sourceLevel);} console.log(JSON.stringify({boards:s.size,levels:[...levels].sort((a,b)=>a-b)}));

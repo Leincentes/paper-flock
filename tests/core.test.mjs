@@ -87,8 +87,8 @@ test("a blocked escape leaves the board unchanged", () => {
   assert.deepEqual(result.board, board);
 });
 
-test("all 20 v0.4 campaign levels have a valid complete solution", () => {
-  for (let levelNumber = 1; levelNumber <= 20; levelNumber += 1) {
+test("all 40 campaign levels have a valid complete solution", () => {
+  for (let levelNumber = 1; levelNumber <= 40; levelNumber += 1) {
     const level = createLevel(levelNumber);
     let board = level.board.map((row) => [...row]);
 
@@ -160,7 +160,7 @@ test("tutorial level 5 has multiple safe opening choices", () => {
 });
 
 test("the mobile board never exceeds five by five", () => {
-  for (let levelNumber = 1; levelNumber <= 20; levelNumber += 1) {
+  for (let levelNumber = 1; levelNumber <= 40; levelNumber += 1) {
     const definition = levelDefinition(levelNumber);
     assert.ok(definition.size <= 5);
     assert.ok(definition.targetBirds <= definition.size ** 2);
@@ -171,8 +171,8 @@ test("generator rejects invalid requested density", () => {
   assert.throws(() => generateSolvableBoard(3, 10, 1));
 });
 
-test("safe hints lead toward a complete solution on every v0.4 campaign level", () => {
-  for (let levelNumber = 1; levelNumber <= 20; levelNumber += 1) {
+test("safe hints lead toward a complete solution on every campaign level", () => {
+  for (let levelNumber = 1; levelNumber <= 40; levelNumber += 1) {
     const level = createLevel(levelNumber);
     const result = findSolution(level.board, { nodeLimit: 150000 });
     assert.equal(
@@ -193,22 +193,51 @@ test("daily puzzles are deterministic for the same date", () => {
   assert.equal(first.seed, second.seed);
 });
 
-test("365 daily puzzles are unique, solvable, and within the solver budget", () => {
+test("365 daily dates rotate through the complete validated campaign pool", () => {
   const boards = new Set();
+  const sourceLevels = new Set();
 
   for (let day = 1; day <= 365; day += 1) {
-    const date = new Date(Date.UTC(2026, 0, day)).toISOString().slice(0, 10);
+    const date = new Date(
+      Date.UTC(2026, 0, day)
+    ).toISOString().slice(0, 10);
     const level = createDailyLevel(date);
-    const encoded = level.board.map((row) => row.join(",")).join(";");
-    boards.add(encoded);
+    const campaign = createLevel(level.sourceLevel);
+    const encoded = level.board
+      .map((row) => row.join(","))
+      .join(";");
 
-    const result = findSolution(level.board, { nodeLimit: 150000 });
-    assert.equal(result.exhausted, false, `Solver exhausted for ${date}.`);
-    assert.ok(result.solution, `No solution found for ${date}.`);
-    assert.equal(result.solution.length, level.targetBirds);
+    boards.add(encoded);
+    sourceLevels.add(level.sourceLevel);
+    assert.deepEqual(level.board, campaign.board);
+
+    const result = findSolution(
+      level.board,
+      { nodeLimit: 300000 }
+    );
+    assert.equal(
+      result.exhausted,
+      false,
+      `Solver exhausted for ${date}.`
+    );
+    assert.ok(
+      result.solution,
+      `No solution found for ${date}.`
+    );
+    assert.equal(
+      result.solution.length,
+      level.targetBirds
+    );
   }
 
-  assert.equal(boards.size, 365);
+  assert.equal(boards.size, 35);
+  assert.deepEqual(
+    [...sourceLevels].sort((left, right) => left - right),
+    Array.from(
+      { length: 35 },
+      (_, index) => index + 6
+    )
+  );
 });
 
 
@@ -398,8 +427,24 @@ test("paper themes unlock only at transparent campaign milestones", () => {
   assert.equal(isThemeUnlocked("meadow", [1, 2, 3, 4, 5]), true);
   assert.equal(nextThemeUnlock([1, 2, 3, 4, 5]).id, "twilight");
   assert.equal(
-    unlockedThemes(Array.from({ length: 20 }, (_, index) => index + 1)).length,
+    unlockedThemes(
+      Array.from({ length: 20 }, (_, index) => index + 1)
+    ).length,
     5
+  );
+  assert.deepEqual(
+    unlockedThemes(
+      Array.from({ length: 40 }, (_, index) => index + 1)
+    ).map((theme) => theme.id),
+    [
+      "dawn",
+      "meadow",
+      "twilight",
+      "festival",
+      "aurora",
+      "moonlit",
+      "midnight"
+    ]
   );
 });
 
@@ -750,7 +795,7 @@ test("adaptive feedback explains penalties once, then becomes concise", () => {
 });
 
 test("all campaign levels have safe openings and fit the analysis budget", () => {
-  for (let levelNumber = 1; levelNumber <= 20; levelNumber += 1) {
+  for (let levelNumber = 1; levelNumber <= 40; levelNumber += 1) {
     const level = createLevel(levelNumber);
     const metrics = analyzeLevel(level, { nodeLimit: 300000 });
     assert.equal(metrics.solvable, true, `Level ${levelNumber}`);

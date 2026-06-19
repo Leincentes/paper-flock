@@ -1,21 +1,21 @@
-PAPER FLOCK v1.2 PUBLIC BETA
+PAPER FLOCK v1.4.2 CONTROLLED TEST
 
-Thank you for testing this unfinished puzzle.
+Thank you for testing this production candidate.
 
-1. Open the HTTPS Paper Flock link supplied by the creator.
-2. Read the public-beta disclosure.
-3. Play naturally.
-4. Use the footer to review Privacy, Support, Release notes, or Known issues.
-5. Choose Send feedback to download a structured JSON report.
-6. Send the JSON file through the creator's configured support channel.
+1. Open the HTTPS Paper Flock link supplied by the test coordinator.
+2. Play naturally; do not clear browser data during the session.
+3. Note where the rules, controls, Journal, or next goal feel unclear.
+4. Record defects using the coordinator's external test form or interview.
+5. Do not include names, email addresses, account names, or other personal
+   information in free-text observations.
+6. Progress remains on this device unless you export a player backup.
 
-Nothing is uploaded by Paper Flock automatically. Do not enter your name,
-email, phone number, account name, or other personal details in free-text
-answers. Progress stays on this device unless you export a backup.
+This test build does not automatically upload gameplay, diagnostics, or
+feedback. AI-simulated reactions are not real-user results.
 
+PHYSICAL JOURNAL CHECK
 
-ACCESSIBILITY TESTERS
-
-Use the dedicated URL ending in ?a11ycert=1 and the anonymous code supplied by
-the creator. Mark a check only after completing the physical task. Download the
-JSON report and send only that file back to the creator.
+For Android and iPhone qualification, follow
+V1.4-JOURNAL-VERIFICATION-GUIDE.md. Record device model, operating-system
+version, browser version, pass/fail for each check, defects, and the tester's
+consent to use the anonymized result.
