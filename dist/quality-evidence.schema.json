@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paper-flock.example/schemas/quality-evidence-v1.json",
+  "title": "Paper Flock CI quality evidence",
+  "type": "object",
+  "required": [
+    "evidence"
+  ],
+  "properties": {
+    "evidence": {
+      "type": "object",
+      "required": [
+        "product",
+        "schemaVersion",
+        "buildVersion",
+        "commitSha",
+        "repository",
+        "workflowRunId",
+        "releaseDigest",
+        "checks"
+      ],
+      "properties": {
+        "product": {
+          "const": "Paper Flock"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "buildVersion": {
+          "type": "string"
+        },
+        "commitSha": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "workflowRunId": {
+          "type": "string"
+        },
+        "releaseDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "checks": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

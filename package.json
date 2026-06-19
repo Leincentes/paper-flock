@@ -1,0 +1,30 @@
+{
+  "name": "paper-flock",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "serve": "python3 serve.py",
+    "check": "node --check service-worker.js && node --check src/storage-core.js && node --check src/release-core.js && node --check src/quality-evidence-core.js && node --check src/production-release-ui.js && node --check src/boot-guard.js && node --check src/performance-monitor.js && node --check src/accessibility-core.js && node --check src/accessibility-ui.js && node --check src/accessibility-certification-core.js && node --check src/accessibility-certification-ui.js && node --check src/public-pages-ui.js && node --check src/mobile-lifecycle-ui.js && node --check src/mobile-viewport-core.js && node --check src/mobile-viewport-ui.js && node --check src/platform-core.js && node --check src/platform-ui.js && node --check src/install-audit-core.js && node --check src/install-audit-ui.js && node --check src/mobile-certification-core.js && node --check src/mobile-certification-ui.js && node --check src/beta-operations-core.js && node --check src/beta-operations-ui.js && node --check tools/configure-release.mjs && node --check tools/build-release.mjs && node --check tools/create-quality-evidence.mjs && node --check tools/audit-supply-chain.mjs && node --check tools/audit-release.mjs && node --check tools/validate-production-config.mjs && node --check tools/audit-accessibility-security.mjs && node --check tools/audit-package.mjs && node --check tools/audit-deployment.mjs",
+    "audit:package": "node tools/audit-package.mjs",
+    "audit:deployment": "node tools/audit-deployment.mjs",
+    "verify": "npm test && npm run check && npm run audit:package && npm run audit:hardening && npm run audit:supply-chain",
+    "configure:release": "node tools/configure-release.mjs",
+    "audit:hardening": "node tools/audit-accessibility-security.mjs",
+    "build": "node tools/build-release.mjs",
+    "audit:release": "node tools/audit-release.mjs",
+    "validate:production": "node tools/validate-production-config.mjs",
+    "test:e2e": "playwright test",
+    "test:lighthouse": "lhci autorun --config=lighthouserc.json",
+    "verify:candidate": "npm run verify && npm run build && npm run audit:release",
+    "verify:production": "npm run verify:candidate && npm run validate:production",
+    "audit:supply-chain": "node tools/audit-supply-chain.mjs",
+    "package:release": "python3 tools/package-release.py",
+    "evidence:quality": "node tools/create-quality-evidence.mjs"
+  },
+  "devDependencies": {
+    "@lhci/cli": "0.15.1",
+    "@playwright/test": "1.60.0"
+  }
+}

@@ -1,0 +1,28 @@
+name: Validate Paper Flock production configuration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - run: npm ci --no-audit --no-fund
+      - run: npm run verify:candidate
+      - run: npm run validate:production
+
+      - name: Explain remaining evidence
+        run: |
+          echo "Configuration passing does not replace imported mobile,"
+          echo "accessibility, real-player, critical-defect, rollback,"
+          echo "backup/restore, and final human review evidence."

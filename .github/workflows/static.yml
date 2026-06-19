@@ -1,0 +1,223 @@
+name: Test, qualify, deploy, and audit Paper Flock
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: paper-flock-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install development quality tools
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit installed dependencies
+        run: npm audit --audit-level=high
+
+      - name: Run automated unit and domain tests
+        run: npm test
+
+      - name: Check JavaScript and tooling syntax
+        run: npm run check
+
+      - name: Audit package, manifest, and offline assets
+        run: npm run audit:package
+
+      - name: Audit accessibility and security hardening
+        run: npm run audit:hardening
+
+      - name: Build deterministic release directory
+        run: npm run build
+
+      - name: Verify release hashes and size budgets
+        run: npm run audit:release
+
+      - name: Generate CycloneDX dependency SBOM
+        run: |
+          mkdir -p release-bundle
+          npm sbom --sbom-format=cyclonedx --package-lock-only             > release-bundle/sbom.cdx.json
+
+      - name: Create deterministic release archive
+        run: python3 tools/package-release.py
+
+      - name: Attest release archive and SBOM
+        if: github.event_name != 'pull_request' && github.event.repository.private == false
+        uses: actions/attest@v4
+        with:
+          subject-path: release-bundle/paper-flock-v1.0-release.zip
+          sbom-path: release-bundle/sbom.cdx.json
+
+      - name: Upload provenance-ready release bundle
+        uses: actions/upload-artifact@v5
+        with:
+          name: paper-flock-v1.0-release-bundle
+          path: release-bundle
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload candidate release
+        uses: actions/upload-artifact@v5
+        with:
+          name: paper-flock-release-candidate
+          path: dist
+          if-no-files-found: error
+
+  browser-quality:
+    runs-on: ubuntu-latest
+    needs: static-quality
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install quality tools
+        run: npm ci --no-audit --no-fund
+
+      - name: Build release directory
+        run: npm run build
+
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run Chromium and WebKit browser tests
+        run: npm run test:e2e
+
+      - name: Run Lighthouse budgets
+        run: npm run test:lighthouse
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: paper-flock-browser-quality
+          path: |
+            playwright-report
+            test-results
+            lighthouse-report
+          if-no-files-found: ignore
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [static-quality, browser-quality]
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download qualified release
+        uses: actions/download-artifact@v6
+        with:
+          name: paper-flock-release-candidate
+          path: _site
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  post-deployment-audit:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Audit deployed HTTPS app
+        run: |
+          node tools/audit-deployment.mjs \
+            "${{ needs.deploy.outputs.page_url }}" \
+            --retries=8 \
+            --delay=4000
+
+
+  release-evidence:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    needs:
+      - static-quality
+      - browser-quality
+      - deploy
+      - post-deployment-audit
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install locked development tools
+        run: npm ci --no-audit --no-fund
+
+      - name: Download release bundle
+        uses: actions/download-artifact@v5
+        with:
+          name: paper-flock-v1.0-release-bundle
+          path: release-bundle
+
+      - name: Generate importable CI evidence
+        run: |
+          node tools/create-quality-evidence.mjs \
+            --unit-tests=true \
+            --package-audit=true \
+            --dependency-audit=true \
+            --release-audit=true \
+            --browser-tests=true \
+            --lighthouse=true \
+            --codeql=true \
+            --deployment-audit=true \
+            --sbom=true \
+            --provenance=true \
+            --output=paper-flock-v1.0-quality-evidence.json
+
+      - name: Upload quality evidence
+        uses: actions/upload-artifact@v5
+        with:
+          name: paper-flock-v1.0-quality-evidence
+          path: paper-flock-v1.0-quality-evidence.json
+          if-no-files-found: error
+          retention-days: 90
