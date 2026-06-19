@@ -1,0 +1,44 @@
+{
+  "product": "Paper Flock",
+  "version": "1.4.4",
+  "packageName": "com.gamelostudio.paperflock",
+  "titleCharacters": 11,
+  "shortDescriptionCharacters": 64,
+  "fullDescriptionCharacters": 1197,
+  "storeIcon": {
+    "width": 512,
+    "height": 512,
+    "bytes": 13350
+  },
+  "featureGraphic": {
+    "width": 1024,
+    "height": 500,
+    "bytes": 101774
+  },
+  "phoneScreenshots": [
+    {
+      "file": "01-gameplay.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 369264
+    },
+    {
+      "file": "02-rotation.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 373362
+    },
+    {
+      "file": "03-offline.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 374658
+    }
+  ],
+  "targetSdk": 36,
+  "permissionSet": [
+    "android.permission.VIBRATE"
+  ],
+  "problems": [],
+  "passed": true
+}

@@ -37,6 +37,7 @@ export function normalizeOnboarding(value) {
     hintPenaltyExplained: Boolean(source.hintPenaltyExplained),
     restartPenaltyExplained: Boolean(source.restartPenaltyExplained),
     deadlockExplained: Boolean(source.deadlockExplained),
+    level11RecoveryExplained: Boolean(source.level11RecoveryExplained),
     undoExplained: Boolean(source.undoExplained)
   };
 }
@@ -65,6 +66,9 @@ export function recordOnboardingEvent(onboarding, eventName, data = {}) {
       break;
     case "deadlock_explained":
       next.deadlockExplained = true;
+      break;
+    case "level11_recovery_explained":
+      next.level11RecoveryExplained = true;
       break;
     case "undo_explained":
       next.undoExplained = true;
@@ -134,6 +138,9 @@ export function feedbackMessage({
   }
 
   if (kind === "deadlock") {
+    if (levelNumber === 11 && !current.level11RecoveryExplained) {
+      return "More open paths are not always safer. Undo the last move and watch which neighboring bird turns.";
+    }
     if (levelNumber === 4 && !current.deadlockExplained) {
       return "Dead end. Undo to recover and try the other opening. This attempt can earn up to two feathers.";
     }

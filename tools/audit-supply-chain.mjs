@@ -150,7 +150,7 @@ check(
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.4.2",
+  buildVersion: "1.4.4",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

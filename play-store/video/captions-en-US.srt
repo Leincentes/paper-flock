@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:03,000
+Read the paths.
+
+2
+00:00:03,000 --> 00:00:08,000
+Every move changes the flock.
+
+3
+00:00:08,000 --> 00:00:13,000
+Learn, undo, and try again.
+
+4
+00:00:13,000 --> 00:00:18,000
+Master cleaner solutions.
+
+5
+00:00:18,000 --> 00:00:22,000
+Track 40 handcrafted puzzles.
+
+6
+00:00:22,000 --> 00:00:24,000
+Paper Flock

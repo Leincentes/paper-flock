@@ -56,7 +56,7 @@ export function createDeviceCertificationReport({
   reportId,
   participantCode,
   deviceFamily,
-  buildVersion = "1.4.2",
+  buildVersion = "1.4.4",
   startedAt = new Date().toISOString(),
   environment = {}
 } = {}) {

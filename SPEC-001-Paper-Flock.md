@@ -1,6 +1,6 @@
 # SPEC-001-Paper-Flock
 
-**Current validation build:** v1.4.2
+**Current validation build:** v1.4.4
 
 ## Background
 

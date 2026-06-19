@@ -74,7 +74,7 @@ import {
   recordPuzzleCompletion
 } from "./achievement-core.js";
 
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const MAX_LEVEL = MAX_CAMPAIGN_LEVEL;
 
@@ -138,7 +138,7 @@ const state = {
   levelMeta: null,
   history: [],
   moves: 0,
-  soundEnabled: false,
+  soundEnabled: true,
   hapticsEnabled: true,
   effectsPreference: "auto",
   resolvedEffects: "full",
@@ -203,7 +203,7 @@ function normalizeSavePayload(value) {
     bestFeathers: normalizeFeatherMap(value.bestFeathers),
     dailyFeathers: trimFeatherRecords(value.dailyFeathers),
     selectedTheme: String(value.selectedTheme ?? "dawn"),
-    soundEnabled: Boolean(value.soundEnabled),
+    soundEnabled: value.soundEnabled !== false,
     hapticsEnabled: value.hapticsEnabled !== false,
     effectsPreference: normalizeEffectsPreference(
       value.effectsPreference
@@ -247,7 +247,7 @@ function loadSave() {
   )
     ? parsed.selectedTheme
     : "dawn";
-  state.soundEnabled = Boolean(parsed.soundEnabled);
+  state.soundEnabled = parsed.soundEnabled !== false;
   state.hapticsEnabled = parsed.hapticsEnabled !== false;
   state.effectsPreference = normalizeEffectsPreference(
     parsed.effectsPreference
@@ -1114,10 +1114,23 @@ async function handleCellClick(row, col, cell) {
   if (status === "complete") {
     completeLevel();
   } else if (status === "deadlock") {
+    const level11RecoveryLesson =
+      state.mode === "campaign" &&
+      state.currentLevel === 11 &&
+      !state.onboarding.level11RecoveryExplained;
+
     state.deadlocked = true;
-    state.deadlocks += 1;
+    if (!level11RecoveryLesson) {
+      state.deadlocks += 1;
+    }
     updateHud();
     elements.undo.classList.add("attention");
+
+    if (level11RecoveryLesson) {
+      result.rotated.forEach(({ row: rotatedRow, col: rotatedCol }) => {
+        queryCell(rotatedRow, rotatedCol)?.classList.add("recovery-focus");
+      });
+    }
 
     setMessage(
       feedbackMessage({
@@ -1131,10 +1144,14 @@ async function handleCellClick(row, col, cell) {
 
     logEvent("level_deadlock", {
       moves: state.moves,
-      remainingBirds: countBirds(state.board)
+      remainingBirds: countBirds(state.board),
+      recoveryLessonShown: level11RecoveryLesson,
+      penaltyApplied: !level11RecoveryLesson
     });
 
-    if (!state.onboarding.deadlockExplained) {
+    if (level11RecoveryLesson) {
+      updateOnboarding("level11_recovery_explained");
+    } else if (!state.onboarding.deadlockExplained) {
       updateOnboarding("deadlock_explained");
     }
   } else {
@@ -2011,7 +2028,7 @@ function resetProgress() {
   state.bestFeathers = {};
   state.dailyFeathers = {};
   state.selectedTheme = "dawn";
-  state.soundEnabled = false;
+  state.soundEnabled = true;
   state.hapticsEnabled = true;
   state.effectsPreference = "auto";
   state.onboarding = normalizeOnboarding(DEFAULT_ONBOARDING);

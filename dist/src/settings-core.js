@@ -15,7 +15,7 @@ export const PLAYER_STORAGE_KEYS = Object.freeze([
 ]);
 
 export const DEFAULT_PLAYER_SETTINGS = Object.freeze({
-  soundEnabled: false,
+  soundEnabled: true,
   hapticsEnabled: true,
   effectsPreference: "auto"
 });
@@ -35,7 +35,7 @@ export function normalizePlayerSettings(value = {}) {
 
   return {
     schemaVersion: SETTINGS_SCHEMA_VERSION,
-    soundEnabled: Boolean(source.soundEnabled),
+    soundEnabled: source.soundEnabled !== false,
     hapticsEnabled: source.hapticsEnabled !== false,
     effectsPreference: EFFECTS.has(source.effectsPreference)
       ? source.effectsPreference
@@ -44,7 +44,7 @@ export function normalizePlayerSettings(value = {}) {
 }
 
 export function createPlayerBackup({
-  buildVersion = "1.4.2",
+  buildVersion = "1.4.4",
   exportedAt = new Date().toISOString(),
   storageValues = {}
 } = {}) {

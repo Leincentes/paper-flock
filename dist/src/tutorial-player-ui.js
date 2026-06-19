@@ -19,7 +19,7 @@ import {
   tutorialHint
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
 const state = {
   progress: loadProgress(),
   session: createTutorialSession("welcome"),

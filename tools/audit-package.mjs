@@ -187,18 +187,24 @@ check(
   "production-gate",
   buildInfo.productionApproved === false &&
     buildInfo.productionGate ===
-      "v1.4.2-ci-evidence-import-and-final-human-signoff-required",
+      "v1.4.4-ci-evidence-import-and-final-human-signoff-required",
   "Production approval remains evidence- and sign-off-gated."
 );
 check(
   "release-notes-current",
-  releaseNotes.currentVersion === "1.4.2",
-  "Current release notes report v1.4.2."
+  releaseNotes.currentVersion === "1.4.4",
+  "Current release notes report v1.4.4."
 );
 check(
   "known-issues-current",
-  knownIssues.buildVersion === "1.4.2",
-  "Known-issues register reports v1.4.2."
+  knownIssues.buildVersion === "1.4.4",
+  "Known-issues register reports v1.4.4."
+);
+check(
+  "sound-default",
+  appConfig.soundDefaultEnabled === true &&
+    buildInfo.soundDefaultEnabled === true,
+  "New and reset player profiles enable sound by default."
 );
 check(
   "settings-styles",
@@ -242,7 +248,7 @@ for (const file of [
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.4.2",
+  buildVersion: "1.4.4",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

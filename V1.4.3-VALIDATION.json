@@ -1,0 +1,73 @@
+{
+  "product": "Paper Flock",
+  "buildVersion": "1.4.4",
+  "packageVersion": "1.4.4",
+  "releaseChannel": "production-candidate",
+  "exportedAt": "2026-06-20T00:00:00+08:00",
+  "changePurpose": "Enable sound by default for new/reset profiles and produce a mechanics-based simulated-player study.",
+  "saveSchemaVersion": 12,
+  "saveMigrationRequired": false,
+  "existingExplicitSoundPreferencePreserved": true,
+  "newPlayerSoundDefaultEnabled": true,
+  "resetProfileSoundDefaultEnabled": true,
+  "browserAutoplayCompatible": true,
+  "automatedTestsPassed": 199,
+  "automatedTestsFailed": 0,
+  "soundDefaultUnitTestsPassed": 3,
+  "campaignLevelsSolvable": 40,
+  "campaignBoardsUnique": 40,
+  "mechanicalSimulation": {
+    "method": "Exact recursive probability over reachable states on each actual campaign board.",
+    "levelsAnalyzed": 40,
+    "simulatedCustomerCount": 30,
+    "realCustomersRepresented": false,
+    "level11RandomSuccessRate": 0.4878605299514889,
+    "level11RandomWithTwoRestartsSuccessRate": 0.8656725584099865,
+    "level11OneStepSafeSuccessRate": 0.5833333333333333,
+    "recommendedExperiment": "One-time non-penalizing Level 11 recovery lesson after the first deadlock."
+  },
+  "staticPackageVerificationPassed": true,
+  "accessibilitySecurityAuditPassed": true,
+  "supplyChainAuditPassed": true,
+  "productionConfigurationValid": true,
+  "strictProductionBuildPassed": true,
+  "releaseHashAuditPassed": true,
+  "dependencyAudit": {
+    "development": {
+      "info": 0,
+      "low": 0,
+      "moderate": 4,
+      "high": 0,
+      "critical": 0
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    }
+  },
+  "browserTestsConfigured": true,
+  "browserTestsListed": 90,
+  "browserProjects": [
+    "desktop-chromium",
+    "mobile-chromium",
+    "mobile-webkit"
+  ],
+  "browserTestsExecutedInThisEnvironment": false,
+  "browserExecutionNote": "Browser projects were discovered successfully. Full GitHub-hosted execution remains required for this changed candidate.",
+  "releaseFiles": 51,
+  "releaseBytesCompressed": 453595,
+  "distFiles": 50,
+  "distBytes": 730218,
+  "releaseArchive": "paper-flock-v1.4.4-release.zip",
+  "releaseArchiveSha256": "2694b344e658c997d5cc184bd5d3a9e06bb9fcc5253133a4b3d073a299ce9a34",
+  "cycloneDxSbomGenerated": true,
+  "internalRegistryUrlsInSbom": 0,
+  "physicalAndroidSoundVerificationComplete": false,
+  "physicalIphoneSoundVerificationComplete": false,
+  "realUserSimulationValidated": false,
+  "productionApproved": false,
+  "remainingRequiredAction": "Push v1.4.4, pass GitHub browser/Lighthouse/CodeQL/deployment/SBOM/provenance gates, verify fresh-install and preserved sound preferences on Android and iPhone, then test the Level 11 recovery hypothesis with 10\u201315 real players."
+}

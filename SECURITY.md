@@ -1,4 +1,4 @@
-# Paper Flock v1.4.2 — Security Notes
+# Paper Flock v1.4.4 — Security Notes
 
 ## Runtime model
 

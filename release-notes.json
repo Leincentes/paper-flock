@@ -1,7 +1,19 @@
 {
   "product": "Paper Flock",
-  "currentVersion": "1.4.2",
+  "currentVersion": "1.4.4",
   "releases": [
+    {
+      "version": "1.4.4",
+      "date": "2026-06-20",
+      "channel": "production-candidate",
+      "changes": [
+        "Sound is enabled by default for new players and after a confirmed progress reset.",
+        "Existing players' explicit sound preference is preserved during upgrade.",
+        "Added regression tests for the sound-default and preference-preservation rules.",
+        "Added a mechanics-based simulated-player study using the real campaign boards.",
+        "Kept gameplay rules, save schema 12, achievements, and progression unchanged."
+      ]
+    },
     {
       "version": "1.4.2",
       "date": "2026-06-20",
@@ -33,7 +45,7 @@
       "date": "2026-06-19",
       "channel": "production",
       "changes": [
-        "Added Chapter 2: Twilight Flock with Levels 21–40.",
+        "Added Chapter 2: Twilight Flock with Levels 21\u201340.",
         "Added chapter progress, completion percentage, and mastery totals.",
         "Added optional mastery guidance using the existing feather system.",
         "Added the Twilight visual atmosphere and two new paper themes.",

@@ -3,7 +3,7 @@ import {
   STORAGE_KEYS
 } from "./storage-core.js";
 
-export const PLATFORM_BUILD_VERSION = "1.4.2";
+export const PLATFORM_BUILD_VERSION = "1.4.4";
 export const BACKUP_SCHEMA_VERSION = 1;
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 export const MAX_ERROR_RECORDS = 50;

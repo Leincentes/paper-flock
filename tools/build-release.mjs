@@ -123,7 +123,8 @@ const publicConfig = {
   lifetimePlayerStatistics: true,
   replayGoalRecommendation: true,
   streaksEnabled: false,
-  expiringRewardsEnabled: false
+  expiringRewardsEnabled: false,
+  soundDefaultEnabled: true
 };
 
 const publicBuildInfo = {
@@ -153,7 +154,8 @@ const publicBuildInfo = {
   saveSchemaVersion: 12,
   ethicalReplayGoals: true,
   productionRuntimeClean: true,
-  internalToolsIncluded: false
+  internalToolsIncluded: false,
+  soundDefaultEnabled: true
 };
 
 writeJson("app-config.json", publicConfig);
@@ -194,6 +196,14 @@ writeJson("known-issues.json", {
       status: "by-design",
       workaround:
         "Open Settings → Game → Replay how to play."
+    },
+    {
+      id: "PF-SOUND-DEFAULT",
+      title: "Sound defaults to on for new and reset player profiles",
+      severity: "informational",
+      status: "by-design",
+      workaround:
+        "Existing explicit choices are preserved. Sound can be disabled in Settings."
     }
   ]
 });
@@ -203,15 +213,15 @@ writeJson("release-notes.json", {
   currentVersion: String(buildInfo.buildVersion),
   releases: [
     {
-      version: "1.4.2",
+      version: "1.4.4",
       date: "2026-06-20",
       channel: "production-candidate",
       changes: [
-        "Moved locked development dependencies to the public npm registry.",
-        "Pinned tmp 0.2.7 to remove the high-severity CI dependency advisory.",
-        "Made CodeQL and provenance evidence derive from completed GitHub jobs.",
-        "Aligned release-engineering and tester documentation.",
-        "Kept gameplay, achievements, save schema 12, and player progression unchanged."
+        "Enabled sound by default for new players and confirmed progress resets.",
+        "Preserved explicit sound-off preferences from existing saves.",
+        "Added regression tests for sound defaults and preference persistence.",
+        "Added a mechanics-based simulated-player study using the actual campaign boards.",
+        "Kept gameplay rules, achievements, save schema 12, and player progression unchanged."
       ]
     },
     {

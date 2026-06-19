@@ -1,4 +1,4 @@
-# Paper Flock v1.4.2 — Operations Runbook
+# Paper Flock v1.4.4 — Operations Runbook
 
 ## Release
 

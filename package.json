@@ -1,6 +1,6 @@
 {
   "name": "paper-flock",
-  "version": "1.4.2",
+  "version": "1.4.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,7 +22,10 @@
     "audit:supply-chain": "node tools/audit-supply-chain.mjs",
     "package:release": "python3 tools/package-release.py",
     "evidence:quality": "node tools/create-quality-evidence.mjs",
-    "analyze:levels": "node tools/analyze-level-quality.mjs LEVEL-QUALITY-REPORT.json"
+    "analyze:levels": "node tools/analyze-level-quality.mjs LEVEL-QUALITY-REPORT.json",
+    "android:sync": "python3 tools/sync-android-assets.py",
+    "verify:play-store": "python3 tools/validate-play-store-assets.py",
+    "verify:android": "npm run build && npm run android:sync && npm run verify:play-store"
   },
   "devDependencies": {
     "@lhci/cli": "0.15.1",

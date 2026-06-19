@@ -1,11 +1,11 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.2",
+  "buildVersion": "1.4.4",
   "releaseChannel": "production",
   "supportEmail": "leincentes@gmail.com",
   "supportUrl": "",
   "repositoryUrl": "https://github.com/leincentes/paper-flock",
-  "privacyEffectiveDate": "2026-06-19",
+  "privacyEffectiveDate": "2026-06-20",
   "automaticUploads": false,
   "analyticsEnabled": false,
   "advertisingEnabled": false,
@@ -42,5 +42,9 @@
   "lifetimePlayerStatistics": true,
   "replayGoalRecommendation": true,
   "streaksEnabled": false,
-  "expiringRewardsEnabled": false
+  "expiringRewardsEnabled": false,
+  "soundDefaultEnabled": true,
+  "androidPlayStorePrepared": true,
+  "androidPackageName": "com.gamelostudio.paperflock",
+  "androidTargetSdk": 36
 }

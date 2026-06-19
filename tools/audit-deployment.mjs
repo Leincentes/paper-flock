@@ -330,7 +330,7 @@ checks.push(
   check(
     "service-worker-version",
     /paper-flock-static-v1\.4/.test(serviceWorkerSource),
-    "The v1.4.2 service worker is deployed."
+    "The v1.4.4 service worker is deployed."
   )
 );
 checks.push(
@@ -359,7 +359,7 @@ const buildInfo = await (
 checks.push(
   check(
     "build-version",
-    buildInfo.buildVersion === "1.4.2",
+    buildInfo.buildVersion === "1.4.4",
     `Deployed build version: ` +
       `${buildInfo.buildVersion ?? "missing"}`
   )
@@ -519,7 +519,7 @@ const requiredFailures = checks.filter(
 
 const report = {
   product: "Paper Flock",
-  buildVersion: "1.4.2",
+  buildVersion: "1.4.4",
   auditedAt: new Date().toISOString(),
   url: baseUrl.href,
   passed: requiredFailures.length === 0,

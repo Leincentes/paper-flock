@@ -1,9 +1,11 @@
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
+const IS_ANDROID_WRAPPER = navigator.userAgent.includes("PaperFlockAndroid/");
 const state = {
   deferredPrompt: null,
   registration: null,
   waitingWorker: null,
   installed:
+    IS_ANDROID_WRAPPER ||
     globalThis.matchMedia?.("(display-mode: standalone)").matches === true ||
     navigator.standalone === true,
   online: navigator.onLine,
@@ -67,6 +69,7 @@ function wireEvents() {
 
 async function registerServiceWorker() {
   if (
+    IS_ANDROID_WRAPPER ||
     !("serviceWorker" in navigator) ||
     !globalThis.isSecureContext
   ) {

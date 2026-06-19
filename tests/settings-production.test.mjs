@@ -67,7 +67,7 @@ test("player backup contains only player-facing storage keys", () => {
   values["paper-flock-research"] = "internal";
 
   const backup = createPlayerBackup({
-    buildVersion: "1.4.2",
+    buildVersion: "1.4.4",
     exportedAt: "2026-06-19T00:00:00.000Z",
     storageValues: values
   });

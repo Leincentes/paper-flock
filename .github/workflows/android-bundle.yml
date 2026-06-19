@@ -1,0 +1,142 @@
+name: Android App Bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - "play-store/**"
+      - "src/**"
+      - "assets/**"
+      - "index.html"
+      - "styles.css"
+      - "service-worker.js"
+      - "package.json"
+      - "package-lock.json"
+      - "tools/sync-android-assets.py"
+      - "tools/validate-play-store-assets.py"
+      - ".github/workflows/android-bundle.yml"
+  pull_request:
+    paths:
+      - "android/**"
+      - "play-store/**"
+      - "src/**"
+      - "assets/**"
+      - "index.html"
+      - "styles.css"
+      - "service-worker.js"
+      - "package.json"
+      - "package-lock.json"
+      - "tools/sync-android-assets.py"
+      - "tools/validate-play-store-assets.py"
+      - ".github/workflows/android-bundle.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-debug-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install and verify web runtime
+        run: |
+          npm ci --no-audit --no-fund
+          npm run verify:production
+          npm run build
+          npm run android:sync
+          npm run verify:play-store
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Lint and build debug bundle
+        run: |
+          gradle -p android lintDebug
+          gradle -p android bundleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper-flock-v1.4.4-debug-aab
+          path: android/app/build/outputs/bundle/debug/app-debug.aab
+          if-no-files-found: error
+
+  signed-release-bundle:
+    if: github.event_name == 'workflow_dispatch'
+    needs: verify-debug-bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install and prepare local web assets
+        run: |
+          npm ci --no-audit --no-fund
+          npm run verify:production
+          npm run build
+          npm run android:sync
+          npm run verify:play-store
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Decode upload keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$KEYSTORE_BASE64"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/paper-flock-upload.jks"
+
+      - name: Build signed release AAB
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/paper-flock-upload.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: gradle -p android bundleRelease
+
+      - name: Rename bundle
+        run: |
+          cp android/app/build/outputs/bundle/release/app-release.aab             paper-flock-v1.4.4.aab
+          sha256sum paper-flock-v1.4.4.aab > paper-flock-v1.4.4.aab.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper-flock-v1.4.4-signed-aab
+          path: |
+            paper-flock-v1.4.4.aab
+            paper-flock-v1.4.4.aab.sha256
+          if-no-files-found: error

@@ -1,8 +1,8 @@
-# Paper Flock v1.4.2 — Controlled Beta Launch Checklist
+# Paper Flock v1.4.4 — Controlled Beta Launch Checklist
 
 ## Before push
 
-- Confirm `package.json` and `package-lock.json` both report 1.4.2.
+- Confirm `package.json` and `package-lock.json` both report 1.4.4.
 - Confirm every lockfile URL uses the public npm registry.
 - Run `npm audit --audit-level=high`.
 - Run unit, syntax, package, hardening, supply-chain, build, and release audits.
@@ -18,7 +18,7 @@
 - Dependency Review has no blocking finding.
 - GitHub Pages deploys `dist/`, not the repository root.
 - The post-deployment HTTPS audit passes.
-- The v1.4.2 SBOM and archive attestation are created.
+- The v1.4.4 SBOM and archive attestation are created.
 - Quality evidence reports actual job outcomes.
 
 ## Physical-device qualification
@@ -36,6 +36,6 @@ willingness-to-pay evidence without actual participant behavior.
 
 ## Approval rule
 
-Do not mark v1.4.2 production-approved until CI evidence, both physical-device
+Do not mark v1.4.4 production-approved until CI evidence, both physical-device
 reports, critical-defect review, rollback readiness, privacy/support review,
 and final human sign-off are complete.

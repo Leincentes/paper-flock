@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.2",
+  "buildVersion": "1.4.4",
   "releaseChannel": "production",
   "closedAlphaApproved": false,
   "releaseGate": "real-field-evidence-required",
@@ -12,7 +12,7 @@
   "installAuditAvailable": true,
   "mobileInstallationCertified": false,
   "installationGate": "android-and-ios-device-reports-required",
-  "serviceWorkerCacheVersion": "1.4.2",
+  "serviceWorkerCacheVersion": "1.4.4",
   "mobileCertificationCollectorAvailable": true,
   "physicalDeviceReportsImported": false,
   "publicBetaOperationsAvailable": true,
@@ -22,7 +22,7 @@
   "releaseNotesPublished": true,
   "knownIssuesPublished": true,
   "productionApproved": false,
-  "productionGate": "v1.4.2-ci-evidence-import-and-final-human-signoff-required",
+  "productionGate": "v1.4.4-ci-evidence-import-and-final-human-signoff-required",
   "accessibilitySettingsAvailable": true,
   "accessibilityStatementPublished": true,
   "contentSecurityPolicyEnabled": true,
@@ -79,5 +79,6 @@
   "playerStatisticsSchemaVersion": 1,
   "ethicalReplayGoals": true,
   "streaksEnabled": false,
-  "expiringRewardsEnabled": false
+  "expiringRewardsEnabled": false,
+  "soundDefaultEnabled": true
 }

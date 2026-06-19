@@ -1,0 +1,64 @@
+{
+  "product": "Paper Flock",
+  "buildVersion": "1.4.4",
+  "packageName": "com.gamelostudio.paperflock",
+  "preparedAt": "2026-06-20T00:00:00+08:00",
+  "soundEnabledByDefaultForNewPlayers": true,
+  "existingSoundPreferencePreserved": true,
+  "level11RecoveryLessonImplemented": true,
+  "level11FirstLessonNonPenalizing": true,
+  "saveSchemaVersion": 12,
+  "android": {
+    "projectPrepared": true,
+    "aabCompiledInThisEnvironment": false,
+    "signedAabGenerated": false,
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "agp": "8.13.2",
+    "gradle": "8.13",
+    "jdk": 17,
+    "androidxWebkit": "1.16.0",
+    "permissions": [
+      "android.permission.VIBRATE"
+    ],
+    "internetPermission": false,
+    "cloudBackupEnabled": false,
+    "localAssetsViaWebViewAssetLoader": true,
+    "githubWorkflowPrepared": true
+  },
+  "storeListing": {
+    "title": "Paper Flock",
+    "titleCharacters": 11,
+    "shortDescriptionCharacters": 64,
+    "fullDescriptionCharacters": 1197,
+    "iconPrepared": true,
+    "featureGraphicPrepared": true,
+    "phoneScreenshotsPrepared": 3,
+    "previewVideoStoryboardPrepared": true,
+    "finalGameplayVideoCaptured": false,
+    "privacyPolicyPrepared": true,
+    "privacyPolicyPubliclyVerifiedForV1_4_4": false,
+    "dataSafetyDraftPrepared": true,
+    "contentRatingDraftPrepared": true,
+    "targetAudienceDraftPrepared": true
+  },
+  "verification": {
+    "automatedTestsPassed": 205,
+    "automatedTestsFailed": 0,
+    "productionVerificationPassed": true,
+    "campaignLevelsPassed": 40,
+    "storeAssetValidationPassed": true,
+    "runtimeDependencyVulnerabilities": 0,
+    "highOrCriticalDevelopmentVulnerabilities": 0,
+    "webReleaseArchiveGenerated": true
+  },
+  "playConsole": {
+    "accountRegisteredByOwner": false,
+    "playAppSigningEnrolled": false,
+    "internalTestUploaded": false,
+    "closedTestStarted": false,
+    "productionApproved": false
+  },
+  "remainingRequiredAction": "Confirm package/account ownership, add signing secrets, run the Android Bundle workflow, deploy and verify the privacy URL, upload the signed AAB to internal testing, then execute the 14-day closed-test and physical-device plan."
+}

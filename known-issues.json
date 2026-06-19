@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.2",
+  "buildVersion": "1.4.4",
   "updatedAt": "2026-06-20",
   "issues": [
     {
@@ -9,6 +9,13 @@
       "severity": "critical",
       "status": "resolved-in-1.4.2",
       "workaround": "Deploy v1.4.2. Existing schema-12 saves and backups remain compatible."
+    },
+    {
+      "id": "PF-SOUND-DEFAULT",
+      "title": "Sound defaults to on for new or reset player profiles",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Existing explicit sound choices are preserved. Browsers begin audio only after a player interaction, and sound can be disabled at any time in Settings."
     },
     {
       "id": "PF-LOCAL-ONLY",
@@ -22,7 +29,7 @@
       "title": "iPhone and iPad installation uses Safari Add to Home Screen",
       "severity": "low",
       "status": "platform-limitation",
-      "workaround": "Open in Safari, then Share → Add to Home Screen."
+      "workaround": "Open in Safari, then Share \u2192 Add to Home Screen."
     },
     {
       "id": "PF-FEEDBACK-MANUAL",
@@ -54,10 +61,10 @@
     },
     {
       "id": "PF-CI-EVIDENCE",
-      "title": "Paper Flock 1.4.2 production approval requires matching CI and device evidence",
+      "title": "Paper Flock 1.4.4 production approval requires matching CI, device, and alpha-readiness evidence",
       "severity": "high",
       "status": "open",
-      "workaround": "Push v1.4.2, require the release workflow and CodeQL jobs to pass, import the v1.4.2 quality-evidence artifact, complete Android and iPhone Journal verification, and perform final human sign-off."
+      "workaround": "Push v1.4.4, require all release and CodeQL jobs to pass, verify Android and iPhone play, then review the simulated-player findings before closed-alpha recruitment."
     },
     {
       "id": "PF-MOBILE-BROWSER-CHROME",

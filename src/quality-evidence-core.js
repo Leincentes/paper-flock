@@ -26,7 +26,7 @@ function cleanText(value, maximum = 1000) {
 }
 
 export function createQualityEvidence({
-  buildVersion = "1.4.2",
+  buildVersion = "1.4.4",
   commitSha,
   repository,
   workflowRunId,
@@ -173,7 +173,7 @@ export function expectedApprovalPhrase(buildVersion) {
 }
 
 export function createProductionApproval({
-  buildVersion = "1.4.2",
+  buildVersion = "1.4.4",
   reviewerCode,
   confirmation,
   readiness,

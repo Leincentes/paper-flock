@@ -1,0 +1,686 @@
+{
+  "generatedAt": "2026-06-19T17:06:50.217Z",
+  "method": "exact recursive probability over the actual board state graph",
+  "rows": [
+    {
+      "level": 1,
+      "random": {
+        "probability": 1,
+        "states": 3
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 3
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 3
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 2,
+      "random": {
+        "probability": 1,
+        "states": 4
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 4
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 4
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 3,
+      "random": {
+        "probability": 1,
+        "states": 5
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 5
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 5
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 4,
+      "random": {
+        "probability": 0.5,
+        "states": 6
+      },
+      "randomWith2Restarts": 0.875,
+      "rotation": {
+        "probability": 0.5,
+        "states": 6
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 5
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 5,
+      "random": {
+        "probability": 1,
+        "states": 14
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 13
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 6
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 6,
+      "random": {
+        "probability": 0.8732638888888888,
+        "states": 47
+      },
+      "randomWith2Restarts": 0.9979643592782145,
+      "rotation": {
+        "probability": 0.75,
+        "states": 16
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 15
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 7,
+      "random": {
+        "probability": 0.8373842592592592,
+        "states": 75
+      },
+      "randomWith2Restarts": 0.9956998090061334,
+      "rotation": {
+        "probability": 0.7222222222222222,
+        "states": 51
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 15
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 8,
+      "random": {
+        "probability": 0.8333333333333334,
+        "states": 74
+      },
+      "randomWith2Restarts": 0.9953703703703703,
+      "rotation": {
+        "probability": 1,
+        "states": 10
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 25
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 9,
+      "random": {
+        "probability": 0.7253402898341049,
+        "states": 159
+      },
+      "randomWith2Restarts": 0.9792802327628509,
+      "rotation": {
+        "probability": 0.8611111111111112,
+        "states": 70
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 44
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 10,
+      "random": {
+        "probability": 0.5,
+        "states": 104
+      },
+      "randomWith2Restarts": 0.875,
+      "rotation": {
+        "probability": 0.5,
+        "states": 64
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 15
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 11,
+      "random": {
+        "probability": 0.4878605299514889,
+        "states": 392
+      },
+      "randomWith2Restarts": 0.8656725584099865,
+      "rotation": {
+        "probability": 0,
+        "states": 31
+      },
+      "oneStepSafe": {
+        "probability": 0.5833333333333333,
+        "states": 53
+      },
+      "oneStepSafeWith2Restarts": 0.927662037037037
+    },
+    {
+      "level": 12,
+      "random": {
+        "probability": 0.4829028949502074,
+        "states": 399
+      },
+      "randomWith2Restarts": 0.8617337070391373,
+      "rotation": {
+        "probability": 0.25,
+        "states": 61
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 29
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 13,
+      "random": {
+        "probability": 0.44705069998059904,
+        "states": 773
+      },
+      "randomWith2Restarts": 0.8309341322667917,
+      "rotation": {
+        "probability": 0,
+        "states": 18
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 18
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 14,
+      "random": {
+        "probability": 0.3967647857054827,
+        "states": 782
+      },
+      "randomWith2Restarts": 0.7804870947994335,
+      "rotation": {
+        "probability": 0,
+        "states": 16
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 52
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 15,
+      "random": {
+        "probability": 0.35077231169537165,
+        "states": 4151
+      },
+      "randomWith2Restarts": 0.7263527424270988,
+      "rotation": {
+        "probability": 0,
+        "states": 112
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 31
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 16,
+      "random": {
+        "probability": 0.3316293851040891,
+        "states": 2006
+      },
+      "randomWith2Restarts": 0.7014259609049315,
+      "rotation": {
+        "probability": 0.7569444444444445,
+        "states": 356
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 51
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 17,
+      "random": {
+        "probability": 0.29904960712696993,
+        "states": 5208
+      },
+      "randomWith2Restarts": 0.6556010248003191,
+      "rotation": {
+        "probability": 0,
+        "states": 128
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 58
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 18,
+      "random": {
+        "probability": 0.34325332355020827,
+        "states": 5157
+      },
+      "randomWith2Restarts": 0.7167345211029976,
+      "rotation": {
+        "probability": 0,
+        "states": 176
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 47
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 19,
+      "random": {
+        "probability": 0.27303287282953725,
+        "states": 9803
+      },
+      "randomWith2Restarts": 0.6158115373743644,
+      "rotation": {
+        "probability": 0,
+        "states": 416
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 29
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 20,
+      "random": {
+        "probability": 0.23983589751462472,
+        "states": 20890
+      },
+      "randomWith2Restarts": 0.5607395818093759,
+      "rotation": {
+        "probability": 0.13425925925925927,
+        "states": 163
+      },
+      "oneStepSafe": {
+        "probability": 0.8125,
+        "states": 93
+      },
+      "oneStepSafeWith2Restarts": 0.993408203125
+    },
+    {
+      "level": 21,
+      "random": {
+        "probability": 1,
+        "states": 191
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 64
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 44
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 22,
+      "random": {
+        "probability": 0.9378529825588467,
+        "states": 1149
+      },
+      "randomWith2Restarts": 0.9997599725714632,
+      "rotation": {
+        "probability": 0.6818767334319272,
+        "states": 392
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 78
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 23,
+      "random": {
+        "probability": 0.8327760897008163,
+        "states": 2455
+      },
+      "randomWith2Restarts": 0.9953237779677254,
+      "rotation": {
+        "probability": 0.6018518518518517,
+        "states": 138
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 79
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 24,
+      "random": {
+        "probability": 0.9198356114887654,
+        "states": 2196
+      },
+      "randomWith2Restarts": 0.9994848372504821,
+      "rotation": {
+        "probability": 0.9608410493827161,
+        "states": 444
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 36
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 25,
+      "random": {
+        "probability": 0.6455405818286991,
+        "states": 5033
+      },
+      "randomWith2Restarts": 0.955465194409279,
+      "rotation": {
+        "probability": 0.8597412109375,
+        "states": 265
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 66
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 26,
+      "random": {
+        "probability": 0.8255351635627056,
+        "states": 3102
+      },
+      "randomWith2Restarts": 0.994689642945574,
+      "rotation": {
+        "probability": 0.7932420267489712,
+        "states": 204
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 45
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 27,
+      "random": {
+        "probability": 0.7905938376192244,
+        "states": 3714
+      },
+      "randomWith2Restarts": 0.9908173427612718,
+      "rotation": {
+        "probability": 0.7183738425925924,
+        "states": 213
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 99
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 28,
+      "random": {
+        "probability": 1,
+        "states": 5265
+      },
+      "randomWith2Restarts": 1,
+      "rotation": {
+        "probability": 1,
+        "states": 359
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 87
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 29,
+      "random": {
+        "probability": 0.9331329106380287,
+        "states": 8838
+      },
+      "randomWith2Restarts": 0.9997010233591974,
+      "rotation": {
+        "probability": 0.7200636256672808,
+        "states": 919
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 33
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 30,
+      "random": {
+        "probability": 0.2785910417015684,
+        "states": 5710
+      },
+      "randomWith2Restarts": 0.6245564973041353,
+      "rotation": {
+        "probability": 0,
+        "states": 21
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 68
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 31,
+      "random": {
+        "probability": 0.5667917573155481,
+        "states": 33448
+      },
+      "randomWith2Restarts": 0.9187000770218187,
+      "rotation": {
+        "probability": 0.33061599794238683,
+        "states": 544
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 35
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 32,
+      "random": {
+        "probability": 0.8222639486561976,
+        "states": 10192
+      },
+      "randomWith2Restarts": 0.9943852996628689,
+      "rotation": {
+        "probability": 0.9100449668175642,
+        "states": 975
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 167
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 33,
+      "random": {
+        "probability": 0.8735201448340967,
+        "states": 27765
+      },
+      "randomWith2Restarts": 0.9979766823090159,
+      "rotation": {
+        "probability": 0.9008264210564136,
+        "states": 5954
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 71
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 34,
+      "random": {
+        "probability": 0.4881777941831256,
+        "states": 66668
+      },
+      "randomWith2Restarts": 0.865922046486499,
+      "rotation": {
+        "probability": 0.37613516131461705,
+        "states": 2973
+      },
+      "oneStepSafe": {
+        "probability": 0.7776562499999999,
+        "states": 400
+      },
+      "oneStepSafeWith2Restarts": 0.9890080491371155
+    },
+    {
+      "level": 35,
+      "random": {
+        "probability": 0.404961816536545,
+        "states": 33977
+      },
+      "randomWith2Restarts": 0.7893145686955065,
+      "rotation": {
+        "probability": 0,
+        "states": 138
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 198
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 36,
+      "random": {
+        "probability": 0.49780355424793576,
+        "states": 47849
+      },
+      "randomWith2Restarts": 0.8733454185285635,
+      "rotation": {
+        "probability": 0.3609540682101184,
+        "states": 1592
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 349
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 37,
+      "random": {
+        "probability": 0.9296267807480528,
+        "states": 58577
+      },
+      "randomWith2Restarts": 0.9996514843735615,
+      "rotation": {
+        "probability": 0.9796422004932059,
+        "states": 10351
+      },
+      "oneStepSafe": {
+        "probability": 0.9712500000000001,
+        "states": 282
+      },
+      "oneStepSafeWith2Restarts": 0.999976236328125
+    },
+    {
+      "level": 38,
+      "random": {
+        "probability": 0.6108166802927351,
+        "states": 100195
+      },
+      "randomWith2Restarts": 0.941052871411234,
+      "rotation": {
+        "probability": 0.4347307506493087,
+        "states": 4053
+      },
+      "oneStepSafe": {
+        "probability": 0.7519370498971193,
+        "states": 663
+      },
+      "oneStepSafeWith2Restarts": 0.9847353900021075
+    },
+    {
+      "level": 39,
+      "random": {
+        "probability": 0.6188787027387909,
+        "states": 66661
+      },
+      "randomWith2Restarts": 0.944640819286024,
+      "rotation": {
+        "probability": 0.8164243191691583,
+        "states": 2057
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 38
+      },
+      "oneStepSafeWith2Restarts": 1
+    },
+    {
+      "level": 40,
+      "random": {
+        "probability": 0.6175343238068719,
+        "states": 24165
+      },
+      "randomWith2Restarts": 0.9440529233855509,
+      "rotation": {
+        "probability": 0.687572786514807,
+        "states": 4253
+      },
+      "oneStepSafe": {
+        "probability": 1,
+        "states": 322
+      },
+      "oneStepSafeWith2Restarts": 1
+    }
+  ]
+}

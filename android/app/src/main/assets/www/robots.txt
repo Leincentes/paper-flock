@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://leincentes.github.io/paper-flock/sitemap.xml

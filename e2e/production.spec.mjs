@@ -170,7 +170,7 @@ test("manifest and release metadata are valid production JSON", async ({
   const release = await request.get("/release.json");
   expect(release.ok()).toBeTruthy();
   const releasePayload = await release.json();
-  expect(releasePayload.buildVersion).toBe("1.4.2");
+  expect(releasePayload.buildVersion).toBe("1.4.4");
   expect(releasePayload.releaseChannel).toBe("production");
 
   const config = await request.get("/app-config.json");
@@ -262,6 +262,19 @@ test("Settings exposes production game, accessibility, data, and about sections"
   await expect(
     page.locator("#settings-export-button")
   ).toHaveCount(1);
+});
+
+test("new player sound is enabled by default", async ({ page }) => {
+  await openReturningPlayerGame(page);
+  await openSettings(page);
+
+  await expect(page.locator("#settings-sound")).toBeChecked();
+
+  const saved = await page.evaluate(() => {
+    const raw = localStorage.getItem("paper-flock-save");
+    return raw ? JSON.parse(raw).payload.soundEnabled : null;
+  });
+  expect(saved).toBe(true);
 });
 
 test("game settings persist inside the player save", async ({ page }) => {
@@ -716,7 +729,7 @@ test("Chapter 2 exposes progress percentage and mastery guidance", async ({
       "paper-flock-save",
       JSON.stringify({
         saveVersion: 11,
-        buildVersion: "1.4.2",
+        buildVersion: "1.4.4",
         currentLevel: 23,
         unlockedLevel: 24,
         completedLevels: [
@@ -882,7 +895,7 @@ test("recommended Journal goal opens the correct campaign level", async ({
       "paper-flock-save",
       JSON.stringify({
         saveVersion: 12,
-        buildVersion: "1.4.2",
+        buildVersion: "1.4.4",
         currentLevel: 4,
         unlockedLevel: 4,
         completedLevels: [1, 2, 3],

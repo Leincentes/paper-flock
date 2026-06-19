@@ -11,7 +11,7 @@ import {
   STORAGE_KEYS
 } from "./storage-player-core.js";
 
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
 const PUBLISHER = "Gamelo Studio";
 const SUPPORT_EMAIL = "leincentes@gmail.com";
 
@@ -718,8 +718,14 @@ function resetPlayerData() {
 }
 
 function downloadJson(filename, payload) {
+  const content = JSON.stringify(payload, null, 2);
+  if (globalThis.PaperFlockAndroid?.saveTextFile) {
+    globalThis.PaperFlockAndroid.saveTextFile(filename, content);
+    return;
+  }
+
   const blob = new Blob(
-    [JSON.stringify(payload, null, 2)],
+    [content],
     { type: "application/json" }
   );
   const link = document.createElement("a");

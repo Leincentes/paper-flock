@@ -1,4 +1,4 @@
-const CACHE_NAME = "paper-flock-static-v1.4.2";
+const CACHE_NAME = "paper-flock-static-v1.4.4";
 const CACHE_PREFIX = "paper-flock-static-";
 const APP_STATIC_RESOURCES = Object.freeze([
   "./",

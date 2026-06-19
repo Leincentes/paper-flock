@@ -81,7 +81,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.event.repository.private == false
         uses: actions/attest@v4
         with:
-          subject-path: release-bundle/paper-flock-v1.4.2-release.zip
+          subject-path: release-bundle/paper-flock-v1.4.4-release.zip
           sbom-path: release-bundle/sbom.cdx.json
 
       - name: Record attestation status
@@ -98,7 +98,7 @@ jobs:
       - name: Upload provenance-ready release bundle
         uses: actions/upload-artifact@v5
         with:
-          name: paper-flock-v1.4.2-release-bundle
+          name: paper-flock-v1.4.4-release-bundle
           path: release-bundle
           if-no-files-found: error
           retention-days: 30
@@ -248,7 +248,7 @@ jobs:
       - name: Download release bundle
         uses: actions/download-artifact@v5
         with:
-          name: paper-flock-v1.4.2-release-bundle
+          name: paper-flock-v1.4.4-release-bundle
           path: release-bundle
 
       - name: Generate importable CI evidence from completed jobs
@@ -264,12 +264,12 @@ jobs:
             --deployment-audit=${{ needs.post-deployment-audit.result == 'success' }} \
             --sbom=${{ needs.static-quality.result == 'success' }} \
             --provenance=${{ needs.static-quality.outputs.provenance_created }} \
-            --output=paper-flock-v1.4.2-quality-evidence.json
+            --output=paper-flock-v1.4.4-quality-evidence.json
 
       - name: Upload quality evidence
         uses: actions/upload-artifact@v5
         with:
-          name: paper-flock-v1.4.2-quality-evidence
-          path: paper-flock-v1.4.2-quality-evidence.json
+          name: paper-flock-v1.4.4-quality-evidence
+          path: paper-flock-v1.4.4-quality-evidence.json
           if-no-files-found: error
           retention-days: 90

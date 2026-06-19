@@ -1,4 +1,4 @@
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
 const READY_TIMEOUT_MS = 8000;
 let ready = false;
 
@@ -130,14 +130,22 @@ function exportRecoveryData() {
     kind: "startup-recovery",
     storageValues
   };
+  const content = JSON.stringify(payload, null, 2);
+  const filename =
+    `paper-flock-v${BUILD_VERSION}-startup-recovery.json`;
+
+  if (globalThis.PaperFlockAndroid?.saveTextFile) {
+    globalThis.PaperFlockAndroid.saveTextFile(filename, content);
+    return;
+  }
+
   const blob = new Blob(
-    [JSON.stringify(payload, null, 2)],
+    [content],
     { type: "application/json" }
   );
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download =
-    `paper-flock-v${BUILD_VERSION}-startup-recovery.json`;
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(link.href);
 }

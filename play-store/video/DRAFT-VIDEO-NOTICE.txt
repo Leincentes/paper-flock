@@ -1,0 +1,4 @@
+This MP4 is a planning draft built from actual Paper Flock screenshots.
+Before Play production submission, replace it with a direct screen recording
+from the compiled Android build and upload that final video to an
+owner-controlled public or unlisted YouTube URL with ads disabled.

@@ -61,7 +61,7 @@ import {
   normalizeTutorialProgress
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.4.2";
+const BUILD_VERSION = "1.4.4";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const EVENT_KEY = STORAGE_KEYS.events;
 const RESEARCH_KEY = STORAGE_KEYS.research;
@@ -149,7 +149,7 @@ const state = {
   levelMeta: null,
   history: [],
   moves: 0,
-  soundEnabled: false,
+  soundEnabled: true,
   effectsPreference: "auto",
   resolvedEffects: "full",
   onboarding: normalizeOnboarding(DEFAULT_ONBOARDING),
@@ -203,7 +203,7 @@ function normalizeSavePayload(value) {
     bestFeathers: normalizeFeatherMap(value.bestFeathers),
     dailyFeathers: trimFeatherRecords(value.dailyFeathers),
     selectedTheme: String(value.selectedTheme ?? "dawn"),
-    soundEnabled: Boolean(value.soundEnabled),
+    soundEnabled: value.soundEnabled !== false,
     effectsPreference: normalizeEffectsPreference(
       value.effectsPreference
     ),
@@ -235,7 +235,7 @@ function loadSave() {
   )
     ? parsed.selectedTheme
     : "dawn";
-  state.soundEnabled = Boolean(parsed.soundEnabled);
+  state.soundEnabled = parsed.soundEnabled !== false;
   state.effectsPreference = normalizeEffectsPreference(
     parsed.effectsPreference
   );
@@ -1833,7 +1833,7 @@ function resetGameStateForParticipant() {
   state.bestFeathers = {};
   state.dailyFeathers = {};
   state.selectedTheme = "dawn";
-  state.soundEnabled = false;
+  state.soundEnabled = true;
   state.effectsPreference = "auto";
   state.onboarding = normalizeOnboarding(DEFAULT_ONBOARDING);
   applyTheme("dawn");
@@ -2061,7 +2061,7 @@ function exportEventLog() {
 
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v1.4.2 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all local Paper Flock v1.4.4 progress, onboarding, feedback settings, feathers, themes, and test events?"
   );
   if (!confirmed) {
     return;
@@ -2078,7 +2078,7 @@ function resetProgress() {
   state.bestFeathers = {};
   state.dailyFeathers = {};
   state.selectedTheme = "dawn";
-  state.soundEnabled = false;
+  state.soundEnabled = true;
   state.effectsPreference = "auto";
   state.onboarding = normalizeOnboarding(DEFAULT_ONBOARDING);
   applyTheme("dawn");
