@@ -1,6 +1,6 @@
 # SPEC-001-Paper-Flock
 
-**Current validation build:** v1.0
+**Current validation build:** v1.2
 
 ## Background
 
@@ -427,3 +427,52 @@ The v1.0 release preserves the mobile viewport, offline, accessibility,
 security, recovery, and release-evidence architecture. New v1.0 CI evidence
 and explicit human sign-off remain required because evidence is tied to the
 exact release version and SHA-256 digest.
+
+
+## v1.1 first-launch interactive tutorial
+
+New players enter a full-screen, skippable tutorial before the campaign is
+visually exposed. The tutorial uses isolated practice state and does not alter
+campaign moves, feathers, unlocked levels, or saved checkpoints.
+
+```plantuml
+@startuml
+actor Player
+component "First-launch Gate" as Gate
+component "Tutorial State Machine" as Tutorial
+component "Practice Board" as Practice
+database "Local Tutorial Progress" as Storage
+component "Campaign Runtime" as Campaign
+component "How to Play Replay" as Replay
+
+Player --> Gate
+Gate --> Tutorial : new player
+Gate --> Campaign : completed, skipped, or existing save
+Tutorial --> Practice
+Tutorial --> Storage
+Replay --> Tutorial
+Tutorial --> Campaign : complete or skip
+@enduml
+```
+
+The five tutorial steps cover the goal, clear paths, blocked paths, clockwise
+neighbor rotation, and a small solvable practice flock. Completion is stored
+locally and included in backup/restore exports.
+
+
+## v1.2 production settings and artifact boundary
+
+The production runtime uses a Settings façade over four player domains:
+
+- game preferences
+- accessibility preferences
+- application lifecycle
+- player data management
+
+The source repository and deployed artifact are separate trust boundaries. The
+source may contain CI-only test and evidence code. The release builder copies
+only an explicit player allowlist, writes sanitized public JSON, and rejects
+internal filenames, module references, query modes, or prototype wording.
+
+Player backups use a dedicated storage-key allowlist. They cannot contain
+research, certification, quality-evidence, or unrelated local-storage values.

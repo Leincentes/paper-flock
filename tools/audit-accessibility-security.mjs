@@ -57,7 +57,7 @@ for (const file of htmlFiles) {
   );
   record(
     `${file}-referrer`,
-    /name="referrer"\s+content="no-referrer"/i.test(html),
+    /<meta[^>]+(?:name="referrer"[^>]+content="no-referrer"|content="no-referrer"[^>]+name="referrer")/i.test(html),
     "Page uses a no-referrer policy."
   );
 
@@ -159,7 +159,7 @@ record(
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.0",
+  buildVersion: "1.2",
   generatedAt: new Date().toISOString(),
   passes,
   failures,

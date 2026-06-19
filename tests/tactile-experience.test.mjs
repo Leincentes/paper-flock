@@ -11,14 +11,20 @@ const css = fs.readFileSync(
   "utf8"
 );
 const ui = fs.readFileSync(
-  new URL("../src/game-ui.js", import.meta.url),
+  new URL("../src/game-player-ui.js", import.meta.url),
   "utf8"
 );
 
-test("customer UI exposes sound and effects controls with labels", () => {
-  assert.match(html, /id="sound-button"[\s\S]*Sound off/);
-  assert.match(html, /id="effects-button"[\s\S]*Effects auto/);
-  assert.match(html, /class="feedback-settings"/);
+test("customer UI exposes sound, haptics, effects, and themes in Settings", () => {
+  const settings = fs.readFileSync(
+    new URL("../src/settings-ui.js", import.meta.url),
+    "utf8"
+  );
+  assert.match(html, /src="\.\/src\/settings-ui\.js"/);
+  assert.match(settings, /id="settings-sound"/);
+  assert.match(settings, /id="settings-haptics"/);
+  assert.match(settings, /id="settings-effects"/);
+  assert.match(settings, /id="settings-theme"/);
 });
 
 test("blocked paths receive source, trace, and blocker treatments", () => {

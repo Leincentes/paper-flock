@@ -1,63 +1,35 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.0",
+  "buildVersion": "1.2",
   "updatedAt": "2026-06-19",
   "issues": [
     {
       "id": "PF-LOCAL-ONLY",
-      "title": "Progress is stored only on the current device and browser",
+      "title": "Progress is stored on the current device and browser",
       "severity": "medium",
       "status": "open",
-      "workaround": "Use Backup app data before changing devices, browsers, or site domains."
+      "workaround": "Use Settings → Data → Export progress backup before changing devices, browsers, or site domains."
     },
     {
       "id": "PF-IOS-INSTALL",
       "title": "iPhone and iPad installation uses Safari Add to Home Screen",
       "severity": "low",
       "status": "platform-limitation",
-      "workaround": "Open in Safari, then Share \u2192 Add to Home Screen."
-    },
-    {
-      "id": "PF-FEEDBACK-MANUAL",
-      "title": "Feedback and diagnostics are downloaded rather than uploaded",
-      "severity": "medium",
-      "status": "open",
-      "workaround": "Send the downloaded JSON file through the creator's configured support channel."
-    },
-    {
-      "id": "PF-SUPPORT-CONTACT",
-      "title": "Public support contact must be configured before production",
-      "severity": "high",
-      "status": "resolved",
-      "workaround": "Configured public support: leincentes@gmail.com."
-    },
-    {
-      "id": "PF-A11Y-PHYSICAL",
-      "title": "Accessibility certification still requires five physical reports",
-      "severity": "high",
-      "status": "open",
-      "workaround": "Run ?a11ycert=1 for keyboard, VoiceOver, TalkBack, text scaling, and contrast, then import all reports."
-    },
-    {
-      "id": "PF-PROD-CONFIG",
-      "title": "Production publisher, support contact, and canonical URL are not configured",
-      "severity": "high",
-      "status": "resolved",
-      "workaround": "Configured Gamelo Studio, leincentes@gmail.com, and https://leincentes.github.io/paper-flock/."
-    },
-    {
-      "id": "PF-CI-EVIDENCE",
-      "title": "Paper Flock 1.0 production approval requires CI evidence from the 1.0 build",
-      "severity": "high",
-      "status": "open",
-      "workaround": "Run the v1.0 workflow, download its quality-evidence artifact, import it, and complete final sign-off."
+      "workaround": "Open Paper Flock in Safari, then use Share → Add to Home Screen."
     },
     {
       "id": "PF-MOBILE-BROWSER-CHROME",
-      "title": "Normal browser tabs may still show browser address and navigation controls",
+      "title": "Normal browser tabs may show browser navigation controls",
       "severity": "low",
       "status": "platform-limitation",
-      "workaround": "Install Paper Flock to the Home Screen for the most game-like standalone viewport."
+      "workaround": "Install Paper Flock to the Home Screen for the most game-like display."
+    },
+    {
+      "id": "PF-TUTORIAL-EXISTING-PLAYERS",
+      "title": "Existing saved players are not interrupted by the tutorial",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Open Settings → Game → Replay how to play."
     }
   ]
 }

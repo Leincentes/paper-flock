@@ -12,15 +12,6 @@ import {
   tracePath
 } from "./game-core.js";
 import {
-  aggregateSessions,
-  appendSessionEvent,
-  completeResearchSession,
-  createResearchSession,
-  isValidParticipantCode,
-  normalizeParticipantCode,
-  sessionsToCsv
-} from "./research-core.js";
-import {
   isDailyUnlocked,
   localDateKey
 } from "./progress-core.js";
@@ -56,12 +47,13 @@ import {
   migrateLegacyStorage,
   normalizeCheckpoint,
   writeRecoverableJson
-} from "./storage-core.js";
+} from "./storage-player-core.js";
+import {
+  normalizeTutorialProgress
+} from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.0";
+const BUILD_VERSION = "1.2";
 const STORAGE_KEY = STORAGE_KEYS.save;
-const EVENT_KEY = STORAGE_KEYS.events;
-const RESEARCH_KEY = STORAGE_KEYS.research;
 const MAX_LEVEL = 20;
 
 const storageMigration = migrateLegacyStorage(localStorage);
@@ -97,29 +89,6 @@ const elements = {
   closeMap: document.querySelector("#close-map-button"),
   closeMapBottom: document.querySelector("#close-map-bottom-button"),
   replay: document.querySelector("#replay-button"),
-  researchWelcome: document.querySelector("#research-welcome"),
-  startResearch: document.querySelector("#start-research-button"),
-  normalPlay: document.querySelector("#normal-play-button"),
-  participantCode: document.querySelector("#participant-code"),
-  participantSegment: document.querySelector("#participant-segment"),
-  participantConsent: document.querySelector("#participant-consent"),
-  consentError: document.querySelector("#consent-error"),
-  researchRibbon: document.querySelector("#research-ribbon"),
-  researchCode: document.querySelector("#research-code-label"),
-  endResearch: document.querySelector("#end-research-button"),
-  survey: document.querySelector("#research-survey"),
-  surveyForm: document.querySelector("#research-survey-form"),
-  surveyError: document.querySelector("#survey-error"),
-  sessionComplete: document.querySelector("#session-complete"),
-  sessionCompleteSummary: document.querySelector("#session-complete-summary"),
-  downloadSession: document.querySelector("#download-session-button"),
-  nextParticipant: document.querySelector("#next-participant-button"),
-  exportResearchJson: document.querySelector("#export-research-json-button"),
-  exportResearchCsv: document.querySelector("#export-research-csv-button"),
-  researchAggregate: document.querySelector("#research-aggregate"),
-  launchResearch: document.querySelector("#launch-research-button"),
-  exportLog: document.querySelector("#export-log-button"),
-  resetProgress: document.querySelector("#reset-progress-button"),
   completion: document.querySelector("#completion"),
   completionTitle: document.querySelector("#completion-title"),
   completionBody: document.querySelector("#completion-body"),
@@ -147,6 +116,7 @@ const state = {
   history: [],
   moves: 0,
   soundEnabled: false,
+  hapticsEnabled: true,
   effectsPreference: "auto",
   resolvedEffects: "full",
   onboarding: normalizeOnboarding(DEFAULT_ONBOARDING),
@@ -159,9 +129,6 @@ const state = {
   deadlocks: 0,
   undosUsed: 0,
   dailyUnlockLogged: false,
-  researchActive: false,
-  researchSessionId: null,
-  researchArchive: { schemaVersion: 1, sessions: [] },
   sessionId: createSessionId(),
   sessionStartedAt: Date.now()
 };
@@ -201,6 +168,7 @@ function normalizeSavePayload(value) {
     dailyFeathers: trimFeatherRecords(value.dailyFeathers),
     selectedTheme: String(value.selectedTheme ?? "dawn"),
     soundEnabled: Boolean(value.soundEnabled),
+    hapticsEnabled: value.hapticsEnabled !== false,
     effectsPreference: normalizeEffectsPreference(
       value.effectsPreference
     ),
@@ -233,10 +201,36 @@ function loadSave() {
     ? parsed.selectedTheme
     : "dawn";
   state.soundEnabled = Boolean(parsed.soundEnabled);
+  state.hapticsEnabled = parsed.hapticsEnabled !== false;
   state.effectsPreference = normalizeEffectsPreference(
     parsed.effectsPreference
   );
   state.onboarding = normalizeOnboarding(parsed.onboarding);
+
+  try {
+    const tutorial = normalizeTutorialProgress(
+      JSON.parse(
+        localStorage.getItem(STORAGE_KEYS.tutorial) || "{}"
+      )
+    );
+    if (tutorial.status === "completed") {
+      state.onboarding = {
+        ...state.onboarding,
+        successfulEscapes: Math.max(
+          state.onboarding.successfulEscapes,
+          2
+        ),
+        rotationEventsSeen: Math.max(
+          state.onboarding.rotationEventsSeen,
+          1
+        ),
+        blockedExplained: true
+      };
+    }
+  } catch {
+    // Tutorial progress is optional and must never block the game.
+  }
+
   state.pendingCheckpoint = normalizeCheckpoint(
     parsed.checkpoint,
     {
@@ -303,6 +297,7 @@ function saveProgress() {
     dailyFeathers: trimFeatherRecords(state.dailyFeathers),
     selectedTheme: state.selectedTheme,
     soundEnabled: state.soundEnabled,
+    hapticsEnabled: state.hapticsEnabled,
     effectsPreference: state.effectsPreference,
     onboarding: normalizeOnboarding(state.onboarding),
     checkpoint: createCheckpoint()
@@ -315,97 +310,7 @@ function saveProgress() {
 }
 
 
-function loadResearchArchive() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(RESEARCH_KEY) || "{}");
-    state.researchArchive = {
-      schemaVersion: 1,
-      sessions: Array.isArray(parsed.sessions) ? parsed.sessions : []
-    };
-
-    const active = [...state.researchArchive.sessions]
-      .reverse()
-      .find((session) => session.status === "active");
-    if (active) {
-      state.researchActive = true;
-      state.researchSessionId = active.sessionId;
-      elements.researchRibbon.hidden = false;
-      elements.researchCode.textContent = active.participantCode;
-    }
-  } catch {
-    localStorage.removeItem(RESEARCH_KEY);
-    state.researchArchive = { schemaVersion: 1, sessions: [] };
-  }
-  updateResearchAggregate();
-}
-
-function saveResearchArchive() {
-  localStorage.setItem(RESEARCH_KEY, JSON.stringify(state.researchArchive));
-  updateResearchAggregate();
-}
-
-function currentResearchSessionIndex() {
-  return state.researchArchive.sessions.findIndex(
-    (session) => session.sessionId === state.researchSessionId
-  );
-}
-
-function updateResearchAggregate() {
-  if (!elements.researchAggregate) {
-    return;
-  }
-  const aggregate = aggregateSessions(state.researchArchive.sessions);
-  const completed = aggregate.completedSessions;
-  elements.researchAggregate.textContent =
-    completed === 0
-      ? "No completed research sessions saved."
-      : `${completed} completed session${completed === 1 ? "" : "s"} saved locally.`;
-}
-
-function appendResearchEvent(event) {
-  if (!state.researchActive) {
-    return;
-  }
-  const index = currentResearchSessionIndex();
-  if (index < 0) {
-    return;
-  }
-  state.researchArchive.sessions[index] = appendSessionEvent(
-    state.researchArchive.sessions[index],
-    event
-  );
-  saveResearchArchive();
-}
-
-function logEvent(name, data = {}) {
-  const event = {
-    name,
-    buildVersion: BUILD_VERSION,
-    occurredAt: new Date().toISOString(),
-    sessionId: state.sessionId,
-    mode: state.mode,
-    puzzleId:
-      state.mode === "daily" ? state.dailyDateKey : `level-${state.currentLevel}`,
-    level: state.mode === "campaign" ? state.currentLevel : null,
-    elapsedMs: Date.now() - state.sessionStartedAt,
-    ...data
-  };
-
-  appendResearchEvent(event);
-  globalThis.dispatchEvent(
-    new CustomEvent("paperflock:event", {
-      detail: JSON.parse(JSON.stringify(event))
-    })
-  );
-
-  try {
-    const events = JSON.parse(localStorage.getItem(EVENT_KEY) || "[]");
-    events.push(event);
-    localStorage.setItem(EVENT_KEY, JSON.stringify(events.slice(-750)));
-  } catch {
-    localStorage.setItem(EVENT_KEY, JSON.stringify([event]));
-  }
-}
+function logEvent() {}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -1462,27 +1367,31 @@ function updateHud() {
     logEvent("daily_unlock_presented");
   }
 
-  const soundLabel =
-    elements.sound.querySelector("span:last-child") ??
-    elements.sound;
-  soundLabel.textContent =
-    state.soundEnabled ? "Sound on" : "Sound off";
-  elements.sound.setAttribute(
-    "aria-pressed",
-    String(state.soundEnabled)
-  );
+  if (elements.sound) {
+    const soundLabel =
+      elements.sound.querySelector("span:last-child") ??
+      elements.sound;
+    soundLabel.textContent =
+      state.soundEnabled ? "Sound on" : "Sound off";
+    elements.sound.setAttribute(
+      "aria-pressed",
+      String(state.soundEnabled)
+    );
+  }
 
-  const effectsText =
-    elements.effects.querySelector("span:last-child") ??
-    elements.effects;
-  effectsText.textContent = effectsLabel(
-    state.effectsPreference,
-    state.resolvedEffects
-  );
-  elements.effects.setAttribute(
-    "aria-label",
-    `Visual effects setting: ${effectsText.textContent}`
-  );
+  if (elements.effects) {
+    const effectsText =
+      elements.effects.querySelector("span:last-child") ??
+      elements.effects;
+    effectsText.textContent = effectsLabel(
+      state.effectsPreference,
+      state.resolvedEffects
+    );
+    elements.effects.setAttribute(
+      "aria-label",
+      `Visual effects setting: ${effectsText.textContent}`
+    );
+  }
 }
 
 function setMessage(text) {
@@ -1498,6 +1407,9 @@ function prefersReducedMotion() {
 }
 
 function vibrateFeedback(kind, feathers = 1) {
+  if (!state.hapticsEnabled) {
+    return;
+  }
   const pattern = hapticPattern(kind, feathers);
   if (pattern.length > 0) {
     navigator.vibrate?.(pattern);
@@ -1788,151 +1700,6 @@ function celebrate() {
 }
 
 
-function resetGameStateForParticipant() {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(STORAGE_KEYS.saveBackup);
-  localStorage.removeItem(EVENT_KEY);
-  state.mode = "campaign";
-  state.currentLevel = 1;
-  state.dailyDateKey = null;
-  state.unlockedLevel = 1;
-  state.completedLevels = [];
-  state.bestFeathers = {};
-  state.dailyFeathers = {};
-  state.selectedTheme = "dawn";
-  state.soundEnabled = false;
-  state.effectsPreference = "auto";
-  state.onboarding = normalizeOnboarding(DEFAULT_ONBOARDING);
-  applyTheme("dawn");
-  applyEffectsMode();
-  state.dailyUnlockLogged = false;
-  state.sessionId = createSessionId();
-  state.sessionStartedAt = Date.now();
-}
-
-function startResearchSession() {
-  const participantCode = normalizeParticipantCode(
-    elements.participantCode.value
-  );
-  const consented = elements.participantConsent.checked;
-
-  if (!isValidParticipantCode(participantCode)) {
-    elements.consentError.textContent =
-      "Enter a 2–16 character anonymous code using letters, numbers, hyphens, or underscores.";
-    elements.participantCode.focus();
-    return;
-  }
-  if (!consented) {
-    elements.consentError.textContent =
-      "Consent is required before research mode can begin.";
-    elements.participantConsent.focus();
-    return;
-  }
-
-  const alreadyUsed = state.researchArchive.sessions.some(
-    (session) => session.participantCode === participantCode
-  );
-  if (alreadyUsed) {
-    elements.consentError.textContent =
-      "That anonymous code is already saved on this device. Use a new code.";
-    elements.participantCode.focus();
-    return;
-  }
-
-  resetGameStateForParticipant();
-  const startedAt = new Date().toISOString();
-  const session = createResearchSession({
-    participantCode,
-    segment: elements.participantSegment.value,
-    sessionId: state.sessionId,
-    startedAt
-  });
-  state.researchArchive.sessions.push(session);
-  state.researchActive = true;
-  state.researchSessionId = session.sessionId;
-  saveResearchArchive();
-
-  elements.consentError.textContent = "";
-  elements.researchWelcome.hidden = true;
-  elements.researchRibbon.hidden = false;
-  elements.researchCode.textContent = participantCode;
-  logEvent("research_session_started", {
-    segment: session.segment,
-    consentedAt: session.consentedAt
-  });
-  startLevel(1, "research_start");
-}
-
-function startNormalPlay() {
-  state.researchActive = false;
-  state.researchSessionId = null;
-  elements.researchWelcome.hidden = true;
-  elements.researchRibbon.hidden = true;
-  logEvent("normal_play_selected");
-}
-
-function openResearchSurvey() {
-  if (!state.researchActive) {
-    return;
-  }
-  logEvent("research_end_requested");
-  elements.survey.hidden = false;
-  elements.survey.querySelector("textarea, select, input")?.focus();
-}
-
-function collectSurveyResponses(form) {
-  const data = new FormData(form);
-  return {
-    featherMeaning: String(data.get("featherMeaning") ?? "").trim(),
-    featherEffect: String(data.get("featherEffect") ?? ""),
-    dailyExpectation: String(data.get("dailyExpectation") ?? "").trim(),
-    dailyOptionalRequired: String(data.get("dailyOptionalRequired") ?? ""),
-    returnReason: String(data.get("returnReason") ?? "").trim(),
-    stopReason: String(data.get("stopReason") ?? "").trim(),
-    additionalComments: String(data.get("additionalComments") ?? "").trim()
-  };
-}
-
-function submitResearchSurvey(event) {
-  event.preventDefault();
-  const responses = collectSurveyResponses(elements.surveyForm);
-  if (
-    responses.featherMeaning.length < 2 ||
-    !responses.featherEffect ||
-    !responses.dailyOptionalRequired
-  ) {
-    elements.surveyError.textContent =
-      "Please answer the required questions before ending the session.";
-    return;
-  }
-
-  logEvent("research_survey_submitted", {
-    featherEffect: responses.featherEffect,
-    dailyOptionalRequired: responses.dailyOptionalRequired
-  });
-
-  const index = currentResearchSessionIndex();
-  const completed = completeResearchSession(
-    state.researchArchive.sessions[index],
-    {
-      endedAt: new Date().toISOString(),
-      responses
-    }
-  );
-  state.researchArchive.sessions[index] = completed;
-  saveResearchArchive();
-
-  state.researchActive = false;
-  state.researchSessionId = null;
-  elements.researchRibbon.hidden = true;
-  elements.survey.hidden = true;
-  elements.surveyError.textContent = "";
-  elements.sessionCompleteSummary.textContent =
-    `Session ${completed.participantCode} saved locally. ` +
-    `Highest campaign level completed: ${completed.summary.highestCampaignLevelCompleted}.`;
-  elements.sessionComplete.hidden = false;
-}
-
 function downloadBlob(filename, type, content) {
   const blob = new Blob([content], { type });
   const link = document.createElement("a");
@@ -1942,93 +1709,9 @@ function downloadBlob(filename, type, content) {
   URL.revokeObjectURL(link.href);
 }
 
-function exportCurrentResearchSession() {
-  const completed = [...state.researchArchive.sessions]
-    .reverse()
-    .find((session) => session.status === "complete");
-  if (!completed) {
-    return;
-  }
-  downloadBlob(
-    `paper-flock-v${BUILD_VERSION}-${completed.participantCode}.json`,
-    "application/json",
-    JSON.stringify(
-      {
-        buildVersion: BUILD_VERSION,
-        exportedAt: new Date().toISOString(),
-        privacy:
-          "Anonymous playtest session stored locally and exported with participant consent.",
-        session: completed
-      },
-      null,
-      2
-    )
-  );
-}
-
-function exportResearchJson() {
-  const aggregate = aggregateSessions(state.researchArchive.sessions);
-  downloadBlob(
-    `paper-flock-v${BUILD_VERSION}-research-sessions.json`,
-    "application/json",
-    JSON.stringify(
-      {
-        buildVersion: BUILD_VERSION,
-        exportedAt: new Date().toISOString(),
-        privacy:
-          "Anonymous research sessions stored locally. No server or tracking SDK was used.",
-        aggregate,
-        sessions: state.researchArchive.sessions
-      },
-      null,
-      2
-    )
-  );
-}
-
-function exportResearchCsv() {
-  downloadBlob(
-    `paper-flock-v${BUILD_VERSION}-research-sessions.csv`,
-    "text/csv;charset=utf-8",
-    sessionsToCsv(state.researchArchive.sessions)
-  );
-}
-
-function prepareNextParticipant() {
-  elements.sessionComplete.hidden = true;
-  elements.surveyForm.reset();
-  elements.participantCode.value = "";
-  elements.participantSegment.value = "casual-puzzle";
-  elements.participantConsent.checked = false;
-  elements.researchWelcome.hidden = false;
-  elements.participantCode.focus();
-}
-
-function exportEventLog() {
-  const payload = {
-    buildVersion: BUILD_VERSION,
-    exportedAt: new Date().toISOString(),
-    privacy: "All events were stored locally in this browser.",
-    save: JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"),
-    researchAggregate: aggregateSessions(state.researchArchive.sessions),
-    events: JSON.parse(localStorage.getItem(EVENT_KEY) || "[]")
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {
-    type: "application/json"
-  });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `paper-flock-v${BUILD_VERSION}-test-log-${new Date()
-    .toISOString()
-    .slice(0, 10)}.json`;
-  link.click();
-  URL.revokeObjectURL(link.href);
-  logEvent("test_log_exported");
-}
-
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v1.0 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all Paper Flock progress, tutorial completion, preferences, feathers, and themes on this device?"
   );
   if (!confirmed) {
     return;
@@ -2036,7 +1719,6 @@ function resetProgress() {
 
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(STORAGE_KEYS.saveBackup);
-  localStorage.removeItem(EVENT_KEY);
   state.mode = "campaign";
   state.currentLevel = 1;
   state.dailyDateKey = null;
@@ -2046,6 +1728,7 @@ function resetProgress() {
   state.dailyFeathers = {};
   state.selectedTheme = "dawn";
   state.soundEnabled = false;
+  state.hapticsEnabled = true;
   state.effectsPreference = "auto";
   state.onboarding = normalizeOnboarding(DEFAULT_ONBOARDING);
   applyTheme("dawn");
@@ -2053,7 +1736,40 @@ function resetProgress() {
   state.sessionId = createSessionId();
   state.sessionStartedAt = Date.now();
   startLevel(1, "progress_reset");
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:tutorial-reset")
+  );
 }
+
+globalThis.addEventListener(
+  "paperflock:tutorial-finished",
+  (event) => {
+    if (event.detail?.status !== "completed") {
+      return;
+    }
+
+    state.onboarding = {
+      ...state.onboarding,
+      successfulEscapes: Math.max(
+        state.onboarding.successfulEscapes,
+        2
+      ),
+      rotationEventsSeen: Math.max(
+        state.onboarding.rotationEventsSeen,
+        1
+      ),
+      blockedExplained: true
+    };
+    saveProgress();
+    setMessage(
+      "Tutorial complete. Free the flock when you are ready."
+    );
+    logEvent("interactive_tutorial_completed", {
+      replay: Boolean(event.detail?.replay),
+      practiceMoves: Number(event.detail?.moves ?? 0)
+    });
+  }
+);
 
 elements.undo.addEventListener("click", undoMove);
 elements.restart.addEventListener("click", restartLevel);
@@ -2096,7 +1812,7 @@ elements.replay.addEventListener("click", () => {
     startLevel(state.currentLevel, "completion_replay");
   }
 });
-elements.sound.addEventListener("click", () => {
+elements.sound?.addEventListener("click", () => {
   state.soundEnabled = !state.soundEnabled;
   saveProgress();
   updateHud();
@@ -2110,20 +1826,7 @@ elements.sound.addEventListener("click", () => {
     playFeedback("hint");
   }
 });
-elements.effects.addEventListener("click", cycleEffectsMode);
-elements.startResearch.addEventListener("click", startResearchSession);
-elements.normalPlay.addEventListener("click", startNormalPlay);
-elements.endResearch.addEventListener("click", openResearchSurvey);
-elements.surveyForm.addEventListener("submit", submitResearchSurvey);
-elements.downloadSession.addEventListener("click", exportCurrentResearchSession);
-elements.nextParticipant.addEventListener("click", prepareNextParticipant);
-elements.exportResearchJson.addEventListener("click", exportResearchJson);
-elements.exportResearchCsv.addEventListener("click", exportResearchCsv);
-elements.launchResearch.addEventListener("click", () => {
-  globalThis.location.href = `${globalThis.location.pathname}?research=1`;
-});
-elements.exportLog.addEventListener("click", exportEventLog);
-elements.resetProgress.addEventListener("click", resetProgress);
+elements.effects?.addEventListener("click", cycleEffectsMode);
 elements.continue.addEventListener("click", () => {
   elements.completion.hidden = true;
   if (state.mode === "daily" || state.currentLevel === MAX_LEVEL) {
@@ -2169,11 +1872,88 @@ navigator.connection?.addEventListener?.("change", () => {
 });
 
 
+
+function settingsSnapshot() {
+  const availableThemeIds = new Set(
+    unlockedThemes(state.completedLevels).map(
+      (theme) => theme.id
+    )
+  );
+
+  return {
+    soundEnabled: state.soundEnabled,
+    hapticsEnabled: state.hapticsEnabled,
+    effectsPreference: state.effectsPreference,
+    resolvedEffects: state.resolvedEffects,
+    selectedTheme: state.selectedTheme,
+    themes: THEMES.map((theme) => ({
+      id: theme.id,
+      name: theme.name,
+      description: theme.description,
+      requirement: theme.requirement,
+      unlocked: availableThemeIds.has(theme.id)
+    })),
+    currentLevel: state.currentLevel,
+    unlockedLevel: state.unlockedLevel,
+    completedLevels: state.completedLevels.length,
+    totalFeathers: totalFeathers(state.bestFeathers)
+  };
+}
+
+function emitSettingsState() {
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:settings-state", {
+      detail: settingsSnapshot()
+    })
+  );
+}
+
+globalThis.addEventListener(
+  "paperflock:settings-state-request",
+  emitSettingsState
+);
+
+globalThis.addEventListener(
+  "paperflock:settings-change",
+  (event) => {
+    const detail = event.detail ?? {};
+    const soundWasEnabled = state.soundEnabled;
+
+    if (typeof detail.soundEnabled === "boolean") {
+      state.soundEnabled = detail.soundEnabled;
+    }
+    if (typeof detail.hapticsEnabled === "boolean") {
+      state.hapticsEnabled = detail.hapticsEnabled;
+    }
+    if (typeof detail.effectsPreference === "string") {
+      state.effectsPreference = normalizeEffectsPreference(
+        detail.effectsPreference
+      );
+      applyEffectsMode();
+    }
+    if (
+      typeof detail.selectedTheme === "string" &&
+      isThemeUnlocked(
+        detail.selectedTheme,
+        state.completedLevels
+      )
+    ) {
+      applyTheme(detail.selectedTheme);
+      renderThemePicker();
+    }
+
+    saveProgress();
+    updateHud();
+    emitSettingsState();
+
+    if (!soundWasEnabled && state.soundEnabled) {
+      playFeedback("hint");
+    }
+  }
+);
+
 function persistForLifecycle(reason) {
   saveProgress();
-  if (state.researchActive) {
-    saveResearchArchive();
-  }
   logEvent("lifecycle_persist", {
     reason,
     moves: state.moves,
@@ -2197,15 +1977,6 @@ globalThis.addEventListener("paperflock:resume", (event) => {
 });
 
 const saveLoadResult = loadSave();
-loadResearchArchive();
-logEvent("prototype_open", {
-  viewportWidth: globalThis.innerWidth,
-  viewportHeight: globalThis.innerHeight,
-  userAgent: navigator.userAgent,
-  soundEnabled: state.soundEnabled,
-  effectsPreference: state.effectsPreference,
-  effectsMode: state.resolvedEffects
-});
 const restoredCheckpoint = restoreCheckpoint(
   state.pendingCheckpoint
 );
@@ -2221,6 +1992,7 @@ logEvent("storage_ready", {
 });
 requestAnimationFrame(() => {
   document.documentElement.classList.add("ui-ready");
+  emitSettingsState();
   globalThis.dispatchEvent(
     new CustomEvent("paperflock:ready", {
       detail: {
@@ -2232,13 +2004,3 @@ requestAnimationFrame(() => {
   );
 });
 
-const researchRequested =
-  new URLSearchParams(globalThis.location.search).get("research") === "1";
-
-if (state.researchActive || researchRequested) {
-  elements.researchWelcome.hidden = state.researchActive;
-  elements.researchRibbon.hidden = !state.researchActive;
-} else {
-  elements.researchWelcome.hidden = true;
-  elements.researchRibbon.hidden = true;
-}

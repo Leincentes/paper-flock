@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.0",
+  "buildVersion": "1.2",
   "releaseChannel": "production",
   "supportEmail": "leincentes@gmail.com",
   "supportUrl": "",
@@ -22,5 +22,12 @@
   "productionConfigurationValid": true,
   "releaseEvidenceCenterAvailable": true,
   "supplyChainProvenanceEnabled": true,
-  "mobileGameplayViewportLock": true
+  "mobileGameplayViewportLock": true,
+  "interactiveTutorialAvailable": true,
+  "tutorialFirstLaunchDefault": true,
+  "tutorialSkippable": true,
+  "tutorialReplayAvailable": true,
+  "productionSettingsAvailable": true,
+  "playerBackupAvailable": true,
+  "internalToolsIncludedInProduction": false
 }

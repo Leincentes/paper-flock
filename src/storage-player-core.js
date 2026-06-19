@@ -4,26 +4,9 @@ export const ENVELOPE_VERSION = 1;
 export const STORAGE_KEYS = Object.freeze({
   save: "paper-flock-save",
   saveBackup: "paper-flock-save-backup",
-  events: "paper-flock-events",
-  research: "paper-flock-research",
-  visualResearch: "paper-flock-visual-research",
-  visualPending: "paper-flock-visual-pending",
-  tactileResearch: "paper-flock-tactile-research",
-  tactilePending: "paper-flock-tactile-pending",
-  errors: "paper-flock-errors",
   orientationDismissed: "paper-flock-orientation-dismissed",
-  installCertification: "paper-flock-install-certification",
-  mobileCertification: "paper-flock-mobile-certification-reports",
-  betaDisclosure: "paper-flock-beta-disclosure",
-  betaFeedback: "paper-flock-beta-feedback",
-  betaOperations: "paper-flock-beta-operations",
   accessibility: "paper-flock-accessibility",
-  accessibilityCertification:
-    "paper-flock-accessibility-certification-reports",
-  performanceHistory: "paper-flock-performance-history",
-  releaseAcknowledgement: "paper-flock-release-acknowledgement",
-  qualityEvidence: "paper-flock-quality-evidence",
-  productionApproval: "paper-flock-production-approval"
+  tutorial: "paper-flock-tutorial"
 });
 
 export const LEGACY_STORAGE_KEYS = Object.freeze({
@@ -35,39 +18,6 @@ export const LEGACY_STORAGE_KEYS = Object.freeze({
     "paper-flock-save-v8",
     "paper-flock-save-v7",
     "paper-flock-save-v6"
-  ]),
-  events: Object.freeze([
-    "paper-flock-events-v12",
-    "paper-flock-events-v11",
-    "paper-flock-events-v10",
-    "paper-flock-events-v9",
-    "paper-flock-events-v8",
-    "paper-flock-events-v7",
-    "paper-flock-events-v6"
-  ]),
-  research: Object.freeze([
-    "paper-flock-research-v12",
-    "paper-flock-research-v11",
-    "paper-flock-research-v10",
-    "paper-flock-research-v9",
-    "paper-flock-research-v8",
-    "paper-flock-research-v7"
-  ]),
-  visualResearch: Object.freeze([
-    "paper-flock-visual-research-v12",
-    "paper-flock-visual-research-v11",
-    "paper-flock-visual-research-v10",
-    "paper-flock-visual-research-v9",
-    "paper-flock-visual-research-v8",
-    "paper-flock-visual-research-v7"
-  ]),
-  tactileResearch: Object.freeze([
-    "paper-flock-tactile-research-v12",
-    "paper-flock-tactile-research-v11",
-    "paper-flock-tactile-research-v10"
-  ]),
-  errors: Object.freeze([
-    "paper-flock-errors-v12"
   ])
 });
 
@@ -99,12 +49,12 @@ export function createEnvelope(
     envelopeVersion = ENVELOPE_VERSION
   } = {}
 ) {
-  const payloadText = JSON.stringify(payload);
+  const clonedPayload = clone(payload);
   return {
     envelopeVersion,
     savedAt: String(savedAt),
-    checksum: fnv1a(payloadText),
-    payload: clone(payload)
+    checksum: fnv1a(JSON.stringify(clonedPayload)),
+    payload: clonedPayload
   };
 }
 
@@ -319,47 +269,6 @@ export function normalizeCheckpoint(
   };
 }
 
-function getFirstValue(storage, keys) {
-  for (const key of keys) {
-    const value = storage.getItem(key);
-    if (typeof value === "string") {
-      return {
-        key,
-        value
-      };
-    }
-  }
-  return null;
-}
-
-export function migrateSimpleStorageKey(
-  storage,
-  stableKey,
-  legacyKeys = []
-) {
-  const existing = storage.getItem(stableKey);
-  if (typeof existing === "string") {
-    return {
-      migrated: false,
-      sourceKey: stableKey
-    };
-  }
-
-  const legacy = getFirstValue(storage, legacyKeys);
-  if (!legacy) {
-    return {
-      migrated: false,
-      sourceKey: null
-    };
-  }
-
-  storage.setItem(stableKey, legacy.value);
-  return {
-    migrated: true,
-    sourceKey: legacy.key
-  };
-}
-
 export function writeRecoverableJson(
   storage,
   payload,
@@ -377,9 +286,12 @@ export function writeRecoverableJson(
     }
   }
 
-  const envelope = createEnvelope(payload, { savedAt });
+  const envelope = createEnvelope(payload, {
+    savedAt
+  });
   const serialized = JSON.stringify(envelope);
   storage.setItem(primaryKey, serialized);
+
   if (typeof storage.getItem(backupKey) !== "string") {
     storage.setItem(backupKey, serialized);
   }
@@ -463,61 +375,27 @@ export function loadRecoverableJson(
 }
 
 export function migrateLegacyStorage(storage) {
-  const migration = {
-    save: false,
-    events: false,
-    research: false,
-    visualResearch: false,
-    tactileResearch: false,
-    errors: false,
-    sources: {}
-  };
-
-  const saveResult = loadRecoverableJson(storage, {
+  const result = loadRecoverableJson(storage, {
     defaultValue: null,
     normalize: (value) =>
       value && typeof value === "object"
         ? value
         : null
   });
-  if (saveResult.migrated || saveResult.recovered || saveResult.repaired) {
-    migration.save = true;
-    migration.sources.save = saveResult.sourceKey;
-  }
 
-  const mappings = [
-    ["events", STORAGE_KEYS.events, LEGACY_STORAGE_KEYS.events],
-    ["research", STORAGE_KEYS.research, LEGACY_STORAGE_KEYS.research],
-    [
-      "visualResearch",
-      STORAGE_KEYS.visualResearch,
-      LEGACY_STORAGE_KEYS.visualResearch
-    ],
-    [
-      "tactileResearch",
-      STORAGE_KEYS.tactileResearch,
-      LEGACY_STORAGE_KEYS.tactileResearch
-    ],
-    ["errors", STORAGE_KEYS.errors, LEGACY_STORAGE_KEYS.errors]
-  ];
-
-  for (const [name, stableKey, legacyKeys] of mappings) {
-    const result = migrateSimpleStorageKey(
-      storage,
-      stableKey,
-      legacyKeys
-    );
-    migration[name] = result.migrated;
-    if (result.sourceKey) {
-      migration.sources[name] = result.sourceKey;
-    }
-  }
-
-  return migration;
+  return {
+    save:
+      result.migrated ||
+      result.recovered ||
+      result.repaired,
+    sourceKey: result.sourceKey
+  };
 }
 
 export function storageHealth(storage) {
-  const primary = parseEnvelope(storage.getItem(STORAGE_KEYS.save));
+  const primary = parseEnvelope(
+    storage.getItem(STORAGE_KEYS.save)
+  );
   const backup = parseEnvelope(
     storage.getItem(STORAGE_KEYS.saveBackup)
   );

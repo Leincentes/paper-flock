@@ -5,7 +5,7 @@ import {
   viewportHeightClass
 } from "./mobile-viewport-core.js";
 
-const BUILD_VERSION = "1.0";
+const BUILD_VERSION = "1.2";
 const MOBILE_QUERY =
   "(max-width: 760px), (display-mode: standalone)";
 const media = globalThis.matchMedia(MOBILE_QUERY);
@@ -73,7 +73,7 @@ function injectViewportInterface() {
           </header>
 
           <p class="mobile-game-menu-help">
-            Level navigation, sound, themes, support, and testing tools remain
+            Levels, settings, themes, support, and game information remain
             available here without making the puzzle screen scroll.
           </p>
 
@@ -172,15 +172,12 @@ function viewportDimensions() {
 
 function synchronizeViewportMode() {
   const viewport = viewportDimensions();
-  const force = new URLSearchParams(
-    globalThis.location.search
-  ).get("viewportlock") === "1";
   const shouldLock = shouldLockGameplayViewport({
     width: viewport.width,
     height: viewport.height,
     isMobileLike: mobileLike(),
     isStandalone: standalone(),
-    force
+    force: false
   });
 
   if (shouldLock && !state.locked) {
@@ -243,10 +240,9 @@ function relocateSecondaryInterface() {
   const content = elements().content;
   const selectors = [
     ".level-nav",
-    ".feedback-settings",
+    ".settings-entry",
     ".mode-actions",
-    ".prototype-tools",
-    ".beta-footer"
+    ".app-footer"
   ];
 
   for (const selector of selectors) {

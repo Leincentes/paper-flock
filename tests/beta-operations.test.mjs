@@ -128,7 +128,7 @@ test("critical beta feedback takes precedence after evidence gates", () => {
     {
       product: "Paper Flock",
       schemaVersion: 1,
-      buildVersion: "1.0",
+      buildVersion: "1.1",
       reportId: "android",
       participantCode: "MC-ANDROID",
       deviceFamily: "android",
@@ -146,7 +146,7 @@ test("critical beta feedback takes precedence after evidence gates", () => {
     {
       product: "Paper Flock",
       schemaVersion: 1,
-      buildVersion: "1.0",
+      buildVersion: "1.1",
       reportId: "ios",
       participantCode: "MC-IOS",
       deviceFamily: "ios",
@@ -214,13 +214,14 @@ test("public beta pages and machine-readable registers exist", () => {
   assert.equal(config.automaticUploads, false);
 });
 
-test("index loads beta operations and exposes public support links", () => {
+test("production index excludes beta operations and keeps public support links", () => {
   const html = fs.readFileSync(
     path.join(root, "index.html"),
     "utf8"
   );
-  assert.match(html, /src="\.\/src\/beta-operations-ui\.js"/);
-  assert.match(html, /id="beta-feedback-button"/);
+  assert.doesNotMatch(html, /beta-operations-ui/);
+  assert.doesNotMatch(html, /beta-feedback-button/);
   assert.match(html, /privacy\.html/);
   assert.match(html, /support\.html/);
+  assert.match(html, /src="\.\/src\/settings-ui\.js"/);
 });

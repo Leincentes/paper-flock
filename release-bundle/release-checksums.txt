@@ -1,1 +1,1 @@
-54bbd4834424e9c7b2cf22422e0b2a3cc2b6113725ffc125fdb4c9522b7a8468  paper-flock-v1.0-release.zip
+93c8b506e8abe062b7205a9b1e4892829c5949520e8a73d8cfe81271b440e6b7  paper-flock-v1.2-release.zip

@@ -102,7 +102,7 @@ test("runtime loads accessibility settings and public statement", () => {
   assert.match(html, /src="\.\/src\/accessibility-ui\.js"/);
   assert.match(html, /href="\.\/accessibility\.html"/);
   assert.match(html, /http-equiv="Content-Security-Policy"/);
-  assert.match(html, /name="referrer" content="no-referrer"/);
+  assert.match(html, /<meta[^>]+content="no-referrer"[^>]+name="referrer"|<meta[^>]+name="referrer"[^>]+content="no-referrer"/);
 });
 
 test("public pages contain no inline executable scripts", () => {

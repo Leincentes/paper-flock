@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.0",
+  "buildVersion": "1.2",
   "updatedAt": "2026-06-19",
   "issues": [
     {
@@ -58,6 +58,13 @@
       "severity": "low",
       "status": "platform-limitation",
       "workaround": "Install Paper Flock to the Home Screen for the most game-like standalone viewport."
+    },
+    {
+      "id": "PF-TUTORIAL-EXISTING-PLAYERS",
+      "title": "Existing saved players are not forced through the new tutorial",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Open More and choose How to play, or add ?tutorial=1 to the game URL."
     }
   ]
 }

@@ -7,7 +7,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 BUNDLE = ROOT / "release-bundle"
-VERSION = "1.0"
+VERSION = "1.2"
 
 if not DIST.exists():
     raise SystemExit("Run npm run build first.")

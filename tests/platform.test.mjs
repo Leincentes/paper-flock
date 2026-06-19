@@ -192,7 +192,7 @@ test("HTML loads the manifest and platform module", () => {
     "utf8"
   );
   assert.match(html, /rel="manifest"/);
-  assert.match(html, /src="\.\/src\/platform-ui\.js"/);
+  assert.match(html, /src="\.\/src\/app-platform-ui\.js"/);
   assert.match(html, /src="\.\/src\/mobile-lifecycle-ui\.js"/);
   assert.match(html, /apple-mobile-web-app-capable/);
 });

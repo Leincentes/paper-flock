@@ -251,18 +251,19 @@ test("service worker exposes complete-cache status messaging", () => {
   assert.match(source, /expectedCount/);
   assert.match(source, /cachedCount/);
   assert.match(source, /missing/);
-  assert.match(source, /paper-flock-static-v1\.0/);
+  assert.match(source, /paper-flock-static-v1\.2/);
 });
 
-test("HTML loads mobile-install audit and mobile-web-app metadata", () => {
+test("production HTML excludes install audit and loads player platform support", () => {
   const html = fs.readFileSync(
     path.join(root, "index.html"),
     "utf8"
   );
 
-  assert.match(html, /src="\.\/src\/install-audit-ui\.js"/);
+  assert.doesNotMatch(html, /install-audit-ui/);
+  assert.match(html, /src="\.\/src\/app-platform-ui\.js"/);
   assert.match(html, /name="mobile-web-app-capable"/);
-  assert.match(html, /Paper Flock v1\.0/);
+  assert.match(html, /Paper Flock v1\.2/);
 });
 
 

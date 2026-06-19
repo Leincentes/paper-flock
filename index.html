@@ -1,529 +1,223 @@
 <!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    >
-    <meta
-      name="description"
-      content="Paper Flock: a one-touch origami escape puzzle prototype."
-    >
-    <meta name="theme-color" content="#151a32">
-    <meta name="referrer" content="no-referrer">
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
-    >
-    <title>Paper Flock — Origami Puzzle Game</title>
-    <link rel="canonical" href="https://leincentes.github.io/paper-flock/">
-    <link rel="manifest" href="./manifest.webmanifest">
-    <link rel="icon" href="./assets/paper-flock-icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="./assets/paper-flock-icon-192.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Paper Flock">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="./styles.css">
-  </head>
-  <body>
-    <div class="ambient-scene" aria-hidden="true">
-      <span class="ambient-orb ambient-orb-one"></span>
-      <span class="ambient-orb ambient-orb-two"></span>
-      <span class="ambient-fold ambient-fold-one"></span>
-      <span class="ambient-fold ambient-fold-two"></span>
-    </div>
-    <main class="app-shell" id="main-content">
-      <header class="hero">
-        <div class="brand-lockup">
-          <span class="brand-mark" aria-hidden="true">
-            <svg class="brand-crane" viewBox="0 0 96 72">
-              <path d="M9 46 38 30 49 8 58 31 87 20 68 48 48 63 28 49Z"></path>
-              <path d="M38 30 58 31 48 63M28 49 49 8 68 48"></path>
-            </svg>
-          </span>
-          <div class="brand-copy">
-            <span class="brand-eyebrow">A calm logic puzzle</span>
-            <h1>Paper Flock</h1>
-            <p>Find the path. Turn the flock. Let the sky unfold.</p>
-          </div>
-        </div>
-      </header>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="Paper Flock is a calm, installable origami puzzle game by Gamelo Studio." name="description"/>
+<meta content="#151a32" name="theme-color"/>
+<meta content="no-referrer" name="referrer"/>
+<meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<title>Paper Flock v1.2 — Origami Puzzle Game</title>
+<link href="https://leincentes.github.io/paper-flock/" rel="canonical"/>
+<link href="./manifest.webmanifest" rel="manifest"/>
+<link href="./assets/paper-flock-icon.svg" rel="icon" type="image/svg+xml"/>
+<link href="./assets/paper-flock-icon-192.png" rel="apple-touch-icon"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="Paper Flock" name="apple-mobile-web-app-title"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<link href="./styles.css" rel="stylesheet"/>
+<meta content="production" name="paper-flock-runtime"/></head>
+<body>
+<div aria-hidden="true" class="ambient-scene">
+<span class="ambient-orb ambient-orb-one"></span>
+<span class="ambient-orb ambient-orb-two"></span>
+<span class="ambient-fold ambient-fold-one"></span>
+<span class="ambient-fold ambient-fold-two"></span>
+</div>
+<main class="app-shell" id="main-content">
+<header class="hero">
+<div class="brand-lockup">
+<span aria-hidden="true" class="brand-mark">
+<svg class="brand-crane" viewbox="0 0 96 72">
+<path d="M9 46 38 30 49 8 58 31 87 20 68 48 48 63 28 49Z"></path>
+<path d="M38 30 58 31 48 63M28 49 49 8 68 48"></path>
+</svg>
+</span>
+<div class="brand-copy">
+<span class="brand-eyebrow">A calm logic puzzle</span>
+<h1>Paper Flock</h1>
+<p>Find the path. Turn the flock. Let the sky unfold.</p>
+</div>
+</div>
+</header>
 
-      <aside class="research-ribbon" id="research-ribbon" hidden>
-        <span>Observed playtest: <strong id="research-code-label"></strong></span>
-        <button id="end-research-button" type="button">End test</button>
-      </aside>
-
-      <section class="game-card" aria-label="Paper Flock puzzle">
-        <div class="hud" aria-label="Puzzle status">
-          <div class="metric">
-            <span class="metric-label" id="mode-label">Level</span>
-            <strong class="metric-value" id="level-number">1</strong>
-          </div>
-          <div class="metric">
-            <span class="metric-label">Birds</span>
-            <strong class="metric-value" id="remaining-count">0</strong>
-          </div>
-          <div class="metric">
-            <span class="metric-label">Feathers</span>
-            <strong class="metric-value" id="feather-count">3/3</strong>
-          </div>
-        </div>
-
-        <div class="lesson-banner">
-          <span class="lesson-label" id="lesson-label">Clear path</span>
-          <p class="message" id="message" aria-live="polite"></p>
-        </div>
-
-        <div class="journey-strip">
-          <div>
-            <span class="journey-label">Chapter</span>
-            <strong id="chapter-name">Dawn Flight</strong>
-          </div>
-          <div class="journey-total">
-            <span class="journey-label">Journey</span>
-            <strong id="journey-progress">0 of 60 journey feathers</strong>
-          </div>
-        </div>
-        <div
-          class="journey-rail"
-          role="progressbar"
-          aria-label="Journey feather progress"
-          aria-valuemin="0"
-          aria-valuemax="60"
-          aria-valuenow="0"
-        >
-          <span id="journey-progress-fill"></span>
-        </div>
-
-        <p class="personal-best" id="best-feathers">
+<section aria-label="Paper Flock puzzle" class="game-card">
+<div aria-label="Puzzle status" class="hud">
+<div class="metric">
+<span class="metric-label" id="mode-label">Level</span>
+<strong class="metric-value" id="level-number">1</strong>
+</div>
+<div class="metric">
+<span class="metric-label">Birds</span>
+<strong class="metric-value" id="remaining-count">0</strong>
+</div>
+<div class="metric">
+<span class="metric-label">Feathers</span>
+<strong class="metric-value" id="feather-count">3/3</strong>
+</div>
+</div>
+<div class="lesson-banner">
+<span class="lesson-label" id="lesson-label">Clear path</span>
+<p aria-live="polite" class="message" id="message"></p>
+</div>
+<div class="journey-strip">
+<div>
+<span class="journey-label">Chapter</span>
+<strong id="chapter-name">Dawn Flight</strong>
+</div>
+<div class="journey-total">
+<span class="journey-label">Journey</span>
+<strong id="journey-progress">0 of 60 journey feathers</strong>
+</div>
+</div>
+<div aria-label="Journey feather progress" aria-valuemax="60" aria-valuemin="0" aria-valuenow="0" class="journey-rail" role="progressbar">
+<span id="journey-progress-fill"></span>
+</div>
+<p class="personal-best" id="best-feathers">
           Complete the flock to earn up to three feathers.
         </p>
-
-        <div class="board-wrap">
-          <span class="board-sheen" aria-hidden="true"></span>
-          <div
-            class="board"
-            id="board"
-            role="group"
-            aria-label="Origami bird grid"
-            aria-describedby="message"
-          ></div>
-        </div>
-
-        <div class="controls" aria-label="Puzzle controls">
-          <button class="control-button" id="undo-button" type="button">
-            <span class="control-icon" aria-hidden="true">↶</span>
-            <span>Undo</span>
-          </button>
-          <button class="control-button control-button-primary" id="hint-button" type="button">
-            <span class="control-icon" aria-hidden="true">✦</span>
-            <span>Hint</span>
-          </button>
-          <button class="control-button" id="restart-button" type="button">
-            <span class="control-icon" aria-hidden="true">↻</span>
-            <span>Restart</span>
-          </button>
-        </div>
-
-        <nav class="level-nav" aria-label="Level navigation">
-          <button class="nav-button" id="previous-button" type="button">
-            <span aria-hidden="true">←</span>
-            <span>Previous</span>
-          </button>
-          <button class="nav-button" id="next-button" type="button">
-            <span>Next</span>
-            <span aria-hidden="true">→</span>
-          </button>
-        </nav>
-
-        <div class="feedback-settings" aria-label="Feedback settings">
-          <button
-            class="sound-button feedback-setting-button"
-            id="sound-button"
-            type="button"
-            aria-pressed="false"
-          >
-            Sound off
-          </button>
-          <button
-            class="effects-button feedback-setting-button"
-            id="effects-button"
-            type="button"
-          >
-            Effects auto
-          </button>
-        </div>
-
-        <div class="mode-actions" aria-label="Puzzle selection">
-          <button class="mode-button" id="open-map-button" type="button">
-            <span class="mode-icon" aria-hidden="true">⌘</span>
-            <span>Level map</span>
-          </button>
-          <button class="mode-button" id="daily-button" type="button" disabled>
-            <span class="mode-icon" aria-hidden="true">☼</span>
-            <span>Daily opens after Level 5</span>
-          </button>
-        </div>
-
-        <div class="completion" id="completion" hidden>
-          <div class="completion-panel" role="dialog" aria-modal="true">
-            <span class="completion-halo" aria-hidden="true"></span>
-            <span class="completion-kicker">Paper sky cleared</span>
-            <h2 id="completion-title">Flock freed</h2>
-            <div
-              class="completion-feathers"
-              id="completion-feathers"
-              aria-label="0 of 3 feathers earned"
-            >
+<div class="board-wrap">
+<span aria-hidden="true" class="board-sheen"></span>
+<div aria-describedby="message" aria-label="Origami bird grid" class="board" id="board" role="group"></div>
+</div>
+<div aria-label="Puzzle controls" class="controls">
+<button class="control-button" id="undo-button" type="button">
+<span aria-hidden="true" class="control-icon">↶</span>
+<span>Undo</span>
+</button>
+<button class="control-button control-button-primary" id="hint-button" type="button">
+<span aria-hidden="true" class="control-icon">✦</span>
+<span>Hint</span>
+</button>
+<button class="control-button" id="restart-button" type="button">
+<span aria-hidden="true" class="control-icon">↻</span>
+<span>Restart</span>
+</button>
+</div>
+<nav aria-label="Level navigation" class="level-nav">
+<button class="nav-button" id="previous-button" type="button">
+<span aria-hidden="true">←</span>
+<span>Previous</span>
+</button>
+<button class="nav-button" id="next-button" type="button">
+<span>Next</span>
+<span aria-hidden="true">→</span>
+</button>
+</nav>
+<div aria-label="Feedback settings" class="settings-entry"><span class="settings-entry-placeholder">Settings</span></div>
+<div aria-label="Puzzle selection" class="mode-actions">
+<button class="mode-button" id="open-map-button" type="button">
+<span aria-hidden="true" class="mode-icon">⌘</span>
+<span>Level map</span>
+</button>
+<button class="mode-button" disabled="" id="daily-button" type="button">
+<span aria-hidden="true" class="mode-icon">☼</span>
+<span>Daily opens after Level 5</span>
+</button>
+</div>
+<div class="completion" hidden="" id="completion">
+<div aria-modal="true" class="completion-panel" role="dialog">
+<span aria-hidden="true" class="completion-halo"></span>
+<span class="completion-kicker">Paper sky cleared</span>
+<h2 id="completion-title">Flock freed</h2>
+<div aria-label="0 of 3 feathers earned" class="completion-feathers" id="completion-feathers">
               ◇◇◇
             </div>
-            <p id="completion-body"></p>
-            <p class="completion-unlock" id="completion-unlock" hidden></p>
-            <div class="completion-actions">
-              <button class="secondary-game-button" id="replay-button" type="button">
+<p id="completion-body"></p>
+<p class="completion-unlock" hidden="" id="completion-unlock"></p>
+<div class="completion-actions">
+<button class="secondary-game-button" id="replay-button" type="button">
                 Replay
               </button>
-              <button class="primary-button" id="continue-button" type="button">
+<button class="primary-button" id="continue-button" type="button">
                 Next level
               </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="level-map-overlay" id="level-map" hidden>
-          <section
-            class="level-map-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="level-map-title"
-          >
-            <div class="level-map-header">
-              <div>
-                <h2 id="level-map-title">Choose a flock</h2>
-                <p>
+</div>
+</div>
+</div>
+<div class="level-map-overlay" hidden="" id="level-map">
+<section aria-labelledby="level-map-title" aria-modal="true" class="level-map-panel" role="dialog">
+<div class="level-map-header">
+<div>
+<h2 id="level-map-title">Choose a flock</h2>
+<p>
                   Replay completed levels to earn more feathers.
                   Locked levels open by completing the level before them;
                   nothing on this map is paid.
                 </p>
-              </div>
-              <button
-                class="close-map-button"
-                id="close-map-button"
-                type="button"
-                aria-label="Close level map"
-              >
+</div>
+<button aria-label="Close level map" class="close-map-button" id="close-map-button" type="button">
                 ×
               </button>
-            </div>
-            <div class="level-grid" id="level-grid"></div>
-
-            <section class="paper-style-section" aria-labelledby="paper-style-title">
-              <div class="section-heading">
-                <span>Collection</span>
-                <h3 id="paper-style-title">Paper skies</h3>
-              </div>
-              <div class="theme-picker" id="theme-picker"></div>
-            </section>
-
-            <button
-              class="map-bottom-close"
-              id="close-map-bottom-button"
-              type="button"
-            >
+</div>
+<div class="level-grid" id="level-grid"></div>
+<section aria-labelledby="paper-style-title" class="paper-style-section">
+<div class="section-heading">
+<span>Collection</span>
+<h3 id="paper-style-title">Paper skies</h3>
+</div>
+<div class="theme-picker" id="theme-picker"></div>
+</section>
+<button class="map-bottom-close" id="close-map-bottom-button" type="button">
               Back to puzzle
             </button>
-          </section>
-        </div>
-
-        <div class="daily-info-overlay" id="daily-info" hidden>
-          <section
-            class="daily-info-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="daily-info-title"
-          >
-            <span class="daily-kicker">Optional variety</span>
-            <h2 id="daily-info-title">Today’s Daily Flock</h2>
-            <p>
+</section>
+</div>
+<div class="daily-info-overlay" hidden="" id="daily-info">
+<section aria-labelledby="daily-info-title" aria-modal="true" class="daily-info-panel" role="dialog">
+<span class="daily-kicker">Optional variety</span>
+<h2 id="daily-info-title">Today’s Daily Flock</h2>
+<p>
               One puzzle generated for your local calendar date. There is no
               timer, streak, lost reward, notification, or penalty for skipping it.
             </p>
-            <div class="daily-info-actions">
-              <button
-                class="secondary-game-button"
-                id="daily-decline-button"
-                type="button"
-              >
+<div class="daily-info-actions">
+<button class="secondary-game-button" id="daily-decline-button" type="button">
                 Not now
               </button>
-              <button
-                class="primary-button"
-                id="daily-confirm-button"
-                type="button"
-              >
+<button class="primary-button" id="daily-confirm-button" type="button">
                 Play today’s flock
               </button>
-            </div>
-          </section>
-        </div>
-      </section>
+</div>
+</section>
+</div>
+</section>
 
 
-      <div class="research-overlay" id="research-welcome" hidden>
-        <section
-          class="research-panel"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="research-welcome-title"
-        >
-          <span class="research-kicker">Paper Flock v1.0</span>
-          <h2 id="research-welcome-title">Choose how to begin</h2>
-          <p>
-            Research mode records anonymous interactions only on this device.
-            Nothing is sent anywhere automatically.
-          </p>
 
-          <div class="research-fields">
-            <label>
-              Anonymous participant code
-              <input
-                id="participant-code"
-                type="text"
-                maxlength="16"
-                autocomplete="off"
-                placeholder="Example: R3-01"
-              >
-            </label>
 
-            <label>
-              Broad player segment
-              <select id="participant-segment">
-                <option value="casual-puzzle">Casual puzzle player</option>
-                <option value="casual-non-puzzle">Casual non-puzzle player</option>
-                <option value="experienced-puzzle">Experienced puzzle player</option>
-                <option value="older-or-low-vision">Older or low-vision player</option>
-                <option value="low-end-small-screen">Low-end or small-screen device</option>
-                <option value="other">Other target player</option>
-              </select>
-            </label>
+<footer class="app-footer">
+<span>Paper Flock v1.2 · Gamelo Studio</span>
+<nav aria-label="Game information and support">
+<a href="./privacy.html">Privacy</a>
+<a href="./terms.html">Terms</a>
+<a href="./support.html">Support</a>
+<a href="./release-notes.html">Release notes</a>
+<a href="./known-issues.html">Known issues</a>
+<a href="./accessibility.html">Accessibility</a>
+<a href="./credits.html">Credits</a>
 
-            <label class="consent-row">
-              <input id="participant-consent" type="checkbox">
-              <span>
-                I understand this is an unfinished prototype and agree that
-                anonymous local interaction data may be exported after this session.
-                I may stop at any time.
-              </span>
-            </label>
-          </div>
+</nav>
+</footer>
+</main>
+<div aria-hidden="true" class="celebration" id="celebration"></div>
 
-          <p class="form-error" id="consent-error" aria-live="polite"></p>
 
-          <div class="research-actions">
-            <button
-              class="secondary-game-button"
-              id="normal-play-button"
-              type="button"
-            >
-              Play without research mode
-            </button>
-            <button
-              class="primary-button"
-              id="start-research-button"
-              type="button"
-            >
-              Start observed playtest
-            </button>
-          </div>
-        </section>
-      </div>
 
-      <div class="research-overlay" id="research-survey" hidden>
-        <section
-          class="research-panel survey-panel"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="survey-title"
-        >
-          <h2 id="survey-title">End-of-session questions</h2>
-          <p>Answer in your own words. There are no correct answers.</p>
 
-          <form id="research-survey-form">
-            <label>
-              What do the three feather symbols mean in this game? *
-              <textarea name="featherMeaning" rows="2" required></textarea>
-            </label>
 
-            <label>
-              How did the feather feedback affect you? *
-              <select name="featherEffect" required>
-                <option value="">Choose one</option>
-                <option value="wanted-to-replay">It made me want to replay for more feathers</option>
-                <option value="neutral">I noticed it but felt neutral</option>
-                <option value="ignored">I mostly ignored it</option>
-                <option value="pressured">It made me feel pressured</option>
-                <option value="confused">It confused me</option>
-              </select>
-            </label>
 
-            <label>
-              What did you expect Daily Flock to do?
-              <textarea name="dailyExpectation" rows="2"></textarea>
-            </label>
 
-            <label>
-              Did Daily Flock feel optional or required? *
-              <select name="dailyOptionalRequired" required>
-                <option value="">Choose one</option>
-                <option value="optional">Optional</option>
-                <option value="required">Required</option>
-                <option value="not-noticed">I did not notice it</option>
-                <option value="unsure">Unsure</option>
-              </select>
-            </label>
 
-            <label>
-              What might make you open the game tomorrow?
-              <textarea name="returnReason" rows="2"></textarea>
-            </label>
 
-            <label>
-              What might make you stop playing?
-              <textarea name="stopReason" rows="2"></textarea>
-            </label>
 
-            <label>
-              Anything else you want the creator to know?
-              <textarea name="additionalComments" rows="2"></textarea>
-            </label>
 
-            <p class="form-error" id="survey-error" aria-live="polite"></p>
 
-            <button class="primary-button full-width" type="submit">
-              Save and end session
-            </button>
-          </form>
-        </section>
-      </div>
 
-      <div class="research-overlay" id="session-complete" hidden>
-        <section
-          class="research-panel"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="session-complete-title"
-        >
-          <h2 id="session-complete-title">Session saved</h2>
-          <p id="session-complete-summary"></p>
-          <p>
-            Download this participant’s anonymous session now, or keep it
-            locally and export all sessions later.
-          </p>
-          <div class="research-actions">
-            <button
-              class="secondary-game-button"
-              id="download-session-button"
-              type="button"
-            >
-              Download this session
-            </button>
-            <button
-              class="primary-button"
-              id="next-participant-button"
-              type="button"
-            >
-              Prepare next participant
-            </button>
-          </div>
-        </section>
-      </div>
 
-      <section class="prototype-tools">
-        <details>
-          <summary>Prototype testing tools</summary>
-          <div class="tool-body">
-            <p>
-              Paper Flock v1.0 game and testing data stays in this browser. Export the JSON after a
-              playtest; no account, server, tracking SDK, or personal data is
-              used.
-            </p>
-            <p id="research-aggregate">No completed research sessions saved.</p>
-            <div class="tool-buttons">
-              <button
-                class="secondary-button"
-                id="launch-research-button"
-                type="button"
-              >
-                Launch observed-test mode
-              </button>
-              <button
-                class="secondary-button"
-                id="export-research-json-button"
-                type="button"
-              >
-                Export all research JSON
-              </button>
-              <button
-                class="secondary-button"
-                id="export-research-csv-button"
-                type="button"
-              >
-                Export research CSV
-              </button>
-              <button
-                class="secondary-button"
-                id="export-log-button"
-                type="button"
-              >
-                Export test log
-              </button>
-              <button
-                class="secondary-button"
-                id="reset-progress-button"
-                type="button"
-              >
-                Reset local data
-              </button>
-            </div>
-            <p class="keyboard-help">
-              Keyboard: Ctrl/Cmd+Z undo · H hint · R restart
-            </p>
-          </div>
-        </details>
-      </section>
 
-      <footer class="beta-footer">
-        <span>Paper Flock v1.0 · Gamelo Studio</span>
-        <nav aria-label="Game information and support">
-          <a href="./privacy.html">Privacy</a>
-          <a href="./terms.html">Terms</a>
-          <a href="./support.html">Support</a>
-          <a href="./release-notes.html">Release notes</a>
-          <a href="./known-issues.html">Known issues</a>
-          <a href="./accessibility.html">Accessibility</a>
-          <a href="./credits.html">Credits</a>
-          <button id="beta-feedback-button" type="button">Send feedback</button>
-        </nav>
-      </footer>
-    </main>
-
-    <div class="celebration" id="celebration" aria-hidden="true"></div>
-    <script type="module" src="./src/boot-guard.js"></script>
-    <script type="module" src="./src/game-ui.js"></script>
-    <script type="module" src="./src/visual-test-ui.js"></script>
-    <script type="module" src="./src/tactile-test-ui.js"></script>
-    <script type="module" src="./src/platform-ui.js"></script>
-    <script type="module" src="./src/mobile-lifecycle-ui.js"></script>
-    <script type="module" src="./src/mobile-viewport-ui.js"></script>
-    <script type="module" src="./src/install-audit-ui.js"></script>
-    <script type="module" src="./src/mobile-certification-ui.js"></script>
-    <script type="module" src="./src/beta-operations-ui.js"></script>
-    <script type="module" src="./src/accessibility-ui.js"></script>
-    <script type="module" src="./src/accessibility-certification-ui.js"></script>
-    <script type="module" src="./src/performance-monitor.js"></script>
-    <script type="module" src="./src/production-release-ui.js"></script>
-  </body>
+<script src="./src/boot-guard.js" type="module"></script><script src="./src/tutorial-player-ui.js" type="module"></script><script src="./src/game-player-ui.js" type="module"></script><script src="./src/app-platform-ui.js" type="module"></script><script src="./src/mobile-lifecycle-ui.js" type="module"></script><script src="./src/mobile-viewport-player-ui.js" type="module"></script><script src="./src/accessibility-ui.js" type="module"></script><script src="./src/settings-ui.js" type="module"></script></body>
 </html>

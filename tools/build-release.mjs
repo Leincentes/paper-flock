@@ -2,7 +2,9 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import {
+  fileURLToPath
+} from "node:url";
 import {
   createReleaseMetadata,
   normalizeCanonicalUrl
@@ -20,14 +22,12 @@ const buildInfo = JSON.parse(
   fs.readFileSync(path.join(root, "build-info.json"), "utf8")
 );
 
-const topLevelRuntime = [
+const topLevelRuntime = Object.freeze([
   "index.html",
   "styles.css",
   "legal.css",
   "manifest.webmanifest",
   "service-worker.js",
-  "build-info.json",
-  "app-config.json",
   "known-issues.json",
   "release-notes.json",
   "privacy.html",
@@ -38,52 +38,210 @@ const topLevelRuntime = [
   "terms.html",
   "credits.html",
   "404.html",
-  "_headers",
-  "quality-evidence.schema.json"
-];
+  "_headers"
+]);
 
-fs.rmSync(dist, { recursive: true, force: true });
-fs.mkdirSync(dist, { recursive: true });
+const playerModules = Object.freeze([
+  "src/boot-guard.js",
+  "src/tutorial-core.js",
+  "src/tutorial-player-ui.js",
+  "src/game-core.js",
+  "src/game-player-ui.js",
+  "src/progress-core.js",
+  "src/experience-core.js",
+  "src/mastery-core.js",
+  "src/storage-player-core.js",
+  "src/settings-core.js",
+  "src/settings-ui.js",
+  "src/app-platform-ui.js",
+  "src/mobile-lifecycle-ui.js",
+  "src/mobile-viewport-core.js",
+  "src/mobile-viewport-player-ui.js",
+  "src/accessibility-core.js",
+  "src/accessibility-ui.js",
+  "src/public-pages-ui.js"
+]);
+
+const forbiddenProductionNames = Object.freeze([
+  "research",
+  "visual-test",
+  "tactile-test",
+  "field-test",
+  "install-audit",
+  "certification",
+  "beta-operations",
+  "performance-monitor",
+  "quality-evidence",
+  "production-release",
+  "audit-package",
+  "audit-deployment"
+]);
+
+fs.rmSync(dist, {
+  recursive: true,
+  force: true
+});
+fs.mkdirSync(dist, {
+  recursive: true
+});
 
 for (const relative of topLevelRuntime) {
   copy(relative);
 }
+for (const relative of playerModules) {
+  copy(relative);
+}
 copyDirectory("assets");
-copyDirectory("src");
+
+const publicConfig = {
+  product: "Paper Flock",
+  buildVersion: String(config.buildVersion),
+  releaseChannel: "production",
+  publisherName: String(config.publisherName),
+  supportEmail: String(config.supportEmail),
+  supportUrl: String(config.supportUrl ?? ""),
+  repositoryUrl: String(config.repositoryUrl),
+  canonicalUrl: String(config.canonicalUrl),
+  analyticsEnabled: false,
+  advertisingEnabled: false,
+  automaticUploads: false,
+  interactiveTutorialAvailable: true,
+  mobileGameplayViewportLock: true,
+  productionSettingsAvailable: true
+};
+
+const publicBuildInfo = {
+  product: "Paper Flock",
+  buildVersion: String(buildInfo.buildVersion),
+  releaseChannel: "production",
+  serviceWorkerCacheVersion: String(
+    buildInfo.serviceWorkerCacheVersion
+  ),
+  productionConfigurationValid: true,
+  publisherName: String(buildInfo.publisherName),
+  canonicalUrl: String(buildInfo.canonicalUrl),
+  supportContactConfigured: true,
+  interactiveFirstLaunchTutorial: true,
+  mobileGameplayViewportLock: true,
+  productionSettingsPage: true,
+  productionRuntimeClean: true,
+  internalToolsIncluded: false
+};
+
+writeJson("app-config.json", publicConfig);
+writeJson("build-info.json", publicBuildInfo);
+writeJson("known-issues.json", {
+  product: "Paper Flock",
+  buildVersion: String(buildInfo.buildVersion),
+  updatedAt: "2026-06-19",
+  issues: [
+    {
+      id: "PF-LOCAL-ONLY",
+      title: "Progress is stored on the current device and browser",
+      severity: "medium",
+      status: "open",
+      workaround:
+        "Use Settings → Data → Export progress backup before changing devices, browsers, or site domains."
+    },
+    {
+      id: "PF-IOS-INSTALL",
+      title: "iPhone and iPad installation uses Safari Add to Home Screen",
+      severity: "low",
+      status: "platform-limitation",
+      workaround:
+        "Open Paper Flock in Safari, then use Share → Add to Home Screen."
+    },
+    {
+      id: "PF-MOBILE-BROWSER-CHROME",
+      title: "Normal browser tabs may show browser navigation controls",
+      severity: "low",
+      status: "platform-limitation",
+      workaround:
+        "Install Paper Flock to the Home Screen for the most game-like display."
+    },
+    {
+      id: "PF-TUTORIAL-EXISTING-PLAYERS",
+      title: "Existing saved players are not interrupted by the tutorial",
+      severity: "informational",
+      status: "by-design",
+      workaround:
+        "Open Settings → Game → Replay how to play."
+    }
+  ]
+});
+
+writeJson("release-notes.json", {
+  product: "Paper Flock",
+  currentVersion: String(buildInfo.buildVersion),
+  releases: [
+    {
+      version: "1.2",
+      date: "2026-06-19",
+      channel: "production",
+      changes: [
+        "Added a complete player-facing Settings page.",
+        "Added sound, haptic, effects, theme, and accessibility preferences.",
+        "Added player progress backup, restore, and reset.",
+        "Added install and update actions inside Settings.",
+        "Separated internal quality tools from the deployable player runtime.",
+        "Added a strict production allowlist that rejects internal tool leakage."
+      ]
+    },
+    {
+      version: "1.1",
+      date: "2026-06-19",
+      channel: "production",
+      changes: [
+        "Added a first-launch interactive tutorial.",
+        "Added clear-path, blocked-path, rotation, and practice lessons.",
+        "Added replayable How to play guidance."
+      ]
+    },
+    {
+      version: "1.0",
+      date: "2026-06-19",
+      channel: "production",
+      changes: [
+        "Published Paper Flock under Gamelo Studio.",
+        "Added offline installation, local saves, accessibility, and mobile viewport support."
+      ]
+    }
+  ]
+});
 fs.writeFileSync(path.join(dist, ".nojekyll"), "");
 
 const canonicalUrl = normalizeCanonicalUrl(config.canonicalUrl);
-const production = config.releaseChannel === "production" && canonicalUrl;
+if (!canonicalUrl) {
+  throw new Error("A canonical HTTPS production URL is required.");
+}
 
 fs.writeFileSync(
   path.join(dist, "robots.txt"),
-  production
-    ? `User-agent: *\nAllow: /\nSitemap: ${canonicalUrl}sitemap.xml\n`
-    : "User-agent: *\nDisallow: /\n"
+  `User-agent: *\nAllow: /\nSitemap: ${canonicalUrl}sitemap.xml\n`
 );
 
-if (production) {
-  const pages = [
-    "",
-    "privacy.html",
-    "terms.html",
-    "support.html",
-    "accessibility.html",
-    "credits.html",
-    "release-notes.html",
-    "known-issues.html"
-  ];
-  const urls = pages.map(
-    (page) => `<url><loc>${canonicalUrl}${page}</loc></url>`
-  );
-  fs.writeFileSync(
-    path.join(dist, "sitemap.xml"),
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
-      urls.join("") +
-      `</urlset>\n`
-  );
-}
+const pages = [
+  "",
+  "privacy.html",
+  "terms.html",
+  "support.html",
+  "accessibility.html",
+  "credits.html",
+  "release-notes.html",
+  "known-issues.html"
+];
+const urls = pages.map(
+  (page) => `<url><loc>${canonicalUrl}${page}</loc></url>`
+);
+fs.writeFileSync(
+  path.join(dist, "sitemap.xml"),
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
+    urls.join("") +
+    `</urlset>\n`
+);
+
+assertCleanProductionArtifact();
 
 const files = listFiles(dist)
   .filter((file) =>
@@ -106,55 +264,124 @@ const files = listFiles(dist)
 
 const release = createReleaseMetadata({
   buildVersion: buildInfo.buildVersion,
-  releaseChannel: config.releaseChannel,
+  releaseChannel: "production",
   commitSha: process.env.GITHUB_SHA ?? "",
   files
 });
 
-fs.writeFileSync(
-  path.join(dist, "asset-manifest.json"),
-  `${JSON.stringify({ files }, null, 2)}\n`
-);
-fs.writeFileSync(
-  path.join(dist, "release.json"),
-  `${JSON.stringify(release, null, 2)}\n`
-);
+writeJson("asset-manifest.json", { files });
+writeJson("release.json", release);
 
 console.log(
   JSON.stringify(
     {
       dist,
       files: files.length,
-      bytes: files.reduce((sum, file) => sum + file.bytes, 0),
-      production: Boolean(production)
+      bytes: files.reduce(
+        (sum, file) => sum + file.bytes,
+        0
+      ),
+      production: true,
+      internalToolsIncluded: false
     },
     null,
     2
   )
 );
 
+function assertCleanProductionArtifact() {
+  const allFiles = listFiles(dist);
+  const relativeFiles = allFiles.map(
+    (file) =>
+      path.relative(dist, file)
+        .replaceAll(path.sep, "/")
+        .toLowerCase()
+  );
+
+  for (const name of forbiddenProductionNames) {
+    const leaked = relativeFiles.find(
+      (relative) => relative.includes(name)
+    );
+    if (leaked) {
+      throw new Error(
+        `Internal testing resource leaked into production: ${leaked}`
+      );
+    }
+  }
+
+  const scanned = allFiles.filter(
+    (file) =>
+      [".html", ".js", ".json"].includes(
+        path.extname(file)
+      )
+  );
+  const forbiddenPatterns = [
+    /prototype testing tools/i,
+    /\?research=1/i,
+    /\?visualtest=1/i,
+    /\?tactiletest=1/i,
+    /\?fieldtest=1/i,
+    /\?mobilecert=1/i,
+    /\?a11ycert=1/i,
+    /[?&]viewportlock=1/i,
+    /URLSearchParams\(globalThis\.location\.search\)/i,
+    /quality-evidence/i,
+    /production-release-ui/i,
+    /accessibility-certification-ui/i,
+    /mobile-certification-ui/i,
+    /install-audit-ui/i,
+    /visual-test-ui/i,
+    /tactile-test-ui/i,
+    /beta-operations-ui/i
+  ];
+
+  for (const file of scanned) {
+    const text = fs.readFileSync(file, "utf8");
+    for (const pattern of forbiddenPatterns) {
+      if (pattern.test(text)) {
+        throw new Error(
+          `Internal testing marker ${pattern} found in ` +
+          path.relative(dist, file)
+        );
+      }
+    }
+  }
+}
+
+function writeJson(relative, payload) {
+  fs.writeFileSync(
+    path.join(dist, relative),
+    `${JSON.stringify(payload, null, 2)}\n`
+  );
+}
+
 function copy(relative) {
   const from = path.join(root, relative);
   const to = path.join(dist, relative);
   if (!fs.existsSync(from)) {
-    throw new Error(`Missing runtime file: ${relative}`);
+    throw new Error(`Missing production runtime file: ${relative}`);
   }
-  fs.mkdirSync(path.dirname(to), { recursive: true });
+  fs.mkdirSync(path.dirname(to), {
+    recursive: true
+  });
   fs.copyFileSync(from, to);
 }
 
 function copyDirectory(relative) {
   const from = path.join(root, relative);
   const to = path.join(dist, relative);
-  fs.cpSync(from, to, { recursive: true });
+  fs.cpSync(from, to, {
+    recursive: true
+  });
 }
 
 function listFiles(directory) {
-  return fs.readdirSync(directory, { withFileTypes: true })
-    .flatMap((entry) => {
-      const absolute = path.join(directory, entry.name);
-      return entry.isDirectory()
-        ? listFiles(absolute)
-        : [absolute];
-    });
+  return fs.readdirSync(directory, {
+    withFileTypes: true
+  }).flatMap((entry) => {
+    const absolute = path.join(directory, entry.name);
+    return entry.isDirectory()
+      ? listFiles(absolute)
+      : [absolute];
+  });
 }

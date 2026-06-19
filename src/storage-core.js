@@ -23,7 +23,8 @@ export const STORAGE_KEYS = Object.freeze({
   performanceHistory: "paper-flock-performance-history",
   releaseAcknowledgement: "paper-flock-release-acknowledgement",
   qualityEvidence: "paper-flock-quality-evidence",
-  productionApproval: "paper-flock-production-approval"
+  productionApproval: "paper-flock-production-approval",
+  tutorial: "paper-flock-tutorial"
 });
 
 export const LEGACY_STORAGE_KEYS = Object.freeze({

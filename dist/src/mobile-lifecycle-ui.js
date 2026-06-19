@@ -1,7 +1,7 @@
 import {
   STORAGE_KEYS,
   storageHealth
-} from "./storage-core.js";
+} from "./storage-player-core.js";
 
 const state = {
   hiddenAt: null,

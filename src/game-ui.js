@@ -57,8 +57,11 @@ import {
   normalizeCheckpoint,
   writeRecoverableJson
 } from "./storage-core.js";
+import {
+  normalizeTutorialProgress
+} from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.0";
+const BUILD_VERSION = "1.2";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const EVENT_KEY = STORAGE_KEYS.events;
 const RESEARCH_KEY = STORAGE_KEYS.research;
@@ -237,6 +240,31 @@ function loadSave() {
     parsed.effectsPreference
   );
   state.onboarding = normalizeOnboarding(parsed.onboarding);
+
+  try {
+    const tutorial = normalizeTutorialProgress(
+      JSON.parse(
+        localStorage.getItem(STORAGE_KEYS.tutorial) || "{}"
+      )
+    );
+    if (tutorial.status === "completed") {
+      state.onboarding = {
+        ...state.onboarding,
+        successfulEscapes: Math.max(
+          state.onboarding.successfulEscapes,
+          2
+        ),
+        rotationEventsSeen: Math.max(
+          state.onboarding.rotationEventsSeen,
+          1
+        ),
+        blockedExplained: true
+      };
+    }
+  } catch {
+    // Tutorial progress is optional and must never block the game.
+  }
+
   state.pendingCheckpoint = normalizeCheckpoint(
     parsed.checkpoint,
     {
@@ -1792,6 +1820,7 @@ function resetGameStateForParticipant() {
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(EVENT_KEY);
+  localStorage.removeItem(STORAGE_KEYS.tutorial);
   state.mode = "campaign";
   state.currentLevel = 1;
   state.dailyDateKey = null;
@@ -2028,7 +2057,7 @@ function exportEventLog() {
 
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v1.0 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all local Paper Flock v1.2 progress, onboarding, feedback settings, feathers, themes, and test events?"
   );
   if (!confirmed) {
     return;
@@ -2053,7 +2082,40 @@ function resetProgress() {
   state.sessionId = createSessionId();
   state.sessionStartedAt = Date.now();
   startLevel(1, "progress_reset");
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:tutorial-reset")
+  );
 }
+
+globalThis.addEventListener(
+  "paperflock:tutorial-finished",
+  (event) => {
+    if (event.detail?.status !== "completed") {
+      return;
+    }
+
+    state.onboarding = {
+      ...state.onboarding,
+      successfulEscapes: Math.max(
+        state.onboarding.successfulEscapes,
+        2
+      ),
+      rotationEventsSeen: Math.max(
+        state.onboarding.rotationEventsSeen,
+        1
+      ),
+      blockedExplained: true
+    };
+    saveProgress();
+    setMessage(
+      "Tutorial complete. Free the flock when you are ready."
+    );
+    logEvent("interactive_tutorial_completed", {
+      replay: Boolean(event.detail?.replay),
+      practiceMoves: Number(event.detail?.moves ?? 0)
+    });
+  }
+);
 
 elements.undo.addEventListener("click", undoMove);
 elements.restart.addEventListener("click", restartLevel);

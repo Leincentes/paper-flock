@@ -16,7 +16,7 @@ const root = path.resolve(new URL("..", import.meta.url).pathname);
 
 function passingEvidence() {
   return createQualityEvidence({
-    buildVersion: "1.0",
+    buildVersion: "1.1",
     commitSha:
       "0123456789abcdef0123456789abcdef01234567",
     repository: "example/paper-flock",
@@ -73,11 +73,11 @@ test("one failed CI check blocks quality evidence", () => {
 
 test("production approval requires readiness, quality evidence, and exact phrase", () => {
   const evidence = passingEvidence();
-  const phrase = expectedApprovalPhrase("1.0");
+  const phrase = expectedApprovalPhrase("1.1");
 
   assert.throws(
     () => createProductionApproval({
-      buildVersion: "1.0",
+      buildVersion: "1.1",
       reviewerCode: "CREATOR",
       confirmation: phrase,
       readiness: {
@@ -89,7 +89,7 @@ test("production approval requires readiness, quality evidence, and exact phrase
   );
 
   const approval = createProductionApproval({
-    buildVersion: "1.0",
+    buildVersion: "1.1",
     reviewerCode: "creator",
     confirmation: phrase,
     readiness: {
@@ -107,14 +107,18 @@ test("production approval requires readiness, quality evidence, and exact phrase
   );
 });
 
-test("runtime loads production evidence center", () => {
+test("production evidence center remains internal and is not shipped to players", () => {
   const html = fs.readFileSync(
     path.join(root, "index.html"),
     "utf8"
   );
-  assert.match(
+  assert.equal(
+    fs.existsSync(path.join(root, "src/production-release-ui.js")),
+    true
+  );
+  assert.doesNotMatch(
     html,
-    /src="\.\/src\/production-release-ui\.js"/
+    /production-release-ui/
   );
 });
 

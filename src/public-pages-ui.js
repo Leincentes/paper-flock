@@ -33,11 +33,11 @@ async function initializeSupport() {
       status.replaceChildren("Support: ", link);
     } else {
       status.textContent =
-        "The creator has not configured a public support contact yet. During controlled beta testing, use the invitation channel supplied by the creator.";
+        "A public support contact is temporarily unavailable. Try again later.";
     }
   } catch {
     status.textContent =
-      "The support configuration could not be loaded. Use the invitation channel supplied by the creator.";
+      "The support configuration could not be loaded. Contact Gamelo Studio through the repository page.";
   }
 }
 

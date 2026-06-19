@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.0",
+  "buildVersion": "1.2",
   "releaseChannel": "production",
   "closedAlphaApproved": false,
   "releaseGate": "real-field-evidence-required",
@@ -12,7 +12,7 @@
   "installAuditAvailable": true,
   "mobileInstallationCertified": false,
   "installationGate": "android-and-ios-device-reports-required",
-  "serviceWorkerCacheVersion": "1.0",
+  "serviceWorkerCacheVersion": "1.2",
   "mobileCertificationCollectorAvailable": true,
   "physicalDeviceReportsImported": false,
   "publicBetaOperationsAvailable": true,
@@ -22,7 +22,7 @@
   "releaseNotesPublished": true,
   "knownIssuesPublished": true,
   "productionApproved": false,
-  "productionGate": "v1-ci-evidence-import-and-final-human-signoff-required",
+  "productionGate": "v1.2-ci-evidence-import-and-final-human-signoff-required",
   "accessibilitySettingsAvailable": true,
   "accessibilityStatementPublished": true,
   "contentSecurityPolicyEnabled": true,
@@ -58,5 +58,13 @@
   "publisherName": "Gamelo Studio",
   "canonicalUrl": "https://leincentes.github.io/paper-flock/",
   "supportContactConfigured": true,
-  "finalHumanReleaseReviewRequired": true
+  "finalHumanReleaseReviewRequired": true,
+  "interactiveFirstLaunchTutorial": true,
+  "tutorialPracticeBoard": true,
+  "tutorialCompletionStoredLocally": true,
+  "tutorialReplayAvailable": true,
+  "productionSettingsPage": true,
+  "playerBackupAndRestore": true,
+  "productionRuntimeClean": true,
+  "internalToolsIncluded": false
 }

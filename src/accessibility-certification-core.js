@@ -96,7 +96,7 @@ export function createAccessibilityCertificationReport({
   reportId,
   participantCode,
   testType,
-  buildVersion = "1.0",
+  buildVersion = "1.2",
   startedAt = new Date().toISOString(),
   environment = {}
 } = {}) {

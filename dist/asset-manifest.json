@@ -12,18 +12,18 @@
     },
     {
       "path": "404.html",
-      "bytes": 1643,
-      "sha256": "c02607310a5315e0990a82221b1903c99c53fd3862962f7a78556be484846c0d"
+      "bytes": 1617,
+      "sha256": "0d1e04a2b7026d58d0d53c219e6176bfc94a54955a232006f9479c471ec52fa2"
     },
     {
       "path": "accessibility.html",
-      "bytes": 2917,
-      "sha256": "ce23f8b1eb2048c89792058bba9493a578537049b3bda61dedea00c355084473"
+      "bytes": 2529,
+      "sha256": "076e0921e8152d53b448d3185508ed40d9d35f5314f68b27631d70c6c50f941f"
     },
     {
       "path": "app-config.json",
-      "bytes": 900,
-      "sha256": "9044ff40549c5c055485befe9d081f87471ff229c3cfb62b007334c0656efc63"
+      "bytes": 521,
+      "sha256": "cdac14921619ba420e7de405b3e54e5ace6256d1c8c8d7d46f165588e52c6b26"
     },
     {
       "path": "assets/paper-flock-icon-192.png",
@@ -57,28 +57,28 @@
     },
     {
       "path": "build-info.json",
-      "bytes": 2385,
-      "sha256": "bce5b92e5f6deac3ee58a14ba49182791533aba395cc9bc81492de187bb36984"
+      "bytes": 485,
+      "sha256": "5729e7e5d7c4151a5ba3f174b9458f8a752d24a0d4657f7c9e915180914291b8"
     },
     {
       "path": "credits.html",
-      "bytes": 2332,
-      "sha256": "d8ccd7cc6a5c8ff28f2c50c2b474d8b10da6216afe7f50bb060e11fd6e2084a7"
+      "bytes": 2082,
+      "sha256": "b4fbf2dc9c17dbdde7542a5a0fb2ce6463dd581c258f24a13ea046844d1989ca"
     },
     {
       "path": "index.html",
-      "bytes": 19703,
-      "sha256": "11c506d740be5d57a16338d56a581b40c853fe330055128ced3f44d4b8796e85"
+      "bytes": 8582,
+      "sha256": "8c66bc0362faac1d5a1823ec4d9bf2c61181c15e00dfe3fc57d40dc9f3ee1971"
     },
     {
       "path": "known-issues.html",
-      "bytes": 1786,
-      "sha256": "f55f519f709010c1e9114857667c7202fca47b5b6bb823f360f99d5897eed67d"
+      "bytes": 1689,
+      "sha256": "6f30ecf1d8da353b83bdda0c9a0afb51c20889f6b4eef7d85def90c7cd1d93e0"
     },
     {
       "path": "known-issues.json",
-      "bytes": 2397,
-      "sha256": "16461e0a6114cd4cbc8b3edd30e04df4b344236833fa8f67193594e1e588419d"
+      "bytes": 1217,
+      "sha256": "d271f2cba356a9618439cf9e83772b466c49133d207f38af119a06f68e854e3b"
     },
     {
       "path": "legal.css",
@@ -92,23 +92,18 @@
     },
     {
       "path": "privacy.html",
-      "bytes": 3719,
-      "sha256": "d7e26d9488ac091dd43def080db7dfc62a70cf1ab9bc18d21aa0f184c7015f6d"
-    },
-    {
-      "path": "quality-evidence.schema.json",
-      "bytes": 1087,
-      "sha256": "c490c5e908583beb5b5f08f69da59f0189aad76a8ff70a0f96a0c3f88216617a"
+      "bytes": 2795,
+      "sha256": "d8bd02934969426ca45143838c70d65081ca0f9ca7b359d86167b11718ab3786"
     },
     {
       "path": "release-notes.html",
-      "bytes": 1805,
-      "sha256": "c6814735f0f18ac5f53534313b251c7eb6a6c203fb2b162a2ed4c3e625f0d525"
+      "bytes": 1689,
+      "sha256": "d2589d186814f89bc2df656b73f4dc48380fed95af70cea01c675a4cc9a7fe27"
     },
     {
       "path": "release-notes.json",
-      "bytes": 5678,
-      "sha256": "b8a76c96f9918501fc7c2958f2dc77e46a65b50928324a1473305c560a1fb2dd"
+      "bytes": 1194,
+      "sha256": "07ab117fbbf10a4799943a0e4286823de1be0a7a45e1c0b49b6c168769008e81"
     },
     {
       "path": "robots.txt",
@@ -117,23 +112,13 @@
     },
     {
       "path": "service-worker.js",
-      "bytes": 5332,
-      "sha256": "5671b08bd274bd20c21871a2828f05420d53fd7d06d190f036f38c5486b126f2"
+      "bytes": 4796,
+      "sha256": "94d5f8979dd2c9d2947650cd8979c3b3e5543d4549f7338f16b704b01dc2cfbe"
     },
     {
       "path": "sitemap.xml",
       "bytes": 712,
       "sha256": "767935a73b6f68e6da440d9990651d7960611ea647e5c4d260b60823fb617edd"
-    },
-    {
-      "path": "src/accessibility-certification-core.js",
-      "bytes": 11886,
-      "sha256": "71c6fdb368cafb3d2ad8d42d0e5592cb51edbd54723d3cfcfbc964f293fdb582"
-    },
-    {
-      "path": "src/accessibility-certification-ui.js",
-      "bytes": 22405,
-      "sha256": "14bedee44bbd02b6b7f0317d36057e2d39fdd1fc30566e7c0211f11977c2e09e"
     },
     {
       "path": "src/accessibility-core.js",
@@ -142,23 +127,18 @@
     },
     {
       "path": "src/accessibility-ui.js",
-      "bytes": 13647,
-      "sha256": "d76def4af8a022f211dfbe3cea76acb71c076c66a05b35f3099616c9d7e68af9"
+      "bytes": 14410,
+      "sha256": "f78b4b21c9ac58e7af629aeb44dcf9b4913f59094befcfd41cfd98932c8076e3"
     },
     {
-      "path": "src/beta-operations-core.js",
-      "bytes": 12633,
-      "sha256": "69da5b4f0513b8b473efef78c11cb6f7c3e105b7ee2805a080e47c4a6077664b"
-    },
-    {
-      "path": "src/beta-operations-ui.js",
-      "bytes": 21954,
-      "sha256": "86e543532b4143d3f5c146f6a042f60a9e2f97e6ec11b22baa32560442d69453"
+      "path": "src/app-platform-ui.js",
+      "bytes": 3171,
+      "sha256": "5d65a87b4e473e28b012b91e7d2d4164cbb26aabc21158339bf0a7d4f429404b"
     },
     {
       "path": "src/boot-guard.js",
       "bytes": 4572,
-      "sha256": "2011f673451df5f64adcbb28810fe1e2db4e81092f8a607bec351257168ad6b2"
+      "sha256": "9187c64da3047520e81b48f354598b20094db04e4a43705778d072a05363adba"
     },
     {
       "path": "src/experience-core.js",
@@ -166,34 +146,14 @@
       "sha256": "25586fafb02b80911eb73bcefdf3cad8b5a1f04a12ce8800baed354fc8640e41"
     },
     {
-      "path": "src/field-test-core.js",
-      "bytes": 11649,
-      "sha256": "0537f55c3b2f3ff1e29d649b21873f37b8c39b511575f78931a14cd3a9fe52b2"
-    },
-    {
       "path": "src/game-core.js",
       "bytes": 13354,
       "sha256": "d9cca9e69356588868f9e0b39b73e4a242e11c146069ef44fd875149d3eeb16d"
     },
     {
-      "path": "src/game-ui.js",
-      "bytes": 63784,
-      "sha256": "25959bd4195fb3e711eaa9008013894bf017b89459aa291177eb62a1dabff72b"
-    },
-    {
-      "path": "src/install-audit-core.js",
-      "bytes": 11945,
-      "sha256": "c6b4b8d2fbbf0e097c431ea56f8118e50d685631b6fb247ccb0733c0f1fd5b8c"
-    },
-    {
-      "path": "src/install-audit-ui.js",
-      "bytes": 21915,
-      "sha256": "c6361aaf352f4e9d44e9f0e46e4cae4ed1673bbb039bb9d5ea6171720c68c962"
-    },
-    {
-      "path": "src/level-quality-core.js",
-      "bytes": 4677,
-      "sha256": "d3542f1b26b977c965b0c05104436360025166d18bdba657e3d837433859ca3a"
+      "path": "src/game-player-ui.js",
+      "bytes": 54434,
+      "sha256": "d463f5f4e89d86346a4426863cb0ae4c09a7e7834436c07b5a2622072ed82f31"
     },
     {
       "path": "src/mastery-core.js",
@@ -201,19 +161,9 @@
       "sha256": "c478d05279009c142f5e79c30f7640fd2e9a464822035526ff6ea0bf64994d9c"
     },
     {
-      "path": "src/mobile-certification-core.js",
-      "bytes": 9715,
-      "sha256": "9760f355093ce77ac9b2aacee84c90519c7c6ecb8ce6a244f38560a1c501c00e"
-    },
-    {
-      "path": "src/mobile-certification-ui.js",
-      "bytes": 22096,
-      "sha256": "dbfdc8c8687d1c6c6caa93331113cadbf2b6cb43047dd672877cafda6f2a92be"
-    },
-    {
       "path": "src/mobile-lifecycle-ui.js",
-      "bytes": 3812,
-      "sha256": "22d8a43af46073ca6e31699e545170f503c8693773ec80bc8bf0ef86594f0f38"
+      "bytes": 3819,
+      "sha256": "a6e46efea2809186030d99ea3c50aeb3850c3ef346434cb1d43b42c29b78cf05"
     },
     {
       "path": "src/mobile-viewport-core.js",
@@ -221,29 +171,9 @@
       "sha256": "e2ee85e9b495750b3d6bc313edd10958f317ace01ae2583de10a31ba24d05bfa"
     },
     {
-      "path": "src/mobile-viewport-ui.js",
-      "bytes": 10329,
-      "sha256": "ad2a0a1386a0c42817ec082303ff17bec852570305e66741cb35538fdee645d8"
-    },
-    {
-      "path": "src/performance-monitor.js",
-      "bytes": 3613,
-      "sha256": "3e0524f94d98a42d5dafead15e25a427463f854eb87e589ec44f0259d0117153"
-    },
-    {
-      "path": "src/platform-core.js",
-      "bytes": 8526,
-      "sha256": "04851ca0cec7800e569e7b8647f7945508413b380da5ba3338e49ce3d65d9f85"
-    },
-    {
-      "path": "src/platform-ui.js",
-      "bytes": 16640,
-      "sha256": "2d088d78e1db5d20ba3a8bb590cdb2e523c75a1c6f3e49f13fb24fa10340249e"
-    },
-    {
-      "path": "src/production-release-ui.js",
-      "bytes": 10945,
-      "sha256": "68338533f959a17027c87ff2a8047897dc423d9f1887b11df8265108aca9e2b1"
+      "path": "src/mobile-viewport-player-ui.js",
+      "bytes": 10203,
+      "sha256": "07a3c8aa22b54fd93a68f3f47456630ce6a575b2c162a79bc0d128335377f99a"
     },
     {
       "path": "src/progress-core.js",
@@ -252,63 +182,48 @@
     },
     {
       "path": "src/public-pages-ui.js",
-      "bytes": 3249,
-      "sha256": "304d43a5dc95ca563436b2f4bc220082469b62973ce3684909bc55794fba75f3"
+      "bytes": 3173,
+      "sha256": "d8387addb74fbdfc3f6b34422ff4a24229b77b127308c85cad56d87c9f33cc29"
     },
     {
-      "path": "src/quality-evidence-core.js",
-      "bytes": 6729,
-      "sha256": "c5daaaae20a96d3451d72ea2a418c34896f439812242fd33ddede9709e617cc7"
+      "path": "src/settings-core.js",
+      "bytes": 4238,
+      "sha256": "2096d0ee39549e73399b4a6b15d976320574b5513b32bac6e67f4fd897264ea1"
     },
     {
-      "path": "src/release-core.js",
-      "bytes": 4755,
-      "sha256": "0dae30453ae3f95a15e1c2524c2de87bbaa0cec0ad19fc4e10c2e7c5d9a284e3"
+      "path": "src/settings-ui.js",
+      "bytes": 21435,
+      "sha256": "c6f977eca411c96c3f22e44882af6176a24d41a84ace4c10c9ab2eef65d2b929"
     },
     {
-      "path": "src/research-core.js",
-      "bytes": 7253,
-      "sha256": "d3fbd3a138184ede08bd41872a67da851021010dfe239522717253087e93548c"
+      "path": "src/storage-player-core.js",
+      "bytes": 8708,
+      "sha256": "6b81ae4112db9594cd90ead4fb608f5bc16ae2e7283eb6f4756f9da19deb223a"
     },
     {
-      "path": "src/storage-core.js",
-      "bytes": 12166,
-      "sha256": "340e91e878f95e741171563100f630459a36b6b424afb9c73a95f1f2506370b0"
+      "path": "src/tutorial-core.js",
+      "bytes": 8763,
+      "sha256": "ef5e421fb3c79be46cd14bc8c5b7220722df63089e9c4d974e6ad2ec02a4a9db"
     },
     {
-      "path": "src/tactile-test-core.js",
-      "bytes": 14794,
-      "sha256": "991298a60edf866d79db7cd986c42275debbdf44c780ea2131d9abc9e26ecac2"
-    },
-    {
-      "path": "src/tactile-test-ui.js",
-      "bytes": 41307,
-      "sha256": "869f3e4259c9aa89ec200c051386ae1886ae3e0400bbdc8f7efd3cefca85443e"
-    },
-    {
-      "path": "src/visual-test-core.js",
-      "bytes": 12729,
-      "sha256": "f4af5c8f91a24e02d821404d811287bd169b823235336232a7ecf16b36cdb60c"
-    },
-    {
-      "path": "src/visual-test-ui.js",
-      "bytes": 27221,
-      "sha256": "eb434302077421a96b45720281ee4ce341036df2561d87c491bd8f772115b135"
+      "path": "src/tutorial-player-ui.js",
+      "bytes": 17396,
+      "sha256": "287ef5e2450307e9b4c0e2707d84de1be0f7516a52a4ceac8ce32fabd3f7c463"
     },
     {
       "path": "styles.css",
-      "bytes": 104069,
-      "sha256": "be81f3cdd638000b037c5a948607bf2b44fe60eef7db8144199847f8a4ab732a"
+      "bytes": 118237,
+      "sha256": "79447b9181fb70908d7249b52489d60e2b2fa076c6a26ceed90f40a66df57d9a"
     },
     {
       "path": "support.html",
-      "bytes": 2570,
-      "sha256": "5cd45e18375a1518725ddfdbe10c5aa6acf72fec1c01372f4fa128ff15c08431"
+      "bytes": 2345,
+      "sha256": "4f307a1327d37bf7fe0b18dfa47e2498556e062a8899d40783a93f328799dcb9"
     },
     {
       "path": "terms.html",
-      "bytes": 2883,
-      "sha256": "3f33c5a12565482df8ad8e6435df30e4fe0d3d61c23a7db6ed530a297e3c6f4b"
+      "bytes": 2537,
+      "sha256": "f5c8acb31e387b63144fe644f193b9e24dda6d32f50312aac101adcfbe2f085a"
     }
   ]
 }

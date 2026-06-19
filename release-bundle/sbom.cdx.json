@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:80f4da8b-5f65-4023-838a-9c71c97cf3d5",
+  "serialNumber": "urn:uuid:6656aab6-7831-438e-b0a4-441416a1706f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-06-19T11:15:11.711Z",
+    "timestamp": "2026-06-19T13:41:07.844Z",
     "lifecycles": [
       {
         "phase": "pre-build"
@@ -19,12 +19,12 @@
       }
     ],
     "component": {
-      "bom-ref": "paper-flock@1.0.0",
+      "bom-ref": "paper-flock@1.2.0",
       "type": "library",
-      "name": "paper-flock-production-v1.0",
-      "version": "1.0.0",
+      "name": "paper-flock-production-v1.2",
+      "version": "1.2.0",
       "scope": "required",
-      "purl": "pkg:npm/paper-flock@1.0.0",
+      "purl": "pkg:npm/paper-flock@1.2.0",
       "properties": [
         {
           "name": "cdx:npm:package:path",
@@ -12136,7 +12136,7 @@
   ],
   "dependencies": [
     {
-      "ref": "paper-flock@1.0.0",
+      "ref": "paper-flock@1.2.0",
       "dependsOn": [
         "@lhci/cli@0.15.1",
         "@playwright/test@1.60.0"

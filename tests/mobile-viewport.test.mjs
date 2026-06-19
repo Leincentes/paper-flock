@@ -111,7 +111,7 @@ test("runtime loads the mobile viewport controller", () => {
   );
   assert.match(
     html,
-    /src="\.\/src\/mobile-viewport-ui\.js"/
+    /src="\.\/src\/mobile-viewport-player-ui\.js"/
   );
 });
 
@@ -136,5 +136,5 @@ test("service worker caches both viewport modules", () => {
     "utf8"
   );
   assert.match(worker, /\.\/src\/mobile-viewport-core\.js/);
-  assert.match(worker, /\.\/src\/mobile-viewport-ui\.js/);
+  assert.match(worker, /\.\/src\/mobile-viewport-player-ui\.js/);
 });

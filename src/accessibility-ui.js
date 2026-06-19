@@ -6,9 +6,9 @@ import {
 } from "./accessibility-core.js";
 import {
   STORAGE_KEYS
-} from "./storage-core.js";
+} from "./storage-player-core.js";
 
-const BUILD_VERSION = "1.0";
+const BUILD_VERSION = "1.2";
 const state = {
   preferences: loadPreferences(),
   activeDialog: null,
@@ -22,6 +22,45 @@ applyPreferences();
 initializeBoardNavigation();
 initializeDialogManagement();
 initializeAnnouncements();
+
+
+function emitAccessibilityPreferences() {
+  const resolved = resolveAccessibilityPreferences(
+    state.preferences,
+    systemPreferences()
+  );
+
+  globalThis.dispatchEvent(
+    new CustomEvent(
+      "paperflock:accessibility-preferences-applied",
+      {
+        detail: {
+          ...state.preferences,
+          effectiveContrast: resolved.effectiveContrast,
+          effectiveMotion: resolved.effectiveMotion,
+          forcedColors: resolved.forcedColors
+        }
+      }
+    )
+  );
+}
+
+globalThis.addEventListener(
+  "paperflock:accessibility-preferences-change",
+  (event) => {
+    state.preferences = normalizeAccessibilityPreferences({
+      ...state.preferences,
+      ...(event.detail ?? {})
+    });
+    savePreferences();
+    applyPreferences();
+  }
+);
+
+globalThis.addEventListener(
+  "paperflock:accessibility-state-request",
+  emitAccessibilityPreferences
+);
 
 function loadPreferences() {
   try {
@@ -71,12 +110,15 @@ function injectAccessibilityInterface() {
     `
   );
 
-  const footerNav = document.querySelector(".beta-footer nav");
+  const footerNav = document.querySelector(".app-footer nav");
   footerNav?.insertAdjacentHTML(
     "beforeend",
     `
-      <a href="./accessibility.html">Accessibility</a>
-      <button id="accessibility-settings-button" type="button">
+      <button
+        id="accessibility-settings-button"
+        type="button"
+        hidden
+      >
         Accessibility settings
       </button>
     `
@@ -114,8 +156,7 @@ function injectAccessibilityInterface() {
           </header>
 
           <p>
-            These settings stay on this device and apply to the game,
-            testing tools, and beta information screens.
+            These settings stay on this device and apply throughout the game.
           </p>
 
           <form id="accessibility-settings-form">
@@ -299,6 +340,7 @@ function applyPreferences() {
   root.dataset.accessibilityMotion = resolved.effectiveMotion;
   root.dataset.forcedColors =
     resolved.forcedColors ? "active" : "inactive";
+  emitAccessibilityPreferences();
 }
 
 function initializeBoardNavigation() {
@@ -504,11 +546,8 @@ function handleDialogKeydown(event) {
         '[aria-label^="Close"]',
         ".close-map-button",
         ".map-bottom-close",
-        ".beta-modal-close",
-        ".mobile-cert-close",
         ".accessibility-close",
-        "#daily-decline-button",
-        "#normal-play-button"
+        "#daily-decline-button"
       ].join(",")
     );
     if (close) {

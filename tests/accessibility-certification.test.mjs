@@ -148,7 +148,7 @@ test("accessibility CSV escapes assistive-technology notes", () => {
   );
 });
 
-test("runtime loads the certification collector and service worker caches it", () => {
+test("accessibility certification remains internal and is excluded from production", () => {
   const html = fs.readFileSync(
     path.join(root, "index.html"),
     "utf8"
@@ -158,16 +158,18 @@ test("runtime loads the certification collector and service worker caches it", (
     "utf8"
   );
 
-  assert.match(
+  assert.equal(
+    fs.existsSync(
+      path.join(root, "src/accessibility-certification-core.js")
+    ),
+    true
+  );
+  assert.doesNotMatch(
     html,
-    /src="\.\/src\/accessibility-certification-ui\.js"/
+    /accessibility-certification-ui/
   );
-  assert.match(
+  assert.doesNotMatch(
     worker,
-    /\.\/src\/accessibility-certification-core\.js/
-  );
-  assert.match(
-    worker,
-    /\.\/src\/accessibility-certification-ui\.js/
+    /accessibility-certification/
   );
 });

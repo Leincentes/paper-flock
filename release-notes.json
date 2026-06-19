@@ -1,7 +1,34 @@
 {
   "product": "Paper Flock",
-  "currentVersion": "1.0",
+  "currentVersion": "1.2",
   "releases": [
+    {
+      "version": "1.2",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added a complete player-facing Settings page.",
+        "Added sound, haptic, effects, theme, and accessibility controls.",
+        "Added player progress backup, restore, and reset.",
+        "Added install and update actions inside Settings.",
+        "Removed internal testing interfaces from the player runtime.",
+        "Added a strict production file allowlist and leakage audit."
+      ]
+    },
+    {
+      "version": "1.1",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added a first-launch interactive tutorial before the campaign is shown.",
+        "Added clear-path, blocked-path, clockwise-rotation, and guided-practice lessons.",
+        "Added a skippable tutorial with locally stored completion.",
+        "Added How to play for replaying the tutorial from the More menu or footer.",
+        "Kept tutorial actions separate from campaign scores, feathers, and progress.",
+        "Added keyboard, screen-reader, reduced-motion, high-contrast, and mobile no-scroll support.",
+        "Added tutorial unit and browser regression tests."
+      ]
+    },
     {
       "version": "1.0",
       "date": "2026-06-19",

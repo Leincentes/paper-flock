@@ -3,7 +3,7 @@ import {
   STORAGE_KEYS
 } from "./storage-core.js";
 
-export const PLATFORM_BUILD_VERSION = "1.0";
+export const PLATFORM_BUILD_VERSION = "1.2";
 export const BACKUP_SCHEMA_VERSION = 1;
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
 export const MAX_ERROR_RECORDS = 50;
@@ -26,7 +26,8 @@ export const MANAGED_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.performanceHistory,
   STORAGE_KEYS.releaseAcknowledgement,
   STORAGE_KEYS.qualityEvidence,
-  STORAGE_KEYS.productionApproval
+  STORAGE_KEYS.productionApproval,
+  STORAGE_KEYS.tutorial
 ]);
 
 const LEGACY_TO_STABLE = Object.freeze(

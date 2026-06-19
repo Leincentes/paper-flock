@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#151a32">
     <meta name="referrer" content="no-referrer">
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
     >
     <title>Known issues — Paper Flock</title>
     <link rel="canonical" href="https://leincentes.github.io/paper-flock/known-issues.html">
@@ -17,27 +17,27 @@
   <body data-page="known-issues">
     <main>
       <header>
-        <span class="eyebrow">Transparent beta limitations</span>
+        <span class="eyebrow">Current player limitations</span>
         <h1>Known issues</h1>
-        <p>Paper Flock production release · Build v0.16</p>
+        <p>Paper Flock production release · v1.2</p>
       </header>
-      
+
       <p>
-        Known issues are published so beta players can distinguish expected
-        limitations from new defects.
+        These are player-facing limitations or platform behaviors that may
+        affect normal play.
       </p>
       <div id="issue-list">Loading known issues…</div>
+
 
       <nav aria-label="Paper Flock information">
         <a href="./">Return to game</a>
         <a href="./privacy.html">Privacy</a>
         <a href="./terms.html">Terms</a>
         <a href="./support.html">Support</a>
-        <a href="./release-notes.html">Release notes</a>
-        <a href="./known-issues.html">Known issues</a>
         <a href="./accessibility.html">Accessibility</a>
         <a href="./credits.html">Credits</a>
       </nav>
+
     </main>
     <script type="module" src="./src/public-pages-ui.js"></script>
   </body>

@@ -102,7 +102,7 @@ test("production approval requires every technical, evidence, and human gate", (
 
 test("release metadata records deterministic hashes and commit", () => {
   const release = createReleaseMetadata({
-    buildVersion: "1.0",
+    buildVersion: "1.1",
     releaseChannel: "public-beta",
     commitSha: "abc123",
     generatedAt: "2026-06-19T00:00:00.000Z",
@@ -120,13 +120,14 @@ test("release metadata records deterministic hashes and commit", () => {
   assert.equal(release.files[0].path, "index.html");
 });
 
-test("runtime loads boot recovery and performance monitoring", () => {
+test("runtime loads player recovery and settings without internal monitoring", () => {
   const html = fs.readFileSync(
     path.join(root, "index.html"),
     "utf8"
   );
   assert.match(html, /src="\.\/src\/boot-guard\.js"/);
-  assert.match(html, /src="\.\/src\/performance-monitor\.js"/);
+  assert.match(html, /src="\.\/src\/settings-ui\.js"/);
+  assert.doesNotMatch(html, /performance-monitor/);
   assert.match(html, /href="\.\/terms\.html"/);
   assert.match(html, /href="\.\/credits\.html"/);
 });

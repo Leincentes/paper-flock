@@ -1,4 +1,4 @@
-const BUILD_VERSION = "1.0";
+const BUILD_VERSION = "1.2";
 const READY_TIMEOUT_MS = 8000;
 let ready = false;
 

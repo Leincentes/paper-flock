@@ -92,9 +92,12 @@ check(
   "CodeQL analyzes JavaScript and TypeScript."
 );
 check(
-  "quality-evidence-runtime",
-  /src="\.\/src\/production-release-ui\.js"/.test(index),
-  "Production evidence center is loaded."
+  "quality-evidence-source-only",
+  fs.existsSync(
+    path.join(root, "src/production-release-ui.js")
+  ) &&
+    !/production-release-ui/.test(index),
+  "Production evidence tooling remains available to CI but is not loaded for players."
 );
 check(
   "quality-schema",
@@ -104,7 +107,7 @@ check(
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.0",
+  buildVersion: "1.2",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

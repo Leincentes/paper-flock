@@ -209,7 +209,7 @@ test("recruitment suggestions prioritize missing device and participant coverage
   );
 });
 
-test("field-test UI is loaded and exposes remote import controls", () => {
+test("field-test tools remain available to developers but not production players", () => {
   const html = fs.readFileSync(
     new URL("../index.html", import.meta.url),
     "utf8"
@@ -219,9 +219,8 @@ test("field-test UI is loaded and exposes remote import controls", () => {
     "utf8"
   );
 
-  assert.match(html, /src="\.\/src\/tactile-test-ui\.js"/);
+  assert.doesNotMatch(html, /tactile-test-ui/);
   assert.match(ui, /fieldtest/);
   assert.match(ui, /import-tactile-json-input/);
-  assert.match(ui, /copyFieldTestLink/);
   assert.match(ui, /evaluateFieldReadiness/);
 });
