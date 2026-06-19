@@ -58,3 +58,31 @@ test("Level 11 recovery lesson is non-penalizing and persisted", () => {
   assert.match(player, /if \(!level11RecoveryLesson\) \{\s*state\.deadlocks \+= 1;/);
   assert.match(player, /recoveryLessonShown: level11RecoveryLesson/);
 });
+
+test("Android shell uses current predictive-back, result, and inset APIs", () => {
+  const activity = read(
+    "android/app/src/main/java/com/gamelostudio/paperflock/MainActivity.java"
+  );
+  const manifest = read("android/app/src/main/AndroidManifest.xml");
+  const theme = read("android/app/src/main/res/values/themes.xml");
+
+  assert.match(activity, /extends ComponentActivity/);
+  assert.match(activity, /OnBackPressedCallback/);
+  assert.match(activity, /getOnBackPressedDispatcher\(\)/);
+  assert.match(activity, /ActivityResultContracts\.StartActivityForResult/);
+  assert.match(activity, /WindowCompat\.enableEdgeToEdge/);
+  assert.match(activity, /WindowInsetsCompat\.Type\.systemBars/);
+
+  assert.doesNotMatch(activity, /public void onBackPressed\(/);
+  assert.doesNotMatch(activity, /startActivityForResult\(/);
+  assert.doesNotMatch(activity, /protected void onActivityResult\(/);
+  assert.doesNotMatch(activity, /setDatabaseEnabled\(/);
+  assert.doesNotMatch(activity, /getSystemWindowInset/);
+  assert.doesNotMatch(activity, /setStatusBarColor\(/);
+  assert.doesNotMatch(activity, /setNavigationBarColor\(/);
+
+  assert.match(manifest, /android:enableOnBackInvokedCallback="true"/);
+  assert.doesNotMatch(manifest, /android:screenOrientation=/);
+  assert.doesNotMatch(theme, /android:statusBarColor/);
+  assert.doesNotMatch(theme, /android:navigationBarColor/);
+});

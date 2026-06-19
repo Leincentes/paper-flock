@@ -70,8 +70,18 @@ jobs:
 
       - name: Lint and build debug bundle
         run: |
-          gradle -p android lintDebug
-          gradle -p android bundleDebug
+          gradle -p android lintDebug bundleDebug --warning-mode all
+
+      - name: Upload Android lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-flock-v1.4.4-lint-reports
+          path: |
+            android/app/build/reports/lint-results-debug.html
+            android/app/build/reports/lint-results-debug.xml
+            android/app/build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt
+          if-no-files-found: warn
 
       - uses: actions/upload-artifact@v4
         with:

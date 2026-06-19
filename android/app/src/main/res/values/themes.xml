@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PaperFlock" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style
+        name="Theme.PaperFlock.Base"
+        parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@color/paper_flock_navy</item>
-        <item name="android:statusBarColor">@color/paper_flock_navy</item>
-        <item name="android:navigationBarColor">@color/paper_flock_navy</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:colorAccent">#B94F4F</item>
     </style>
+
+    <style
+        name="Theme.PaperFlock"
+        parent="Theme.PaperFlock.Base" />
 </resources>

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PaperFlock" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style
+        name="Theme.PaperFlock"
+        parent="Theme.PaperFlock.Base">
         <item name="android:windowSplashScreenBackground">@color/paper_flock_navy</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
-        <item name="android:windowBackground">@color/paper_flock_navy</item>
-        <item name="android:statusBarColor">@color/paper_flock_navy</item>
-        <item name="android:navigationBarColor">@color/paper_flock_navy</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
     </style>
 </resources>

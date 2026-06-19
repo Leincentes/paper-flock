@@ -5,12 +5,8 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.view.WindowInsets;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -21,7 +17,16 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewClientCompat;
 
@@ -29,28 +34,48 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-public final class MainActivity extends Activity {
-    private static final int REQUEST_OPEN_BACKUP = 4101;
-    private static final int REQUEST_SAVE_BACKUP = 4102;
+public final class MainActivity extends ComponentActivity {
     private static final String LOCAL_HOST = "appassets.androidplatform.net";
     private static final String START_URL =
         "https://" + LOCAL_HOST + "/assets/www/index.html";
 
     private WebView webView;
+    private OnBackPressedCallback webHistoryBackCallback;
     private ValueCallback<Uri[]> filePathCallback;
     private String pendingSaveName;
     private String pendingSaveContent;
+
+    private final ActivityResultLauncher<Intent> openBackupLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> handleOpenBackupResult(
+                result.getResultCode(),
+                result.getData()
+            )
+        );
+
+    private final ActivityResultLauncher<Intent> saveBackupLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> handleSaveBackupResult(
+                result.getResultCode(),
+                result.getData()
+            )
+        );
 
     @Override
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setStatusBarColor(Color.rgb(21, 26, 50));
-        getWindow().setNavigationBarColor(Color.rgb(21, 26, 50));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            getWindow().setDecorFitsSystemWindows(false);
-        }
+        WindowCompat.enableEdgeToEdge(getWindow());
+        WindowInsetsControllerCompat systemBars =
+            WindowCompat.getInsetsController(
+                getWindow(),
+                getWindow().getDecorView()
+            );
+        systemBars.setAppearanceLightStatusBars(false);
+        systemBars.setAppearanceLightNavigationBars(false);
 
         FrameLayout root = new FrameLayout(this);
         webView = new WebView(this);
@@ -63,11 +88,11 @@ public final class MainActivity extends Activity {
         );
         setContentView(root);
         applySystemBarInsets(webView);
+        configureBackNavigation();
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
@@ -103,12 +128,13 @@ public final class MainActivity extends Activity {
         webView.loadUrl(START_URL);
     }
 
-    private void applySystemBarInsets(View view) {
-        view.setOnApplyWindowInsetsListener((target, insets) -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                android.graphics.Insets bars = insets.getInsets(
-                    WindowInsets.Type.systemBars()
-                        | WindowInsets.Type.displayCutout()
+    private void applySystemBarInsets(WebView view) {
+        ViewCompat.setOnApplyWindowInsetsListener(
+            view,
+            (target, windowInsets) -> {
+                Insets bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                        | WindowInsetsCompat.Type.displayCutout()
                 );
                 target.setPadding(
                     bars.left,
@@ -116,17 +142,41 @@ public final class MainActivity extends Activity {
                     bars.right,
                     bars.bottom
                 );
-            } else {
-                target.setPadding(
-                    insets.getSystemWindowInsetLeft(),
-                    insets.getSystemWindowInsetTop(),
-                    insets.getSystemWindowInsetRight(),
-                    insets.getSystemWindowInsetBottom()
-                );
+                return windowInsets;
             }
-            return insets;
-        });
-        view.requestApplyInsets();
+        );
+        ViewCompat.requestApplyInsets(view);
+    }
+
+    private void configureBackNavigation() {
+        webHistoryBackCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                WebView currentWebView = webView;
+                if (
+                    currentWebView != null
+                    && currentWebView.canGoBack()
+                ) {
+                    currentWebView.goBack();
+                    return;
+                }
+
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(
+            this,
+            webHistoryBackCallback
+        );
+    }
+
+    private void updateBackNavigationState(WebView view) {
+        if (webHistoryBackCallback != null) {
+            webHistoryBackCallback.setEnabled(
+                view != null && view.canGoBack()
+            );
+        }
     }
 
     private boolean isLocalUri(Uri uri) {
@@ -198,6 +248,22 @@ public final class MainActivity extends Activity {
             openExternal(uri);
             return true;
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            updateBackNavigationState(view);
+        }
+
+        @Override
+        public void doUpdateVisitedHistory(
+            WebView view,
+            String url,
+            boolean isReload
+        ) {
+            super.doUpdateVisitedHistory(view, url, isReload);
+            updateBackNavigationState(view);
+        }
     }
 
     private final class LocalWebChromeClient extends WebChromeClient {
@@ -217,7 +283,7 @@ public final class MainActivity extends Activity {
                 .setType("application/json");
 
             try {
-                startActivityForResult(intent, REQUEST_OPEN_BACKUP);
+                openBackupLauncher.launch(intent);
                 return true;
             } catch (ActivityNotFoundException error) {
                 filePathCallback = null;
@@ -244,7 +310,7 @@ public final class MainActivity extends Activity {
                     .putExtra(Intent.EXTRA_TITLE, pendingSaveName);
 
                 try {
-                    startActivityForResult(intent, REQUEST_SAVE_BACKUP);
+                    saveBackupLauncher.launch(intent);
                 } catch (ActivityNotFoundException error) {
                     pendingSaveName = null;
                     pendingSaveContent = null;
@@ -273,83 +339,81 @@ public final class MainActivity extends Activity {
         return candidate;
     }
 
-    @Override
-    protected void onActivityResult(
-        int requestCode,
+    private void handleOpenBackupResult(
         int resultCode,
         @Nullable Intent data
     ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_OPEN_BACKUP) {
-            if (filePathCallback == null) {
-                return;
-            }
-            Uri[] result = null;
-            if (
-                resultCode == Activity.RESULT_OK
-                && data != null
-                && data.getData() != null
-            ) {
-                result = new Uri[]{data.getData()};
-            }
-            filePathCallback.onReceiveValue(result);
-            filePathCallback = null;
+        if (filePathCallback == null) {
             return;
         }
 
-        if (requestCode == REQUEST_SAVE_BACKUP) {
-            Uri uri =
-                resultCode == Activity.RESULT_OK && data != null
-                    ? data.getData()
-                    : null;
-            if (
-                uri != null
-                && pendingSaveContent != null
-            ) {
-                try (
-                    OutputStream output =
-                        getContentResolver().openOutputStream(uri, "w")
-                ) {
-                    if (output == null) {
-                        throw new IllegalStateException(
-                            "Document output stream was unavailable."
-                        );
-                    }
-                    output.write(
-                        pendingSaveContent.getBytes(StandardCharsets.UTF_8)
-                    );
-                    output.flush();
-                    Toast.makeText(
-                        this,
-                        "Paper Flock backup saved.",
-                        Toast.LENGTH_SHORT
-                    ).show();
-                } catch (Exception error) {
-                    Toast.makeText(
-                        this,
-                        "The backup could not be saved.",
-                        Toast.LENGTH_LONG
-                    ).show();
-                }
-            }
-            pendingSaveName = null;
-            pendingSaveContent = null;
+        Uri[] result = null;
+        if (
+            resultCode == Activity.RESULT_OK
+            && data != null
+            && data.getData() != null
+        ) {
+            result = new Uri[]{data.getData()};
         }
+
+        filePathCallback.onReceiveValue(result);
+        filePathCallback = null;
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
-            webView.goBack();
-            return;
+    private void handleSaveBackupResult(
+        int resultCode,
+        @Nullable Intent data
+    ) {
+        Uri uri =
+            resultCode == Activity.RESULT_OK && data != null
+                ? data.getData()
+                : null;
+
+        if (
+            uri != null
+            && pendingSaveContent != null
+        ) {
+            try (
+                OutputStream output =
+                    getContentResolver().openOutputStream(uri, "w")
+            ) {
+                if (output == null) {
+                    throw new IllegalStateException(
+                        "Document output stream was unavailable."
+                    );
+                }
+                output.write(
+                    pendingSaveContent.getBytes(StandardCharsets.UTF_8)
+                );
+                output.flush();
+                Toast.makeText(
+                    this,
+                    "Paper Flock backup saved.",
+                    Toast.LENGTH_SHORT
+                ).show();
+            } catch (Exception error) {
+                Toast.makeText(
+                    this,
+                    "The backup could not be saved.",
+                    Toast.LENGTH_LONG
+                ).show();
+            }
         }
-        super.onBackPressed();
+
+        pendingSaveName = null;
+        pendingSaveContent = null;
     }
 
     @Override
     protected void onDestroy() {
+        if (filePathCallback != null) {
+            filePathCallback.onReceiveValue(null);
+            filePathCallback = null;
+        }
+        if (webHistoryBackCallback != null) {
+            webHistoryBackCallback.remove();
+            webHistoryBackCallback = null;
+        }
         if (webView != null) {
             webView.removeJavascriptInterface("PaperFlockAndroid");
             webView.stopLoading();
