@@ -1,4 +1,8 @@
 import {
+  STORAGE_KEYS,
+  migrateLegacyStorage
+} from "./storage-core.js";
+import {
   aggregateTactileSessions,
   appendFrameSamples,
   appendTactileEvent,
@@ -17,11 +21,13 @@ import {
   nextParticipantRecommendations
 } from "./field-test-core.js";
 
-const BUILD_VERSION = "0.11";
-const ARCHIVE_KEY = "paper-flock-tactile-research-v11";
-const PENDING_KEY = "paper-flock-tactile-pending-v11";
-const GAME_SAVE_KEY = "paper-flock-save-v11";
-const GAME_EVENT_KEY = "paper-flock-events-v11";
+const BUILD_VERSION = "0.21";
+const ARCHIVE_KEY = STORAGE_KEYS.tactileResearch;
+const PENDING_KEY = STORAGE_KEYS.tactilePending;
+const GAME_SAVE_KEY = STORAGE_KEYS.save;
+const GAME_EVENT_KEY = STORAGE_KEYS.events;
+const storageMigration = migrateLegacyStorage(localStorage);
+
 const query = new URLSearchParams(globalThis.location.search);
 const fieldRequested = query.get("fieldtest") === "1";
 const moderatorRequested = query.get("tactiletest") === "1";
@@ -173,7 +179,7 @@ function injectInterface() {
           aria-modal="true"
           aria-labelledby="tactile-test-welcome-title"
         >
-          <span class="tactile-test-kicker">Paper Flock v0.11</span>
+          <span class="tactile-test-kicker">Paper Flock v0.21</span>
           <h2 id="tactile-test-welcome-title">Real-device core-feel test</h2>
           <p id="tactile-test-welcome-copy">
             This mode records anonymous local interaction timing, frame samples,
@@ -1065,6 +1071,7 @@ function prepareParticipant() {
     })
   );
   localStorage.removeItem(GAME_SAVE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(GAME_EVENT_KEY);
   globalThis.location.reload();
 }
@@ -1258,6 +1265,7 @@ function completeSession(event) {
 
 function prepareNextParticipant() {
   localStorage.removeItem(GAME_SAVE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(GAME_EVENT_KEY);
   globalThis.location.href =
     `${globalThis.location.pathname}` +

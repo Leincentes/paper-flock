@@ -1,4 +1,8 @@
 import {
+  STORAGE_KEYS,
+  migrateLegacyStorage
+} from "./storage-core.js";
+import {
   aggregateVisualSessions,
   appendVisualEvent,
   completeVisualExposure,
@@ -12,11 +16,13 @@ import {
   visualSessionsToCsv
 } from "./visual-test-core.js";
 
-const BUILD_VERSION = "0.11";
-const ARCHIVE_KEY = "paper-flock-visual-research-v11";
-const PENDING_KEY = "paper-flock-visual-pending-v11";
-const GAME_SAVE_KEY = "paper-flock-save-v11";
-const GAME_EVENT_KEY = "paper-flock-events-v11";
+const BUILD_VERSION = "0.21";
+const ARCHIVE_KEY = STORAGE_KEYS.visualResearch;
+const PENDING_KEY = STORAGE_KEYS.visualPending;
+const GAME_SAVE_KEY = STORAGE_KEYS.save;
+const GAME_EVENT_KEY = STORAGE_KEYS.events;
+const storageMigration = migrateLegacyStorage(localStorage);
+
 const visualRequested =
   new URLSearchParams(globalThis.location.search).get("visualtest") === "1";
 
@@ -100,7 +106,7 @@ function injectVisualTestInterface() {
           aria-modal="true"
           aria-labelledby="visual-test-welcome-title"
         >
-          <span class="visual-test-kicker">Paper Flock v0.11</span>
+          <span class="visual-test-kicker">Paper Flock v0.21</span>
           <h2 id="visual-test-welcome-title">Visual appeal test</h2>
           <p>
             This test begins with a five-second look at the customer-facing
@@ -607,6 +613,7 @@ function prepareParticipant() {
   );
 
   localStorage.removeItem(GAME_SAVE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(GAME_EVENT_KEY);
   globalThis.location.reload();
 }
@@ -739,6 +746,7 @@ function completeTest(event) {
 
 function prepareNextParticipant() {
   localStorage.removeItem(GAME_SAVE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(GAME_EVENT_KEY);
   globalThis.location.href =
     `${globalThis.location.pathname}?visualtest=1`;

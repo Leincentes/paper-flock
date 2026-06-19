@@ -1,0 +1,122 @@
+{
+  "product": "Paper Flock",
+  "currentVersion": "0.21",
+  "releases": [
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "production-candidate",
+      "changes": [
+        "Locked active mobile gameplay to the visible viewport.",
+        "Removed page scrolling, bounce, and pull-to-refresh during puzzle play.",
+        "Added VisualViewport-aware sizing for mobile browser chrome changes.",
+        "Added responsive board fitting for short phones.",
+        "Added compact portrait and landscape layouts.",
+        "Moved secondary controls, support, and testing tools into an internally scrollable game menu.",
+        "Kept pinch zoom and accessibility gestures available.",
+        "Added mobile browser tests for no-scroll layout and control reachability."
+      ]
+    },
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "production-candidate",
+      "changes": [
+        "Added a locked npm dependency tree and npm ci builds.",
+        "Added high-severity dependency auditing and pull-request dependency review.",
+        "Added weekly Dependabot updates for npm and GitHub Actions.",
+        "Added CodeQL analysis for JavaScript and workflow files.",
+        "Added CycloneDX SBOM generation.",
+        "Added GitHub release and SBOM provenance attestations.",
+        "Added importable CI quality evidence.",
+        "Added a creator-side production evidence center and explicit final sign-off."
+      ]
+    },
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "production-candidate",
+      "changes": [
+        "Added deterministic release builds and SHA-256 asset manifests.",
+        "Added Chromium and WebKit Playwright quality gates.",
+        "Added Lighthouse performance and accessibility budgets.",
+        "Added local Web Vitals and long-task history.",
+        "Added startup recovery and local recovery export.",
+        "Added Terms, Credits, and Page Not Found screens.",
+        "Added production response-header templates.",
+        "Added production configuration validation and manual release workflow."
+      ]
+    },
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "public-beta",
+      "changes": [
+        "Added guided keyboard-only accessibility certification.",
+        "Added guided iPhone and iPad VoiceOver certification.",
+        "Added guided Android TalkBack certification.",
+        "Added guided large-text and contrast certification.",
+        "Added per-test JSON reports and combined JSON/CSV exports.",
+        "Added creator-side import, duplicate rejection, and missing-test guidance.",
+        "Replaced manual accessibility readiness checkboxes with report-based evidence.",
+        "Added accessibility reports to local app backups and production readiness."
+      ]
+    },
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "public-beta",
+      "changes": [
+        "Added user-selectable text size, higher contrast, and reduced motion.",
+        "Added keyboard arrow navigation between active birds.",
+        "Added modal focus trapping, Escape handling, and focus restoration.",
+        "Added screen-reader announcements for key gameplay events.",
+        "Added strong focus indicators, skip navigation, and 44px control targets.",
+        "Added forced-colors support and a public accessibility statement.",
+        "Added a self-only Content Security Policy and no-referrer policy.",
+        "Removed inline scripts from public information pages.",
+        "Added automated accessibility and security package auditing."
+      ]
+    },
+    {
+      "version": "0.21",
+      "date": "2026-06-19",
+      "channel": "public-beta",
+      "changes": [
+        "Added first-launch public-beta disclosure.",
+        "Added privacy, support, release-notes, and known-issues pages.",
+        "Added local feedback and defect-report JSON export.",
+        "Added creator-side feedback import and aggregation.",
+        "Added public-beta and production-readiness dashboard.",
+        "Added release-operation verification and exportable readiness report.",
+        "Added beta and mobile-certification data to app backups."
+      ]
+    },
+    {
+      "version": "0.15",
+      "date": "2026-06-19",
+      "channel": "field-test",
+      "changes": [
+        "Added guided Android and iPhone/iPad certification reports.",
+        "Added cross-platform installation certification aggregation."
+      ]
+    },
+    {
+      "version": "0.14",
+      "date": "2026-06-19",
+      "channel": "field-test",
+      "changes": [
+        "Added package and deployment installability audits.",
+        "Added mobile installation checklist and offline-resource validation."
+      ]
+    },
+    {
+      "version": "0.13",
+      "date": "2026-06-19",
+      "channel": "field-test",
+      "changes": [
+        "Added stable storage keys, corrupt-save recovery, and exact puzzle resume."
+      ]
+    }
+  ]
+}

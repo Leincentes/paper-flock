@@ -49,12 +49,22 @@ import {
   unlockedThemes,
   updateFeatherRecord
 } from "./mastery-core.js";
+import {
+  LEGACY_STORAGE_KEYS,
+  STORAGE_KEYS,
+  loadRecoverableJson,
+  migrateLegacyStorage,
+  normalizeCheckpoint,
+  writeRecoverableJson
+} from "./storage-core.js";
 
-const BUILD_VERSION = "0.11";
-const STORAGE_KEY = "paper-flock-save-v11";
-const EVENT_KEY = "paper-flock-events-v11";
-const RESEARCH_KEY = "paper-flock-research-v11";
+const BUILD_VERSION = "0.21";
+const STORAGE_KEY = STORAGE_KEYS.save;
+const EVENT_KEY = STORAGE_KEYS.events;
+const RESEARCH_KEY = STORAGE_KEYS.research;
 const MAX_LEVEL = 20;
+
+const storageMigration = migrateLegacyStorage(localStorage);
 
 const elements = {
   board: document.querySelector("#board"),
@@ -128,6 +138,8 @@ const state = {
   dailyFeathers: {},
   selectedTheme: "dawn",
   pendingThemeUnlock: null,
+  pendingCheckpoint: null,
+  puzzleCompleted: false,
   boardRevealPending: true,
   board: [],
   initialBoard: [],
@@ -161,49 +173,145 @@ function createSessionId() {
   return `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function loadSave() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    state.currentLevel = clamp(parsed.currentLevel ?? 1, 1, MAX_LEVEL);
-    state.unlockedLevel = clamp(parsed.unlockedLevel ?? 1, 1, MAX_LEVEL);
-    state.completedLevels = Array.isArray(parsed.completedLevels)
-      ? parsed.completedLevels.filter(Number.isInteger)
-      : [];
-    state.bestFeathers = normalizeFeatherMap(parsed.bestFeathers);
-    state.dailyFeathers = trimFeatherRecords(parsed.dailyFeathers);
-    state.selectedTheme = isThemeUnlocked(
-      parsed.selectedTheme,
-      state.completedLevels
-    )
-      ? parsed.selectedTheme
-      : "dawn";
-    state.soundEnabled = Boolean(parsed.soundEnabled);
-    state.effectsPreference = normalizeEffectsPreference(
-      parsed.effectsPreference
-    );
-    state.onboarding = normalizeOnboarding(parsed.onboarding);
-  } catch {
-    localStorage.removeItem(STORAGE_KEY);
+
+function normalizeSavePayload(value) {
+  if (!value || typeof value !== "object") {
+    return null;
   }
+
+  const currentLevel = clamp(value.currentLevel ?? 1, 1, MAX_LEVEL);
+  const unlockedLevel = clamp(value.unlockedLevel ?? 1, 1, MAX_LEVEL);
+  const completedLevels = Array.isArray(value.completedLevels)
+    ? value.completedLevels
+        .filter(
+          (level) =>
+            Number.isInteger(level) &&
+            level >= 1 &&
+            level <= MAX_LEVEL
+        )
+    : [];
+
+  return {
+    saveVersion: 10,
+    buildVersion: String(value.buildVersion ?? ""),
+    currentLevel,
+    unlockedLevel,
+    completedLevels,
+    bestFeathers: normalizeFeatherMap(value.bestFeathers),
+    dailyFeathers: trimFeatherRecords(value.dailyFeathers),
+    selectedTheme: String(value.selectedTheme ?? "dawn"),
+    soundEnabled: Boolean(value.soundEnabled),
+    effectsPreference: normalizeEffectsPreference(
+      value.effectsPreference
+    ),
+    onboarding: normalizeOnboarding(value.onboarding),
+    checkpoint: value.checkpoint ?? null
+  };
+}
+
+function loadSave() {
+  const result = loadRecoverableJson(localStorage, {
+    primaryKey: STORAGE_KEYS.save,
+    backupKey: STORAGE_KEYS.saveBackup,
+    legacyKeys: LEGACY_STORAGE_KEYS.save,
+    defaultValue: normalizeSavePayload({}),
+    normalize: normalizeSavePayload
+  });
+  const parsed = result.value ?? normalizeSavePayload({});
+
+  state.currentLevel = clamp(parsed.currentLevel ?? 1, 1, MAX_LEVEL);
+  state.unlockedLevel = clamp(parsed.unlockedLevel ?? 1, 1, MAX_LEVEL);
+  state.completedLevels = Array.isArray(parsed.completedLevels)
+    ? parsed.completedLevels.filter(Number.isInteger)
+    : [];
+  state.bestFeathers = normalizeFeatherMap(parsed.bestFeathers);
+  state.dailyFeathers = trimFeatherRecords(parsed.dailyFeathers);
+  state.selectedTheme = isThemeUnlocked(
+    parsed.selectedTheme,
+    state.completedLevels
+  )
+    ? parsed.selectedTheme
+    : "dawn";
+  state.soundEnabled = Boolean(parsed.soundEnabled);
+  state.effectsPreference = normalizeEffectsPreference(
+    parsed.effectsPreference
+  );
+  state.onboarding = normalizeOnboarding(parsed.onboarding);
+  state.pendingCheckpoint = normalizeCheckpoint(
+    parsed.checkpoint,
+    {
+      todayKey: localDateKey(),
+      maximumLevel: MAX_LEVEL,
+      unlockedLevel: state.unlockedLevel
+    }
+  );
+
   applyTheme(state.selectedTheme);
   applyEffectsMode();
+
+  return result;
+}
+
+function createCheckpoint() {
+  if (
+    state.puzzleCompleted ||
+    !Array.isArray(state.board) ||
+    state.board.length === 0 ||
+    countBirds(state.board) === 0
+  ) {
+    return null;
+  }
+
+  return {
+    checkpointVersion: 1,
+    savedAt: new Date().toISOString(),
+    mode: state.mode,
+    currentLevel: state.currentLevel,
+    dailyDateKey: state.dailyDateKey,
+    board: cloneBoard(state.board),
+    initialBoard: cloneBoard(state.initialBoard),
+    history: state.history.slice(-100).map((item) => ({
+      board: cloneBoard(item.board),
+      moves: item.moves,
+      deadlocked: Boolean(item.deadlocked)
+    })),
+    moves: state.moves,
+    hintedCell: state.hintedCell
+      ? {
+          row: state.hintedCell.row,
+          col: state.hintedCell.col
+        }
+      : null,
+    deadlocked: state.deadlocked,
+    hintsUsed: state.hintsUsed,
+    restarts: state.restarts,
+    deadlocks: state.deadlocks,
+    undosUsed: state.undosUsed
+  };
 }
 
 function saveProgress() {
   const payload = {
-    saveVersion: 9,
+    saveVersion: 10,
     buildVersion: BUILD_VERSION,
     currentLevel: state.currentLevel,
     unlockedLevel: state.unlockedLevel,
-    completedLevels: [...new Set(state.completedLevels)].sort((a, b) => a - b),
+    completedLevels: [...new Set(state.completedLevels)].sort(
+      (a, b) => a - b
+    ),
     bestFeathers: normalizeFeatherMap(state.bestFeathers),
     dailyFeathers: trimFeatherRecords(state.dailyFeathers),
     selectedTheme: state.selectedTheme,
     soundEnabled: state.soundEnabled,
     effectsPreference: state.effectsPreference,
-    onboarding: normalizeOnboarding(state.onboarding)
+    onboarding: normalizeOnboarding(state.onboarding),
+    checkpoint: createCheckpoint()
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+
+  writeRecoverableJson(localStorage, payload, {
+    primaryKey: STORAGE_KEYS.save,
+    backupKey: STORAGE_KEYS.saveBackup
+  });
 }
 
 
@@ -422,6 +530,73 @@ function currentBest() {
   return currentRecord();
 }
 
+
+function restoreCheckpoint(checkpoint) {
+  const normalized = normalizeCheckpoint(checkpoint, {
+    todayKey: localDateKey(),
+    maximumLevel: MAX_LEVEL,
+    unlockedLevel: state.unlockedLevel
+  });
+
+  if (!normalized) {
+    return false;
+  }
+
+  clearPathFeedback();
+  state.mode = normalized.mode;
+  state.currentLevel = normalized.currentLevel;
+  state.dailyDateKey = normalized.dailyDateKey;
+  state.levelMeta =
+    normalized.mode === "daily"
+      ? createDailyLevel(normalized.dailyDateKey)
+      : createLevel(normalized.currentLevel);
+  state.board = cloneBoard(normalized.board);
+  state.initialBoard = cloneBoard(normalized.initialBoard);
+  state.history = normalized.history.map((item) => ({
+    board: cloneBoard(item.board),
+    moves: item.moves,
+    deadlocked: item.deadlocked
+  }));
+  state.moves = normalized.moves;
+  state.hintedCell = normalized.hintedCell;
+  state.deadlocked = normalized.deadlocked;
+  state.hintsUsed = normalized.hintsUsed;
+  state.restarts = normalized.restarts;
+  state.deadlocks = normalized.deadlocks;
+  state.undosUsed = normalized.undosUsed;
+  state.pendingThemeUnlock = null;
+  state.boardRevealPending = false;
+  state.inputLocked = false;
+  state.puzzleCompleted = false;
+
+  elements.completion.hidden = true;
+  elements.completion.classList.remove("completion-visible");
+  elements.levelMap.hidden = true;
+  elements.undo.classList.toggle(
+    "attention",
+    state.deadlocked && state.history.length > 0
+  );
+
+  renderBoard();
+  renderLevelMap();
+  renderThemePicker();
+  updateHud();
+  elements.lesson.textContent = state.levelMeta.title;
+  setMessage(
+    state.mode === "daily"
+      ? "Today’s flock resumed where you left it."
+      : `Level ${state.currentLevel} resumed where you left it.`
+  );
+  logEvent("puzzle_resumed", {
+    checkpointSavedAt: normalized.savedAt,
+    moves: state.moves,
+    remainingBirds: countBirds(state.board),
+    mode: state.mode
+  });
+
+  return true;
+}
+
 function beginPuzzle(level, reason) {
   clearPathFeedback();
   state.levelMeta = level;
@@ -436,6 +611,7 @@ function beginPuzzle(level, reason) {
   state.deadlocks = 0;
   state.undosUsed = 0;
   state.pendingThemeUnlock = null;
+  state.puzzleCompleted = false;
   state.boardRevealPending = true;
   state.inputLocked = false;
   elements.completion.hidden = true;
@@ -608,6 +784,8 @@ function renderBoard(previousBoard = null, rotated = []) {
       }
       cell.dataset.row = String(row);
       cell.dataset.col = String(col);
+      cell.setAttribute("aria-rowindex", String(row + 1));
+      cell.setAttribute("aria-colindex", String(col + 1));
 
       if (direction === EMPTY) {
         cell.classList.add("empty");
@@ -619,7 +797,7 @@ function renderBoard(previousBoard = null, rotated = []) {
         cell.innerHTML = birdMarkup(direction);
         cell.setAttribute(
           "aria-label",
-          `Origami bird facing ${directionName}. Tap to attempt an escape.`
+          `Row ${row + 1}, column ${col + 1}. Origami bird facing ${directionName}. Activate to attempt an escape.`
         );
         cell.addEventListener("click", () => handleCellClick(row, col, cell));
 
@@ -857,7 +1035,9 @@ async function handleCellClick(row, col, cell) {
   });
   state.deadlocked = false;
   const previousBoard = cloneBoard(state.board);
+  state.board = result.board;
   state.moves += 1;
+  saveProgress();
 
   const vector = DIRECTIONS[direction];
   cell.style.setProperty("--fly-x", `${vector.dc * 170}%`);
@@ -898,7 +1078,6 @@ async function handleCellClick(row, col, cell) {
         : 45;
   await delay(escapeDuration);
 
-  state.board = result.board;
   state.onboarding = recordOnboardingEvent(
     state.onboarding,
     "successful_escape",
@@ -950,6 +1129,7 @@ async function handleCellClick(row, col, cell) {
   }
 
   state.inputLocked = false;
+  saveProgress();
 }
 
 function completeLevel() {
@@ -1000,6 +1180,7 @@ function completeLevel() {
     );
   }
 
+  state.puzzleCompleted = true;
   saveProgress();
   renderLevelMap();
   renderThemePicker();
@@ -1115,6 +1296,7 @@ function undoMove() {
   if (!state.onboarding.undoExplained) {
     updateOnboarding("undo_explained");
   }
+  saveProgress();
 }
 
 function restartLevel() {
@@ -1150,6 +1332,7 @@ function restartLevel() {
   if (!state.onboarding.restartPenaltyExplained) {
     updateOnboarding("restart_penalty_explained");
   }
+  saveProgress();
 }
 
 function showHint() {
@@ -1198,6 +1381,7 @@ function showHint() {
   if (!state.onboarding.hintPenaltyExplained) {
     updateOnboarding("hint_penalty_explained");
   }
+  saveProgress();
 }
 
 function updateHud() {
@@ -1606,6 +1790,7 @@ function celebrate() {
 
 function resetGameStateForParticipant() {
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(EVENT_KEY);
   state.mode = "campaign";
   state.currentLevel = 1;
@@ -1843,13 +2028,14 @@ function exportEventLog() {
 
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v0.11 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all local Paper Flock v0.21 progress, onboarding, feedback settings, feathers, themes, and test events?"
   );
   if (!confirmed) {
     return;
   }
 
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_KEYS.saveBackup);
   localStorage.removeItem(EVENT_KEY);
   state.mode = "campaign";
   state.currentLevel = 1;
@@ -1982,7 +2168,35 @@ navigator.connection?.addEventListener?.("change", () => {
   }
 });
 
-loadSave();
+
+function persistForLifecycle(reason) {
+  saveProgress();
+  if (state.researchActive) {
+    saveResearchArchive();
+  }
+  logEvent("lifecycle_persist", {
+    reason,
+    moves: state.moves,
+    remainingBirds: countBirds(state.board)
+  });
+}
+
+globalThis.addEventListener("paperflock:persist-now", (event) => {
+  persistForLifecycle(event.detail?.reason ?? "custom");
+});
+
+globalThis.addEventListener("paperflock:resume", (event) => {
+  renderBoard();
+  renderLevelMap();
+  renderThemePicker();
+  updateHud();
+  logEvent("app_resumed", {
+    reason: event.detail?.reason ?? "visible",
+    persisted: Boolean(event.detail?.persisted)
+  });
+});
+
+const saveLoadResult = loadSave();
 loadResearchArchive();
 logEvent("prototype_open", {
   viewportWidth: globalThis.innerWidth,
@@ -1992,9 +2206,30 @@ logEvent("prototype_open", {
   effectsPreference: state.effectsPreference,
   effectsMode: state.resolvedEffects
 });
-startLevel(state.currentLevel, "initial_load");
+const restoredCheckpoint = restoreCheckpoint(
+  state.pendingCheckpoint
+);
+if (!restoredCheckpoint) {
+  startLevel(state.currentLevel, "initial_load");
+}
+logEvent("storage_ready", {
+  source: saveLoadResult.source,
+  recovered: saveLoadResult.recovered,
+  migrated: saveLoadResult.migrated,
+  repaired: saveLoadResult.repaired,
+  legacyMigration: storageMigration
+});
 requestAnimationFrame(() => {
   document.documentElement.classList.add("ui-ready");
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:ready", {
+      detail: {
+        buildVersion: BUILD_VERSION,
+        mode: state.mode,
+        level: state.currentLevel
+      }
+    })
+  );
 });
 
 const researchRequested =

@@ -63,7 +63,7 @@ export function createTactileSession({
 
   return {
     schemaVersion: 1,
-    buildVersion: "0.11",
+    buildVersion: "0.21",
     participantCode: code,
     segment: String(segment || "not-specified"),
     deviceTier: String(deviceTier || "unknown"),

@@ -11,7 +11,19 @@
       content="Paper Flock: a one-touch origami escape puzzle prototype."
     >
     <meta name="theme-color" content="#151a32">
-    <title>Paper Flock v0.11 — Field Test Build</title>
+    <meta name="referrer" content="no-referrer">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
+    >
+    <title>Paper Flock v0.21 — Mobile Viewport Lock</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./assets/paper-flock-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./assets/paper-flock-icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Paper Flock">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
@@ -21,7 +33,7 @@
       <span class="ambient-fold ambient-fold-one"></span>
       <span class="ambient-fold ambient-fold-two"></span>
     </div>
-    <main class="app-shell">
+    <main class="app-shell" id="main-content">
       <header class="hero">
         <div class="brand-lockup">
           <span class="brand-mark" aria-hidden="true">
@@ -94,6 +106,7 @@
           <div
             class="board"
             id="board"
+            role="group"
             aria-label="Origami bird grid"
             aria-describedby="message"
           ></div>
@@ -265,7 +278,7 @@
           aria-modal="true"
           aria-labelledby="research-welcome-title"
         >
-          <span class="research-kicker">Paper Flock v0.11</span>
+          <span class="research-kicker">Paper Flock v0.21</span>
           <h2 id="research-welcome-title">Choose how to begin</h2>
           <p>
             Research mode records anonymous interactions only on this device.
@@ -432,7 +445,7 @@
           <summary>Prototype testing tools</summary>
           <div class="tool-body">
             <p>
-              Paper Flock v0.11 gameplay events stay in this browser. Export the JSON after a
+              Paper Flock v0.21 public-beta data stays in this browser. Export the JSON after a
               playtest; no account, server, tracking SDK, or personal data is
               used.
             </p>
@@ -480,11 +493,36 @@
           </div>
         </details>
       </section>
+
+      <footer class="beta-footer">
+        <span>Paper Flock public beta · v0.21</span>
+        <nav aria-label="Beta information and support">
+          <a href="./privacy.html">Privacy</a>
+          <a href="./terms.html">Terms</a>
+          <a href="./support.html">Support</a>
+          <a href="./release-notes.html">Release notes</a>
+          <a href="./known-issues.html">Known issues</a>
+          <a href="./accessibility.html">Accessibility</a>
+          <a href="./credits.html">Credits</a>
+          <button id="beta-feedback-button" type="button">Send feedback</button>
+        </nav>
+      </footer>
     </main>
 
     <div class="celebration" id="celebration" aria-hidden="true"></div>
+    <script type="module" src="./src/boot-guard.js"></script>
     <script type="module" src="./src/game-ui.js"></script>
     <script type="module" src="./src/visual-test-ui.js"></script>
     <script type="module" src="./src/tactile-test-ui.js"></script>
+    <script type="module" src="./src/platform-ui.js"></script>
+    <script type="module" src="./src/mobile-lifecycle-ui.js"></script>
+    <script type="module" src="./src/mobile-viewport-ui.js"></script>
+    <script type="module" src="./src/install-audit-ui.js"></script>
+    <script type="module" src="./src/mobile-certification-ui.js"></script>
+    <script type="module" src="./src/beta-operations-ui.js"></script>
+    <script type="module" src="./src/accessibility-ui.js"></script>
+    <script type="module" src="./src/accessibility-certification-ui.js"></script>
+    <script type="module" src="./src/performance-monitor.js"></script>
+    <script type="module" src="./src/production-release-ui.js"></script>
   </body>
 </html>

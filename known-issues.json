@@ -1,0 +1,63 @@
+{
+  "product": "Paper Flock",
+  "buildVersion": "0.21",
+  "updatedAt": "2026-06-19",
+  "issues": [
+    {
+      "id": "PF-LOCAL-ONLY",
+      "title": "Progress is stored only on the current device and browser",
+      "severity": "medium",
+      "status": "open",
+      "workaround": "Use Backup app data before changing devices, browsers, or site domains."
+    },
+    {
+      "id": "PF-IOS-INSTALL",
+      "title": "iPhone and iPad installation uses Safari Add to Home Screen",
+      "severity": "low",
+      "status": "platform-limitation",
+      "workaround": "Open in Safari, then Share \u2192 Add to Home Screen."
+    },
+    {
+      "id": "PF-FEEDBACK-MANUAL",
+      "title": "Feedback and diagnostics are downloaded rather than uploaded",
+      "severity": "medium",
+      "status": "open",
+      "workaround": "Send the downloaded JSON file through the creator's configured support channel."
+    },
+    {
+      "id": "PF-SUPPORT-CONTACT",
+      "title": "Public support contact must be configured before production",
+      "severity": "high",
+      "status": "open",
+      "workaround": "Set supportEmail or supportUrl in app-config.json before a broad public launch."
+    },
+    {
+      "id": "PF-A11Y-PHYSICAL",
+      "title": "Accessibility certification still requires five physical reports",
+      "severity": "high",
+      "status": "open",
+      "workaround": "Run ?a11ycert=1 for keyboard, VoiceOver, TalkBack, text scaling, and contrast, then import all reports."
+    },
+    {
+      "id": "PF-PROD-CONFIG",
+      "title": "Production publisher, support contact, and canonical URL are not configured",
+      "severity": "high",
+      "status": "open",
+      "workaround": "Configure app-config.json and run npm run validate:production before release."
+    },
+    {
+      "id": "PF-CI-EVIDENCE",
+      "title": "Production approval requires CI quality evidence from the deployed build",
+      "severity": "high",
+      "status": "open",
+      "workaround": "Download paper-flock-v0.21-quality-evidence from the successful GitHub Actions run and import it in Prototype testing tools."
+    },
+    {
+      "id": "PF-MOBILE-BROWSER-CHROME",
+      "title": "Normal browser tabs may still show browser address and navigation controls",
+      "severity": "low",
+      "status": "platform-limitation",
+      "workaround": "Install Paper Flock to the Home Screen for the most game-like standalone viewport."
+    }
+  ]
+}

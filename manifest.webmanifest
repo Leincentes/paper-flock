@@ -1,16 +1,57 @@
 {
-  "name": "Paper Flock v0.11",
+  "id": "./",
+  "name": "Paper Flock",
   "short_name": "Paper Flock",
+  "description": "A calm one-touch origami puzzle public beta. Free each bird, predict clockwise folds, and continue offline.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
   "background_color": "#151a32",
   "theme_color": "#151a32",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "lang": "en",
   "icons": [
+    {
+      "src": "./assets/paper-flock-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "./assets/paper-flock-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/paper-flock-icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/paper-flock-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "./assets/screenshots/paper-flock-phone.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Paper Flock puzzle board and tactile origami birds"
+    }
+  ],
+  "prefer_related_applications": false
 }
