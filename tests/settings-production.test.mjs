@@ -236,3 +236,64 @@ test("release builder uses an explicit player allowlist", () => {
   assert.match(build, /assertCleanProductionArtifact/);
   assert.match(build, /internalToolsIncluded: false/);
 });
+
+
+test("service-worker activation reloads only after an explicit update request", () => {
+  const platform = fs.readFileSync(
+    path.join(root, "src/app-platform-ui.js"),
+    "utf8"
+  );
+
+  assert.match(platform, /reloadOnControllerChange: false/);
+  assert.match(
+    platform,
+    /!state\.reloadOnControllerChange \|\|\s*state\.reloading/
+  );
+  assert.match(
+    platform,
+    /state\.reloadOnControllerChange = true;\s*state\.waitingWorker\.postMessage/
+  );
+});
+
+test("settings delegates modal focus ownership to the central dialog manager", () => {
+  const settings = fs.readFileSync(
+    path.join(root, "src/settings-ui.js"),
+    "utf8"
+  );
+  const journal = fs.readFileSync(
+    path.join(root, "src/journal-ui.js"),
+    "utf8"
+  );
+  const accessibility = fs.readFileSync(
+    path.join(root, "src/accessibility-ui.js"),
+    "utf8"
+  );
+
+  assert.doesNotMatch(settings, /restoreFocus/);
+  assert.doesNotMatch(settings, /function handleKeydown\(/);
+  assert.doesNotMatch(
+    settings,
+    /document\.addEventListener\("keydown", handleKeydown\)/
+  );
+  assert.doesNotMatch(journal, /restoreFocus/);
+  assert.doesNotMatch(journal, /function handleKeydown\(/);
+  assert.match(accessibility, /initializeDialogManagement\(\)/);
+  assert.match(accessibility, /function handleDialogKeydown\(/);
+  assert.match(accessibility, /function releaseDialog\(/);
+});
+
+test("browser helpers wait for the complete player runtime", () => {
+  const spec = fs.readFileSync(
+    path.join(root, "e2e/production.spec.mjs"),
+    "utf8"
+  );
+  const config = fs.readFileSync(
+    path.join(root, "playwright.config.mjs"),
+    "utf8"
+  );
+
+  assert.match(spec, /async function waitForAppReady\(page\)/);
+  assert.match(spec, /classList\.contains\("ui-ready"\)/);
+  assert.match(spec, /#settings-button/);
+  assert.match(config, /failOnFlakyTests: Boolean\(process\.env\.CI\)/);
+});

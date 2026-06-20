@@ -26,7 +26,6 @@ const state = {
     installAvailable: false,
     updateAvailable: false
   },
-  restoreFocus: null,
   activeSection: "game"
 };
 
@@ -446,8 +445,6 @@ function wireSettingsInterface() {
   el.importInput?.addEventListener("change", restoreBackup);
   el.reset?.addEventListener("click", resetPlayerData);
 
-  document.addEventListener("keydown", handleKeydown);
-
   globalThis.addEventListener(
     "paperflock:settings-state",
     (event) => {
@@ -500,18 +497,11 @@ function requestStates() {
 
 function openSettings() {
   const el = elements();
-  state.restoreFocus =
-    document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : null;
 
   requestStates();
   selectSection("game");
   el.page.hidden = false;
   document.body.classList.add("settings-open");
-  requestAnimationFrame(() =>
-    el.close.focus({ preventScroll: true })
-  );
 }
 
 function closeSettings() {
@@ -522,13 +512,6 @@ function closeSettings() {
 
   el.page.hidden = true;
   document.body.classList.remove("settings-open");
-
-  if (state.restoreFocus?.isConnected) {
-    requestAnimationFrame(() =>
-      state.restoreFocus.focus({ preventScroll: true })
-    );
-  }
-  state.restoreFocus = null;
 }
 
 function selectSection(sectionId) {
@@ -737,51 +720,4 @@ function downloadJson(filename, payload) {
 
 function setStatus(message) {
   elements().status.textContent = message;
-}
-
-function handleKeydown(event) {
-  const el = elements();
-  if (el.page.hidden) {
-    return;
-  }
-
-  if (event.key === "Escape") {
-    event.preventDefault();
-    closeSettings();
-    return;
-  }
-
-  if (event.key !== "Tab") {
-    return;
-  }
-
-  const focusable = [
-    ...el.panel.querySelectorAll(
-      'button:not([disabled]):not([hidden]), ' +
-      'select:not([disabled]), input:not([disabled]), ' +
-      'a[href], textarea:not([disabled])'
-    )
-  ].filter(
-    (node) =>
-      !node.closest("[hidden]") &&
-      node.getClientRects().length > 0
-  );
-
-  if (focusable.length === 0) {
-    return;
-  }
-
-  const first = focusable[0];
-  const last = focusable.at(-1);
-
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (
-    !event.shiftKey &&
-    document.activeElement === last
-  ) {
-    event.preventDefault();
-    first.focus();
-  }
 }

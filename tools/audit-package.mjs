@@ -28,6 +28,7 @@ const css = read("styles.css");
 const worker = read("service-worker.js");
 const buildTool = read("tools/build-release.mjs");
 const settingsUi = read("src/settings-ui.js");
+const accessibilityUi = read("src/accessibility-ui.js");
 const journalUi = read("src/journal-ui.js");
 const achievementCore = read("src/achievement-core.js");
 const playerGame = read("src/game-player-ui.js");
@@ -108,10 +109,15 @@ check(
   "Production Settings provides player backup, restore, and reset."
 );
 check(
-  "settings-focus",
-  /event\.key === "Escape"/.test(settingsUi) &&
-    /event\.key !== "Tab"/.test(settingsUi),
-  "Settings handles Escape and trapped Tab navigation."
+  "dialog-focus",
+  /initializeDialogManagement\(\)/.test(accessibilityUi) &&
+    /function handleDialogKeydown\(/.test(accessibilityUi) &&
+    /event\.key === "Escape"/.test(accessibilityUi) &&
+    /event\.key !== "Tab"/.test(accessibilityUi) &&
+    /function releaseDialog\(/.test(accessibilityUi) &&
+    !/function handleKeydown\(/.test(settingsUi) &&
+    !/function handleKeydown\(/.test(journalUi),
+  "The central accessibility controller owns dialog focus, Escape, and trapped Tab navigation."
 );
 
 check(

@@ -3,6 +3,14 @@ import {
   test
 } from "@playwright/test";
 
+async function waitForAppReady(page) {
+  await page.waitForFunction(() =>
+    document.documentElement.classList.contains("ui-ready")
+  );
+  await expect(page.locator("#board")).toBeVisible();
+  await expect(page.locator("#settings-button")).toBeAttached();
+}
+
 async function resetPlayerStorage(page) {
   await page.goto("/404.html");
   await page.evaluate(() => {
@@ -28,8 +36,10 @@ async function markTutorialComplete(page) {
 
 async function openReturningPlayerGame(page) {
   await markTutorialComplete(page);
-  await page.goto("/");
-  await expect(page.locator("#board")).toBeVisible();
+  await page.goto("/", {
+    waitUntil: "domcontentloaded"
+  });
+  await waitForAppReady(page);
 }
 
 async function openSettings(page) {
@@ -61,18 +71,6 @@ test("game starts without uncaught page errors", async ({ page }) => {
   await expect(
     page.locator(".cell:not(.empty)").first()
   ).toBeVisible();
-
-  await page.evaluate(() =>
-    new Promise((resolve) => {
-      if (document.documentElement.classList.contains("ui-ready")) {
-        resolve();
-        return;
-      }
-      addEventListener("paperflock:ready", resolve, {
-        once: true
-      });
-    })
-  );
 
   expect(errors).toEqual([]);
 });
