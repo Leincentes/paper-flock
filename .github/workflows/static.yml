@@ -185,7 +185,7 @@ jobs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download qualified release
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: paper-flock-release-candidate
           path: _site
@@ -246,7 +246,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Download release bundle
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: paper-flock-v1.6.0-release-bundle
           path: release-bundle
