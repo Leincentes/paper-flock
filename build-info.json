@@ -12,7 +12,7 @@
   "installAuditAvailable": true,
   "mobileInstallationCertified": false,
   "installationGate": "android-and-ios-device-reports-required",
-  "serviceWorkerCacheVersion": "1.6.0",
+  "serviceWorkerCacheVersion": "1.6.0-mobile-map-hotfix-1",
   "mobileCertificationCollectorAvailable": true,
   "physicalDeviceReportsImported": false,
   "publicBetaOperationsAvailable": true,
@@ -108,5 +108,6 @@
   "studioOpeningPublisher": "Gamelo Studio",
   "studioOpeningSkippable": true,
   "studioOpeningReplayAvailable": true,
-  "studioOpeningReducedMotionSupported": true
+  "studioOpeningReducedMotionSupported": true,
+  "mobileLevelMapHiddenStateGuard": true
 }

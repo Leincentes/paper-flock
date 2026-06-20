@@ -1,1 +1,2 @@
+- Fixed mobile level selection so Choose a flock closes correctly.
 New: a skippable Gamelo Studio opening for first-time players, with replay and show-on-launch controls in Settings. Remix Flights with 12 curated puzzles, three visible modifiers, branching three-puzzle routes, cosmetic fold trails, and local shareable result cards. Campaign progress and existing saves remain compatible.

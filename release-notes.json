@@ -7,6 +7,7 @@
       "date": "2026-06-20",
       "channel": "closed-test-candidate",
       "changes": [
+        "Fixed the mobile Choose a flock screen so selecting a level closes the map and opens the puzzle.",
         "Added a skippable Gamelo Studio opening for new players, with replay and show-on-launch controls in Settings.",
         "Added Remix Flights with two branching flights, four three-puzzle routes, and twelve solver-verified remix puzzles.",
         "Added Linked Folds, Locked Fold, and Tailwind modifiers with visible, explained effects.",
@@ -82,7 +83,7 @@
       "date": "2026-06-19",
       "channel": "production",
       "changes": [
-        "Added Chapter 2: Twilight Flock with Levels 21–40.",
+        "Added Chapter 2: Twilight Flock with Levels 21\u201340.",
         "Added chapter progress, completion percentage, and mastery totals.",
         "Added optional mastery guidance using the existing feather system.",
         "Added the Twilight visual atmosphere and two new paper themes.",

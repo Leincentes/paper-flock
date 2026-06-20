@@ -7,6 +7,7 @@
       "date": "2026-06-20",
       "channel": "closed-test-candidate",
       "changes": [
+        "Fixed the mobile Choose a flock screen so selecting a level closes the map and opens the puzzle.",
         "Added a skippable Gamelo Studio opening for new players, with replay and show-on-launch controls in Settings.",
         "Added Remix Flights with two branching flights, four routes, and twelve solver-verified puzzles.",
         "Added Linked Folds, Locked Fold, and Tailwind modifiers with visible explanations.",

@@ -205,6 +205,31 @@ test("mobile overlays remain above the utility drawer and inside the viewport", 
   );
 });
 
+test("mobile level map respects the hidden attribute after selecting a flock", () => {
+  const css = fs.readFileSync(
+    path.join(root, "styles.css"),
+    "utf8"
+  );
+
+  const flexRule = css.indexOf(
+    "html.mobile-gameplay-lock .level-map-overlay {"
+  );
+  const hiddenRule = css.indexOf(
+    "html.mobile-gameplay-lock .level-map-overlay[hidden] {"
+  );
+
+  assert.notEqual(flexRule, -1);
+  assert.notEqual(hiddenRule, -1);
+  assert.ok(
+    hiddenRule > flexRule,
+    "The mobile hidden override must follow the display:flex rule."
+  );
+  assert.match(
+    css.slice(hiddenRule),
+    /html\.mobile-gameplay-lock \.level-map-overlay\[hidden\]\s*\{\s*display:\s*none;/
+  );
+});
+
 test("compact landscape uses a dedicated board and two-column control rail", () => {
   const css = fs.readFileSync(
     path.join(root, "styles.css"),

@@ -662,6 +662,10 @@ test("mobile menu actions reveal gameplay surfaces instead of staying above them
   expect(containment.panelBottom).toBeLessThanOrEqual(
     containment.viewportHeight + 1
   );
+
+  await page.locator(".level-tile:not(:disabled)").first().click();
+  await expect(page.locator("#level-map")).toBeHidden();
+  await expect(page.locator("#board")).toBeVisible();
 });
 
 test("mobile utility surfaces expose 44-pixel touch targets", async ({

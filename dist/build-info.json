@@ -2,7 +2,7 @@
   "product": "Paper Flock",
   "buildVersion": "1.6.0",
   "releaseChannel": "production",
-  "serviceWorkerCacheVersion": "1.6.0",
+  "serviceWorkerCacheVersion": "1.6.0-mobile-map-hotfix-1",
   "productionConfigurationValid": true,
   "publisherName": "Gamelo Studio",
   "canonicalUrl": "https://leincentes.github.io/paper-flock/",

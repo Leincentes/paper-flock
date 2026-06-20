@@ -1,5 +1,7 @@
 ## Paper Flock v1.6.0
 
+- Fixed the mobile Choose a flock screen so selecting a level closes the map and opens the puzzle.
+
 - Added a skippable Gamelo Studio opening for new players, with replay and show-on-launch controls in Settings.
 
 # Paper Flock v1.6.0 — Remix Flights

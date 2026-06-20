@@ -1,7 +1,7 @@
 {
   "product": "Paper Flock",
   "audit": "mobile-ui",
-  "generatedAt": "2026-06-20T14:30:36.312Z",
+  "generatedAt": "2026-06-20T15:22:15.997Z",
   "checks": [
     {
       "name": "production control #undo-button exists",
@@ -402,6 +402,11 @@
       "name": "level map is contained above the drawer",
       "passed": true,
       "detail": "The map must not remain hidden under More or extend beyond the visual viewport."
+    },
+    {
+      "name": "mobile level map closes after flock selection",
+      "passed": true,
+      "detail": "The mobile display:flex containment rule must not override the level map hidden state."
     },
     {
       "name": "settings and Journal scroll internally",

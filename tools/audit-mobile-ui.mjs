@@ -150,6 +150,12 @@ check(
 );
 
 check(
+  "mobile level map closes after flock selection",
+  /html\.mobile-gameplay-lock \.level-map-overlay\[hidden\]\s*\{\s*display:\s*none;/.test(css),
+  "The mobile display:flex containment rule must not override the level map hidden state."
+);
+
+check(
   "settings and Journal scroll internally",
   /\.settings-content[\s\S]*?overflow-y:\s*auto/.test(css) &&
     /\.journal-content[\s\S]*?overflow-y:\s*auto/.test(css),

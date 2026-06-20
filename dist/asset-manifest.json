@@ -57,8 +57,8 @@
     },
     {
       "path": "build-info.json",
-      "bytes": 1331,
-      "sha256": "183ccbc08853e11f1b5f764c01acbff3d7b234783712a8a12dca9bbbd1e65c29"
+      "bytes": 1351,
+      "sha256": "c14e6e6a55a65f497b75186681dbc8ded027acfa373a150eed608960e32a21f4"
     },
     {
       "path": "credits.html",
@@ -102,8 +102,8 @@
     },
     {
       "path": "release-notes.json",
-      "bytes": 2807,
-      "sha256": "2cd4fedbe73a9698ad470fb02b076337bf9b7c005160c74bd0c3774c22e70e89"
+      "bytes": 2915,
+      "sha256": "2bc6c0a84942d15523d88dfa69e8f5eddbf9e84e339e1e3324142175c6a795e3"
     },
     {
       "path": "robots.txt",
@@ -112,8 +112,8 @@
     },
     {
       "path": "service-worker.js",
-      "bytes": 5042,
-      "sha256": "1c9d3ed5690dae9b6caa5a3c3a6c4cf6963b6fca687539908e68255edc9b3d73"
+      "bytes": 5062,
+      "sha256": "2e2b441096cc6cbe5dd869e93d3f38c16bed723d0ecbe3415075e14e3c2daaa9"
     },
     {
       "path": "sitemap.xml",
@@ -257,8 +257,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 159626,
-      "sha256": "451be1dc5ee67be09fdd77c0e511c819a4851a37c54d87fb76552e07a92ba1bf"
+      "bytes": 159945,
+      "sha256": "9291f10b8ae5e9dc5726dbd478957a6bb20161ba23cf02c6e4703e6a7b125de9"
     },
     {
       "path": "support.html",

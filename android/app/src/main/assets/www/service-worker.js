@@ -1,4 +1,4 @@
-const CACHE_NAME = "paper-flock-static-v1.6.0";
+const CACHE_NAME = "paper-flock-static-v1.6.0-mobile-map-hotfix-1";
 const CACHE_PREFIX = "paper-flock-static-";
 const APP_STATIC_RESOURCES = Object.freeze([
   "./",

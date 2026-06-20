@@ -7418,6 +7418,17 @@ html.mobile-gameplay-lock .level-map-panel {
   scroll-padding-block: 72px 58px;
 }
 
+/*
+ * Mobile level-map visibility guard.
+ *
+ * The mobile containment rule above sets the overlay to display:flex.
+ * Without this higher-specificity hidden rule, the HTML hidden attribute
+ * cannot close the map after a level is selected.
+ */
+html.mobile-gameplay-lock .level-map-overlay[hidden] {
+  display: none;
+}
+
 
 /* v1.5 closed-test recovery and local diagnostics */
 .safe-mode-notice {
