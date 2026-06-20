@@ -1,4 +1,4 @@
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const IS_ANDROID_WRAPPER = navigator.userAgent.includes("PaperFlockAndroid/");
 const state = {
   deferredPrompt: null,
@@ -9,7 +9,8 @@ const state = {
     globalThis.matchMedia?.("(display-mode: standalone)").matches === true ||
     navigator.standalone === true,
   online: navigator.onLine,
-  reloading: false
+  reloading: false,
+  reloadOnControllerChange: false
 };
 
 initialize();
@@ -45,7 +46,10 @@ function wireEvents() {
   navigator.serviceWorker?.addEventListener(
     "controllerchange",
     () => {
-      if (state.reloading) {
+      if (
+        !state.reloadOnControllerChange ||
+        state.reloading
+      ) {
         return;
       }
       state.reloading = true;
@@ -130,7 +134,13 @@ async function installApp() {
 }
 
 function applyUpdate() {
-  state.waitingWorker?.postMessage({
+  if (!state.waitingWorker) {
+    emitState();
+    return;
+  }
+
+  state.reloadOnControllerChange = true;
+  state.waitingWorker.postMessage({
     type: "SKIP_WAITING"
   });
 }

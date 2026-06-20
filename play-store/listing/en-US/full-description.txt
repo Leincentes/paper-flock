@@ -20,3 +20,7 @@ PLAYER-FIRST DESIGN
 Paper Flock has no advertisements, energy system, loot boxes, forced waiting, paid progression, or push-notification pressure. Progress is stored locally on your device, and the game does not require an account.
 
 Take a quiet break, study the folds, and find the path that frees the whole flock.
+
+
+REMIX FLIGHTS
+Choose short three-puzzle routes with Linked Folds, Locked Fold, and Tailwind rules. Every modifier is explained before play, and completed routes unlock optional visual fold trails.

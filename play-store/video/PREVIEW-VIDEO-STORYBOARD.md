@@ -17,7 +17,7 @@ monetization disabled.
 
 ## Capture requirements
 
-- Record the actual v1.4.4 Android build at 1080×1920 or higher
+- Record the actual v1.6.0 Android build at 1080×1920 or higher
 - Show gameplay within the first 3 seconds
 - Keep at least 80% of the video as real in-game footage
 - Capture game sound, then add captions for muted autoplay

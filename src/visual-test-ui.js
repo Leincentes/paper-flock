@@ -16,7 +16,7 @@ import {
   visualSessionsToCsv
 } from "./visual-test-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const ARCHIVE_KEY = STORAGE_KEYS.visualResearch;
 const PENDING_KEY = STORAGE_KEYS.visualPending;
 const GAME_SAVE_KEY = STORAGE_KEYS.save;
@@ -106,7 +106,7 @@ function injectVisualTestInterface() {
           aria-modal="true"
           aria-labelledby="visual-test-welcome-title"
         >
-          <span class="visual-test-kicker">Paper Flock v1.4.4</span>
+          <span class="visual-test-kicker">Paper Flock v1.6.0</span>
           <h2 id="visual-test-welcome-title">Visual appeal test</h2>
           <p>
             This test begins with a five-second look at the customer-facing

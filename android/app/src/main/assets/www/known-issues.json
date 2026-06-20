@@ -1,8 +1,15 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.4",
+  "buildVersion": "1.6.0",
   "updatedAt": "2026-06-20",
   "issues": [
+    {
+      "id": "PF-REMIX-FIELD-TEST",
+      "title": "Remix Flights require real-player fairness and replay validation",
+      "severity": "medium",
+      "status": "open",
+      "workaround": "Use the v1.6 closed test to measure modifier comprehension, route completion, retries, abandonment, and voluntary second-route starts."
+    },
     {
       "id": "PF-LOCAL-ONLY",
       "title": "Progress is stored on the current device and browser",
@@ -30,6 +37,13 @@
       "severity": "informational",
       "status": "by-design",
       "workaround": "Open Settings → Game → Replay how to play."
+    },
+    {
+      "id": "PF-CLOSED-TEST-DIAGNOSTICS",
+      "title": "Closed-test diagnostics remain local until exported",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Use Settings → Data → Export tester report when a tester chooses to share a privacy-safe diagnostic summary."
     },
     {
       "id": "PF-SOUND-DEFAULT",

@@ -235,7 +235,7 @@ test("production runtime caches and deploys the campaign model", () => {
     "utf8"
   );
 
-  assert.match(html, /Paper Flock v1\.4/);
+  assert.match(html, /Paper Flock v1\.6/);
   assert.match(worker, /\.\/src\/campaign-core\.js/);
   assert.match(build, /src\/campaign-core\.js/);
   assert.match(build, /campaignLevelCount:\s*40/);

@@ -14,7 +14,7 @@ import {
   requiredChecksForType
 } from "./accessibility-certification-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const ACTIVE_KEY =
   "paper-flock-accessibility-certification-active";
 

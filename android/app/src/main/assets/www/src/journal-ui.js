@@ -1,7 +1,6 @@
 const state = {
   snapshot: null,
-  activeCategory: "all",
-  restoreFocus: null
+  activeCategory: "all"
 };
 
 injectJournal();
@@ -196,7 +195,6 @@ function wireJournal() {
     }
   });
   el.goalButton?.addEventListener("click", runRecommendedGoal);
-  document.addEventListener("keydown", handleKeydown);
 
   globalThis.addEventListener(
     "paperflock:journal-state",
@@ -229,19 +227,12 @@ function requestJournalState() {
 
 function openJournal() {
   const el = elements();
-  state.restoreFocus =
-    document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : null;
 
   requestJournalState();
   el.page.hidden = false;
   document.body.classList.add("journal-open");
   globalThis.dispatchEvent(
     new CustomEvent("paperflock:journal-opened")
-  );
-  requestAnimationFrame(() =>
-    el.close.focus({ preventScroll: true })
   );
 }
 
@@ -253,13 +244,6 @@ function closeJournal() {
 
   el.page.hidden = true;
   document.body.classList.remove("journal-open");
-
-  if (state.restoreFocus?.isConnected) {
-    requestAnimationFrame(() =>
-      state.restoreFocus.focus({ preventScroll: true })
-    );
-  }
-  state.restoreFocus = null;
 }
 
 function renderJournal() {
@@ -487,50 +471,4 @@ function showAchievementToast(achievement) {
       el.toast.hidden = true;
     }, 250);
   }, 4200);
-}
-
-function handleKeydown(event) {
-  const el = elements();
-  if (el.page.hidden) {
-    return;
-  }
-
-  if (event.key === "Escape") {
-    event.preventDefault();
-    closeJournal();
-    return;
-  }
-
-  if (event.key !== "Tab") {
-    return;
-  }
-
-  const focusable = [
-    ...el.panel.querySelectorAll(
-      'button:not([disabled]):not([hidden]), ' +
-      'a[href], input:not([disabled]), select:not([disabled])'
-    )
-  ].filter(
-    (node) =>
-      !node.closest("[hidden]") &&
-      node.getClientRects().length > 0
-  );
-
-  if (focusable.length === 0) {
-    return;
-  }
-
-  const first = focusable[0];
-  const last = focusable.at(-1);
-
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (
-    !event.shiftKey &&
-    document.activeElement === last
-  ) {
-    event.preventDefault();
-    first.focus();
-  }
 }

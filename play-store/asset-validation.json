@@ -1,10 +1,10 @@
 {
   "product": "Paper Flock",
-  "version": "1.4.4",
+  "version": "1.6.0",
   "packageName": "com.gamelostudio.paperflock",
   "titleCharacters": 11,
   "shortDescriptionCharacters": 64,
-  "fullDescriptionCharacters": 1197,
+  "fullDescriptionCharacters": 1396,
   "storeIcon": {
     "width": 512,
     "height": 512,

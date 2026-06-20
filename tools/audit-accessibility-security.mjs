@@ -159,7 +159,7 @@ record(
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.4.4",
+  buildVersion: "1.6.0",
   generatedAt: new Date().toISOString(),
   passes,
   failures,

@@ -5,7 +5,7 @@ import {
   viewportHeightClass
 } from "./mobile-viewport-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const MOBILE_QUERY =
   "(max-width: 760px), (display-mode: standalone)";
 const media = globalThis.matchMedia(MOBILE_QUERY);

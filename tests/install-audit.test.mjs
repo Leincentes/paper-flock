@@ -251,7 +251,7 @@ test("service worker exposes complete-cache status messaging", () => {
   assert.match(source, /expectedCount/);
   assert.match(source, /cachedCount/);
   assert.match(source, /missing/);
-  assert.match(source, /paper-flock-static-v1\.4/);
+  assert.match(source, /paper-flock-static-v1\.6/);
 });
 
 test("production HTML excludes install audit and loads player platform support", () => {
@@ -263,7 +263,7 @@ test("production HTML excludes install audit and loads player platform support",
   assert.doesNotMatch(html, /install-audit-ui/);
   assert.match(html, /src="\.\/src\/app-platform-ui\.js"/);
   assert.match(html, /name="mobile-web-app-capable"/);
-  assert.match(html, /Paper Flock v1\.4/);
+  assert.match(html, /Paper Flock v1\.6/);
 });
 
 

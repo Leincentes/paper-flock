@@ -73,12 +73,43 @@ import {
   recordLaunch,
   recordPuzzleCompletion
 } from "./achievement-core.js";
+import {
+  REMIX_BACKUP_KEY,
+  REMIX_STORAGE_KEY,
+  REMIX_REQUIRED_CAMPAIGN_LEVEL,
+  REMIX_UNLOCK_LEVEL,
+  applyRemixMove,
+  createRemixPuzzle,
+  findRemixSolution,
+  getRemixLegalMoves,
+  normalizeRemixProgress,
+  recordRemixPuzzleCompletion,
+  remixBoardStatus,
+  remixCellState,
+  remixProgressSummary,
+  remixRoute,
+  selectRemixTrail
+} from "./remix-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const MAX_LEVEL = MAX_CAMPAIGN_LEVEL;
+const SAFE_MODE_KEY = "paper-flock-safe-start";
+const safeStartActive = (() => {
+  try {
+    return sessionStorage.getItem(SAFE_MODE_KEY) === "1";
+  } catch {
+    return false;
+  }
+})();
 
-const storageMigration = migrateLegacyStorage(localStorage);
+const storageMigration = safeStartActive
+  ? {
+      save: false,
+      sourceKey: null,
+      skipped: true
+    }
+  : migrateLegacyStorage(localStorage);
 
 const elements = {
   board: document.querySelector("#board"),
@@ -122,6 +153,7 @@ const elements = {
 
 const state = {
   mode: "campaign",
+  safeMode: safeStartActive,
   currentLevel: 1,
   dailyDateKey: null,
   unlockedLevel: 1,
@@ -155,6 +187,17 @@ const state = {
   deadlocks: 0,
   undosUsed: 0,
   dailyUnlockLogged: false,
+  remixProgress: normalizeRemixProgress({}),
+  remixRouteId: null,
+  remixPuzzleIndex: 0,
+  remixRun: {
+    routeId: null,
+    totalMoves: 0,
+    totalHints: 0,
+    totalUndos: 0,
+    totalFeathers: 0,
+    puzzlesCompleted: 0
+  },
   sessionId: createSessionId(),
   sessionStartedAt: Date.now()
 };
@@ -225,13 +268,22 @@ function normalizeSavePayload(value) {
 }
 
 function loadSave() {
-  const result = loadRecoverableJson(localStorage, {
-    primaryKey: STORAGE_KEYS.save,
-    backupKey: STORAGE_KEYS.saveBackup,
-    legacyKeys: LEGACY_STORAGE_KEYS.save,
-    defaultValue: normalizeSavePayload({}),
-    normalize: normalizeSavePayload
-  });
+  const result = state.safeMode
+    ? {
+        value: normalizeSavePayload({}),
+        source: "safe-mode",
+        sourceKey: null,
+        recovered: false,
+        migrated: false,
+        repaired: false
+      }
+    : loadRecoverableJson(localStorage, {
+        primaryKey: STORAGE_KEYS.save,
+        backupKey: STORAGE_KEYS.saveBackup,
+        legacyKeys: LEGACY_STORAGE_KEYS.save,
+        defaultValue: normalizeSavePayload({}),
+        normalize: normalizeSavePayload
+      });
   const parsed = result.value ?? normalizeSavePayload({});
 
   state.currentLevel = clamp(parsed.currentLevel ?? 1, 1, MAX_LEVEL);
@@ -304,8 +356,62 @@ function loadSave() {
   return result;
 }
 
+function loadRemixProgress() {
+  const result = state.safeMode
+    ? {
+        value: normalizeRemixProgress({}),
+        source: "safe-mode",
+        recovered: false,
+        repaired: false
+      }
+    : loadRecoverableJson(localStorage, {
+        primaryKey: REMIX_STORAGE_KEY,
+        backupKey: REMIX_BACKUP_KEY,
+        legacyKeys: [],
+        defaultValue: normalizeRemixProgress({}),
+        normalize: normalizeRemixProgress
+      });
+  state.remixProgress = normalizeRemixProgress(result.value);
+  applyRemixTrail();
+  return result;
+}
+
+function saveRemixProgress() {
+  if (state.safeMode) {
+    return {
+      skipped: true,
+      reason: "safe-mode"
+    };
+  }
+  return writeRecoverableJson(
+    localStorage,
+    normalizeRemixProgress(state.remixProgress),
+    {
+      primaryKey: REMIX_STORAGE_KEY,
+      backupKey: REMIX_BACKUP_KEY
+    }
+  );
+}
+
+function applyRemixTrail() {
+  document.documentElement.dataset.remixTrail =
+    state.remixProgress.selectedTrail ?? "plain";
+}
+
+function resetRemixRun(routeId) {
+  state.remixRun = {
+    routeId,
+    totalMoves: 0,
+    totalHints: 0,
+    totalUndos: 0,
+    totalFeathers: 0,
+    puzzlesCompleted: 0
+  };
+}
+
 function createCheckpoint() {
   if (
+    state.mode === "remix" ||
     state.puzzleCompleted ||
     !Array.isArray(state.board) ||
     state.board.length === 0 ||
@@ -343,6 +449,13 @@ function createCheckpoint() {
 }
 
 function saveProgress() {
+  if (state.safeMode) {
+    return {
+      skipped: true,
+      reason: "safe-mode"
+    };
+  }
+
   const payload = {
     saveVersion: 12,
     buildVersion: BUILD_VERSION,
@@ -379,7 +492,21 @@ function saveProgress() {
 }
 
 
-function logEvent() {}
+function logEvent(name, data = {}) {
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:diagnostic", {
+      detail: {
+        name,
+        data: {
+          mode: state.mode,
+          level: state.currentLevel,
+          safeMode: state.safeMode,
+          ...data
+        }
+      }
+    })
+  );
+}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -452,7 +579,9 @@ function applyChapterAtmosphere() {
   const atmosphere =
     state.mode === "daily"
       ? "daily-paper-sky"
-      : chapterForLevel(state.currentLevel).atmosphere;
+      : state.mode === "remix"
+        ? "remix-paper-sky"
+        : chapterForLevel(state.currentLevel).atmosphere;
   document.documentElement.dataset.chapterAtmosphere =
     atmosphere;
 }
@@ -460,6 +589,11 @@ function applyChapterAtmosphere() {
 function currentRecord() {
   if (state.mode === "daily") {
     return state.dailyFeathers[state.dailyDateKey] ?? 0;
+  }
+  if (state.mode === "remix") {
+    return state.remixProgress.bestFeathers[
+      state.levelMeta?.remixPuzzleId
+    ] ?? 0;
   }
   return state.bestFeathers[String(state.currentLevel)] ?? 0;
 }
@@ -613,16 +747,29 @@ function beginPuzzle(level, reason) {
   updateHud();
   elements.lesson.textContent = level.title;
   setMessage(
-    adaptivePuzzleInstruction({
-      onboarding: state.onboarding,
-      levelInstruction: level.instruction,
-      levelNumber: state.currentLevel,
-      mode: state.mode
-    })
+    state.mode === "remix"
+      ? level.instruction
+      : adaptivePuzzleInstruction({
+          onboarding: state.onboarding,
+          levelInstruction: level.instruction,
+          levelNumber: state.currentLevel,
+          mode: state.mode
+        })
   );
 }
 
+function leaveRemixMode() {
+  if (state.mode === "remix") {
+    globalThis.dispatchEvent(
+      new CustomEvent("paperflock:remix-left")
+    );
+  }
+  state.remixRouteId = null;
+  state.remixPuzzleIndex = 0;
+}
+
 function startLevel(levelNumber, reason = "navigation") {
+  leaveRemixMode();
   state.mode = "campaign";
   state.dailyDateKey = null;
   state.currentLevel = clamp(levelNumber, 1, state.unlockedLevel);
@@ -635,11 +782,94 @@ function startDaily(reason = "daily_button") {
     return;
   }
 
+  leaveRemixMode();
   state.mode = "daily";
   state.dailyDateKey = localDateKey();
   logEvent("daily_started", { reason, dateKey: state.dailyDateKey });
   elements.dailyInfo.hidden = true;
   beginPuzzle(createDailyLevel(state.dailyDateKey), reason);
+}
+
+function startRemix(
+  routeId,
+  puzzleIndex = 0,
+  reason = "remix_selector"
+) {
+  if (state.unlockedLevel < REMIX_UNLOCK_LEVEL) {
+    setMessage(
+      `Complete Level ${REMIX_REQUIRED_CAMPAIGN_LEVEL} to unlock Remix Flights.`
+    );
+    return;
+  }
+
+  const route = remixRoute(routeId);
+  if (!route) {
+    setMessage("That Remix route is not available.");
+    return;
+  }
+
+  const index = clamp(
+    Number(puzzleIndex) || 0,
+    0,
+    route.puzzleIds.length - 1
+  );
+  if (
+    state.remixRun.routeId !== route.id ||
+    index === 0
+  ) {
+    resetRemixRun(route.id);
+  }
+
+  state.mode = "remix";
+  state.dailyDateKey = null;
+  state.remixRouteId = route.id;
+  state.remixPuzzleIndex = index;
+  const puzzle = createRemixPuzzle(route.id, index);
+
+  logEvent("remix_puzzle_started", {
+    reason,
+    routeId: route.id,
+    routeName: route.name,
+    puzzleId: puzzle.remixPuzzleId,
+    puzzleIndex: index,
+    modifier: puzzle.modifier
+  });
+  beginPuzzle(puzzle, reason);
+}
+
+function emitRemixState() {
+  const route = remixRoute(state.remixRouteId);
+  const interval =
+    state.levelMeta?.modifier === "tailwind"
+      ? Math.max(
+          2,
+          Number(state.levelMeta?.modifierConfig?.interval) || 3
+        )
+      : null;
+  const windMovesRemaining =
+    interval === null
+      ? null
+      : interval - (state.moves % interval);
+
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:remix-state", {
+      detail: {
+        unlockedLevel: state.unlockedLevel,
+        progress: normalizeRemixProgress(state.remixProgress),
+        active:
+          state.mode === "remix"
+            ? {
+                routeId: route?.id ?? null,
+                routeName: route?.name ?? "Remix Flight",
+                puzzleId: state.levelMeta?.remixPuzzleId ?? null,
+                puzzleIndex: state.remixPuzzleIndex,
+                modifier: state.levelMeta?.modifier ?? null,
+                windMovesRemaining
+              }
+            : null
+      }
+    })
+  );
 }
 
 function openDailyInvitation() {
@@ -815,11 +1045,26 @@ function renderBoard(previousBoard = null, rotated = []) {
         cell.setAttribute("aria-label", "Empty paper tile");
       } else {
         const directionName = DIRECTIONS[direction].name;
+        const remixMarker =
+          state.mode === "remix"
+            ? remixCellState(
+                state.board,
+                row,
+                col,
+                state.levelMeta,
+                state.moves
+              )
+            : {
+                classes: [],
+                label: "",
+                locked: false
+              };
         cell.dataset.direction = directionName;
+        cell.classList.add(...remixMarker.classes);
         cell.innerHTML = birdMarkup(direction);
         cell.setAttribute(
           "aria-label",
-          `Row ${row + 1}, column ${col + 1}. Origami bird facing ${directionName}. Activate to attempt an escape.`
+          `Row ${row + 1}, column ${col + 1}. Origami bird facing ${directionName}${remixMarker.label ? `, ${remixMarker.label}` : ""}. Activate to attempt an escape.`
         );
         cell.addEventListener("click", () => handleCellClick(row, col, cell));
 
@@ -835,7 +1080,9 @@ function renderBoard(previousBoard = null, rotated = []) {
         if (change && previousBoard) {
           const wrapper = cell.querySelector(".bird-rotation");
           const from = DIRECTIONS[change.from].angle;
-          const to = from + 90;
+          const quarterTurns =
+            ((change.to - change.from + 4) % 4) || 4;
+          const to = from + quarterTurns * 90;
           wrapper.animate(
             [
               {
@@ -1019,9 +1266,42 @@ async function handleCellClick(row, col, cell) {
   state.hintedCell = null;
 
   const direction = state.board[row][col];
-  const result = applyMove(state.board, row, col);
+  const remixMarker =
+    state.mode === "remix"
+      ? remixCellState(
+          state.board,
+          row,
+          col,
+          state.levelMeta,
+          state.moves
+        )
+      : null;
+  const result =
+    state.mode === "remix"
+      ? applyRemixMove(
+          state.board,
+          row,
+          col,
+          state.levelMeta,
+          state.moves
+        )
+      : applyMove(state.board, row, col);
 
   if (!result.ok) {
+    if (remixMarker?.locked) {
+      setMessage(
+        "That fold is still locked. Free the key-marked bird first."
+      );
+      playFeedback("blocked");
+      vibrateFeedback("blocked");
+      logEvent("remix_locked_tap", {
+        routeId: state.remixRouteId,
+        puzzleId: state.levelMeta?.remixPuzzleId,
+        row,
+        col
+      });
+      return;
+    }
     const trace = showBlockedPath(row, col, direction);
     const message = feedbackMessage({
       kind: "blocked",
@@ -1092,6 +1372,20 @@ async function handleCellClick(row, col, cell) {
     )
   });
 
+  if (
+    state.mode === "remix" &&
+    Array.isArray(result.modifierEffects) &&
+    result.modifierEffects.length > 0
+  ) {
+    logEvent("remix_modifier_triggered", {
+      routeId: state.remixRouteId,
+      puzzleId: state.levelMeta?.remixPuzzleId,
+      modifier: state.levelMeta?.modifier,
+      effects: result.modifierEffects.map((effect) => effect.kind),
+      moveNumber: state.moves
+    });
+  }
+
   const escapeDuration =
     state.resolvedEffects === "full"
       ? 330
@@ -1110,7 +1404,14 @@ async function handleCellClick(row, col, cell) {
   renderBoard(previousBoard, result.rotated);
   updateHud();
 
-  const status = boardStatus(state.board);
+  const status =
+    state.mode === "remix"
+      ? remixBoardStatus(
+          state.board,
+          state.levelMeta,
+          state.moves
+        )
+      : boardStatus(state.board);
   if (status === "complete") {
     completeLevel();
   } else if (status === "deadlock") {
@@ -1155,7 +1456,14 @@ async function handleCellClick(row, col, cell) {
       updateOnboarding("deadlock_explained");
     }
   } else {
-    const legalCount = getLegalMoves(state.board).length;
+    const legalCount =
+      state.mode === "remix"
+        ? getRemixLegalMoves(
+            state.board,
+            state.levelMeta,
+            state.moves
+          ).length
+        : getLegalMoves(state.board).length;
     setMessage(
       feedbackMessage({
         kind: "escape",
@@ -1239,6 +1547,8 @@ function completeLevel() {
     deadlocks: state.deadlocks
   });
   let featherResult;
+  let remixResult = null;
+  let remixRouteDefinition = null;
 
   if (state.mode === "campaign") {
     if (!state.completedLevels.includes(state.currentLevel)) {
@@ -1254,18 +1564,45 @@ function completeLevel() {
       earnedFeathers
     );
     state.bestFeathers = featherResult.records;
-  } else {
+  } else if (state.mode === "daily") {
     featherResult = updateFeatherRecord(
       state.dailyFeathers,
       state.dailyDateKey,
       earnedFeathers
     );
     state.dailyFeathers = trimFeatherRecords(featherResult.records);
+  } else {
+    remixRouteDefinition = remixRoute(state.remixRouteId);
+    remixResult = recordRemixPuzzleCompletion(
+      state.remixProgress,
+      state.levelMeta,
+      earnedFeathers
+    );
+    state.remixProgress = remixResult.progress;
+    saveRemixProgress();
+    applyRemixTrail();
+
+    featherResult = {
+      records: state.remixProgress.bestFeathers,
+      previousBest: remixResult.previousBest,
+      best: remixResult.best,
+      improved: remixResult.improved
+    };
+
+    state.remixRun.totalMoves += state.moves;
+    state.remixRun.totalHints += state.hintsUsed;
+    state.remixRun.totalUndos += state.undosUsed;
+    state.remixRun.totalFeathers += earnedFeathers;
+    state.remixRun.puzzlesCompleted += 1;
   }
 
   const afterThemes = unlockedThemes(state.completedLevels);
   state.pendingThemeUnlock =
-    afterThemes.find((theme) => !beforeThemes.has(theme.id)) ?? null;
+    state.mode === "campaign"
+      ? afterThemes.find(
+          (theme) => !beforeThemes.has(theme.id)
+        ) ?? null
+      : null;
 
   const firstFeatherIntroduction =
     !state.onboarding.feathersIntroduced;
@@ -1298,7 +1635,11 @@ function completeLevel() {
 
   state.deadlocked = false;
   elements.undo.classList.remove("attention");
-  setMessage("The whole flock is free.");
+  setMessage(
+    state.mode === "remix"
+      ? "Remix puzzle cleared."
+      : "The whole flock is free."
+  );
   playFeedback("complete", { feathers: earnedFeathers });
   vibrateFeedback("complete", earnedFeathers);
   const chapterFinale =
@@ -1311,24 +1652,43 @@ function completeLevel() {
       isCampaignFinale(state.currentLevel)
   });
 
-  logEvent("puzzle_complete", {
-    moves: state.moves,
-    feathersEarned: earnedFeathers,
-    newBestFeathers: featherResult.improved,
-    previousBestFeathers: featherResult.previousBest,
-    bestFeathers: featherResult.best,
-    hintsUsed: state.hintsUsed,
-    restarts: state.restarts,
-    deadlocks: state.deadlocks,
-    undosUsed: state.undosUsed,
-    themeUnlocked: state.pendingThemeUnlock?.id ?? null,
-    sessionDurationMs: Date.now() - state.sessionStartedAt,
-    completedCount: state.completedLevels.length
-  });
+  logEvent(
+    state.mode === "remix"
+      ? "remix_puzzle_completed"
+      : "puzzle_complete",
+    {
+      moves: state.moves,
+      feathersEarned: earnedFeathers,
+      newBestFeathers: featherResult.improved,
+      previousBestFeathers: featherResult.previousBest,
+      bestFeathers: featherResult.best,
+      hintsUsed: state.hintsUsed,
+      restarts: state.restarts,
+      deadlocks: state.deadlocks,
+      undosUsed: state.undosUsed,
+      themeUnlocked: state.pendingThemeUnlock?.id ?? null,
+      sessionDurationMs: Date.now() - state.sessionStartedAt,
+      completedCount: state.completedLevels.length,
+      remixRouteId:
+        state.mode === "remix" ? state.remixRouteId : null,
+      remixPuzzleId:
+        state.mode === "remix"
+          ? state.levelMeta?.remixPuzzleId
+          : null,
+      modifier:
+        state.mode === "remix"
+          ? state.levelMeta?.modifier
+          : null,
+      routeComplete: remixResult?.routeComplete ?? false
+    }
+  );
 
   if (state.mode === "daily") {
     elements.completionTitle.textContent =
       "Daily flock freed";
+  } else if (state.mode === "remix") {
+    elements.completionTitle.textContent =
+      `${remixRouteDefinition?.name ?? "Remix Flight"} · ${state.remixPuzzleIndex + 1}/3`;
   } else if (isCampaignFinale(state.currentLevel)) {
     elements.completionTitle.textContent =
       "Twilight Flock complete";
@@ -1356,33 +1716,58 @@ function completeLevel() {
   elements.completionBody.textContent =
     state.mode === "daily"
       ? `${improvementMessage} The next local day selects another solver-validated flock.`
-      : isCampaignFinale(state.currentLevel)
-        ? `${improvementMessage} You completed both chapters and freed all forty campaign flocks.`
-        : isChapterFinale(state.currentLevel)
-          ? `${improvementMessage} ${chapterForLevel(state.currentLevel).name} is complete. Twilight Flock is now open.`
-          : `${improvementMessage} ${
-              achievedMastery
-                ? "Mastery goal achieved."
-                : `Optional goal: ${masteryGoalForLevel(state.currentLevel)}`
-            }`;
+      : state.mode === "remix"
+        ? `${improvementMessage} ${
+            remixResult?.routeComplete
+              ? "This three-puzzle route is complete."
+              : `Next, continue through ${remixRouteDefinition?.name ?? "the route"}.`
+          }`
+        : isCampaignFinale(state.currentLevel)
+          ? `${improvementMessage} You completed both chapters and freed all forty campaign flocks.`
+          : isChapterFinale(state.currentLevel)
+            ? `${improvementMessage} ${chapterForLevel(state.currentLevel).name} is complete. Twilight Flock is now open.`
+            : `${improvementMessage} ${
+                achievedMastery
+                  ? "Mastery goal achieved."
+                  : `Optional goal: ${masteryGoalForLevel(state.currentLevel)}`
+              }`;
 
   if (firstFeatherIntroduction) {
     elements.completionBody.textContent +=
       " Feathers show mastery: finish, avoid hints, and avoid restarts or dead ends.";
   }
 
-  elements.completionUnlock.textContent = state.pendingThemeUnlock
-    ? `New paper style unlocked: ${state.pendingThemeUnlock.name}.`
-    : "";
-  elements.completionUnlock.hidden = !state.pendingThemeUnlock;
+  if (state.mode === "remix" && remixResult?.newlyCompletedRoute) {
+    const trailName =
+      document.querySelector(
+        `[data-trail="${remixResult.rewardTrailId}"] strong`
+      )?.textContent ??
+      "a new fold trail";
+    elements.completionUnlock.textContent =
+      `Route reward unlocked: ${trailName}.`;
+    elements.completionUnlock.hidden = false;
+    logEvent("remix_reward_unlocked", {
+      routeId: state.remixRouteId,
+      trailId: remixResult.rewardTrailId
+    });
+  } else {
+    elements.completionUnlock.textContent = state.pendingThemeUnlock
+      ? `New paper style unlocked: ${state.pendingThemeUnlock.name}.`
+      : "";
+    elements.completionUnlock.hidden = !state.pendingThemeUnlock;
+  }
 
   elements.continue.textContent =
-    state.mode === "daily" ||
-    isCampaignFinale(state.currentLevel)
-      ? "Choose a level"
-      : state.currentLevel === 20
-        ? "Enter Twilight Flock"
-        : "Next level";
+    state.mode === "remix"
+      ? state.remixPuzzleIndex >= 2
+        ? "Choose another route"
+        : "Next Remix puzzle"
+      : state.mode === "daily" ||
+          isCampaignFinale(state.currentLevel)
+        ? "Choose a level"
+        : state.currentLevel === 20
+          ? "Enter Twilight Flock"
+          : "Next level";
   elements.completion.hidden = false;
   requestAnimationFrame(() => {
     elements.completion.classList.add("completion-visible");
@@ -1390,8 +1775,42 @@ function completeLevel() {
   logEvent("completion_screen_shown", {
     displayedFeathers: earnedFeathers,
     newBestFeathers: featherResult.improved,
-    themeUnlocked: state.pendingThemeUnlock?.id ?? null
+    themeUnlocked: state.pendingThemeUnlock?.id ?? null,
+    remixRouteComplete: remixResult?.routeComplete ?? false
   });
+
+  if (state.mode === "remix") {
+    const routeBestFeathers =
+      remixRouteDefinition?.puzzleIds.reduce(
+        (total, puzzleId) =>
+          total +
+          (state.remixProgress.bestFeathers[puzzleId] ?? 0),
+        0
+      ) ?? earnedFeathers;
+    const completedOnRoute =
+      remixRouteDefinition?.puzzleIds.filter((puzzleId) =>
+        state.remixProgress.completedPuzzles.includes(puzzleId)
+      ).length ?? 1;
+
+    globalThis.dispatchEvent(
+      new CustomEvent("paperflock:remix-result", {
+        detail: {
+          routeId: state.remixRouteId,
+          routeName:
+            remixRouteDefinition?.name ?? "Remix Flight",
+          puzzleId: state.levelMeta?.remixPuzzleId,
+          puzzleNumber: state.remixPuzzleIndex + 1,
+          puzzlesCompleted: completedOnRoute,
+          totalFeathers: routeBestFeathers,
+          totalMoves: state.remixRun.totalMoves,
+          totalHints: state.remixRun.totalHints,
+          totalUndos: state.remixRun.totalUndos,
+          routeComplete: Boolean(remixResult?.routeComplete),
+          rewardTrailId: remixResult?.rewardTrailId ?? null
+        }
+      })
+    );
+  }
 }
 
 function undoMove() {
@@ -1475,7 +1894,17 @@ function showHint() {
   }
 
   clearPathFeedback();
-  const result = findSolution(state.board, { nodeLimit: 150000 });
+  const result =
+    state.mode === "remix"
+      ? findRemixSolution(
+          state.board,
+          state.levelMeta,
+          {
+            moveCount: state.moves,
+            nodeLimit: 250000
+          }
+        )
+      : findSolution(state.board, { nodeLimit: 150000 });
   if (!result.solution || result.solution.length === 0) {
     setMessage(
       result.exhausted
@@ -1520,9 +1949,17 @@ function showHint() {
 
 function updateHud() {
   elements.modeLabel.textContent =
-    state.mode === "daily" ? "Daily" : "Level";
+    state.mode === "daily"
+      ? "Daily"
+      : state.mode === "remix"
+        ? "Remix"
+        : "Level";
   elements.level.textContent =
-    state.mode === "daily" ? "Today" : String(state.currentLevel);
+    state.mode === "daily"
+      ? "Today"
+      : state.mode === "remix"
+        ? `${state.remixPuzzleIndex + 1}/3`
+        : String(state.currentLevel);
 
   const record = currentRecord();
   const potential = currentFeatherPotential({
@@ -1533,7 +1970,8 @@ function updateHud() {
   const feathersVisible =
     state.onboarding.feathersIntroduced ||
     state.completedLevels.length > 0 ||
-    state.mode === "daily";
+    state.mode === "daily" ||
+    state.mode === "remix";
 
   if (!feathersVisible) {
     elements.best.textContent =
@@ -1546,7 +1984,9 @@ function updateHud() {
   } else {
     elements.best.textContent =
       record === 0
-        ? "Complete the flock to earn up to three feathers."
+        ? state.mode === "remix"
+          ? "Clear this Remix puzzle to record its best flight."
+          : "Complete the flock to earn up to three feathers."
         : `Best flight: ${featherText(record)} (${record}/3)`;
     elements.feathers.textContent = `${potential}/3`;
     elements.feathers.setAttribute(
@@ -1582,6 +2022,34 @@ function updateHud() {
       elements.masteryGoal.textContent =
         state.levelMeta?.masteryGoal ??
         "Daily mastery: complete a clean flight.";
+    }
+  } else if (state.mode === "remix") {
+    const route = remixRoute(state.remixRouteId);
+    const summary = remixProgressSummary(state.remixProgress);
+    const routeCompleted = route
+      ? route.puzzleIds.filter((id) =>
+          state.remixProgress.completedPuzzles.includes(id)
+        ).length
+      : 0;
+    const percent = Math.round((routeCompleted / 3) * 100);
+
+    elements.chapter.textContent =
+      route?.name ?? "Remix Flight";
+    elements.journeyProgress.textContent =
+      `${routeCompleted}/3 route puzzles · ${summary.completedRoutes}/${summary.totalRoutes} routes`;
+    elements.journeyFill.style.width = `${percent}%`;
+    elements.journeyRail.setAttribute("aria-valuemin", "0");
+    elements.journeyRail.setAttribute("aria-valuemax", "3");
+    elements.journeyRail.setAttribute(
+      "aria-valuenow",
+      String(routeCompleted)
+    );
+    if (elements.masteryGoal) {
+      elements.masteryGoal.textContent =
+        `${state.levelMeta?.modifierName ?? "Remix"} · ${
+          state.levelMeta?.masteryGoal ??
+          "Finish without a hint, restart, or dead end."
+        }`;
     }
   } else {
     const chapter = chapterForLevel(
@@ -1626,9 +2094,9 @@ function updateHud() {
   elements.undo.disabled =
     state.history.length === 0 || state.inputLocked;
   elements.previous.disabled =
-    state.mode === "daily" || state.currentLevel <= 1;
+    state.mode !== "campaign" || state.currentLevel <= 1;
   elements.next.disabled =
-    state.mode === "daily" ||
+    state.mode !== "campaign" ||
     state.currentLevel >= state.unlockedLevel ||
     state.currentLevel >= MAX_LEVEL;
 
@@ -1670,6 +2138,8 @@ function updateHud() {
       `Visual effects setting: ${effectsText.textContent}`
     );
   }
+
+  emitRemixState();
 }
 
 function setMessage(text) {
@@ -2104,11 +2574,21 @@ elements.dailyInfo.addEventListener("click", (event) => {
 elements.replay.addEventListener("click", () => {
   logEvent("replay_started", {
     replayMode: state.mode,
-    replayLevel: state.mode === "campaign" ? state.currentLevel : null
+    replayLevel: state.mode === "campaign" ? state.currentLevel : null,
+    remixRouteId:
+      state.mode === "remix" ? state.remixRouteId : null,
+    remixPuzzleIndex:
+      state.mode === "remix" ? state.remixPuzzleIndex : null
   });
   elements.completion.hidden = true;
   if (state.mode === "daily") {
     startDaily("completion_replay");
+  } else if (state.mode === "remix") {
+    startRemix(
+      state.remixRouteId,
+      state.remixPuzzleIndex,
+      "completion_replay"
+    );
   } else {
     startLevel(state.currentLevel, "completion_replay");
   }
@@ -2130,7 +2610,22 @@ elements.sound?.addEventListener("click", () => {
 elements.effects?.addEventListener("click", cycleEffectsMode);
 elements.continue.addEventListener("click", () => {
   elements.completion.hidden = true;
-  if (state.mode === "daily" || state.currentLevel === MAX_LEVEL) {
+  if (state.mode === "remix") {
+    if (state.remixPuzzleIndex >= 2) {
+      globalThis.dispatchEvent(
+        new CustomEvent("paperflock:open-remix")
+      );
+    } else {
+      startRemix(
+        state.remixRouteId,
+        state.remixPuzzleIndex + 1,
+        "completion_continue"
+      );
+    }
+  } else if (
+    state.mode === "daily" ||
+    state.currentLevel === MAX_LEVEL
+  ) {
     openLevelMap();
   } else {
     startLevel(state.currentLevel + 1, "completion_continue");
@@ -2174,6 +2669,43 @@ navigator.connection?.addEventListener?.("change", () => {
 
 
 
+globalThis.addEventListener(
+  "paperflock:start-remix",
+  (event) => {
+    const detail = event.detail ?? {};
+    startRemix(
+      String(detail.routeId ?? ""),
+      Number(detail.puzzleIndex) || 0,
+      "remix_selector"
+    );
+  }
+);
+
+globalThis.addEventListener(
+  "paperflock:remix-state-request",
+  emitRemixState
+);
+
+globalThis.addEventListener(
+  "paperflock:remix-trail-selected",
+  (event) => {
+    const trailId = String(event.detail?.trailId ?? "");
+    const previous = state.remixProgress.selectedTrail;
+    state.remixProgress = selectRemixTrail(
+      state.remixProgress,
+      trailId
+    );
+    if (state.remixProgress.selectedTrail !== previous) {
+      saveRemixProgress();
+      applyRemixTrail();
+      logEvent("remix_trail_selected", {
+        trailId: state.remixProgress.selectedTrail
+      });
+    }
+    emitRemixState();
+  }
+);
+
 function settingsSnapshot() {
   const availableThemeIds = new Set(
     unlockedThemes(state.completedLevels).map(
@@ -2200,15 +2732,19 @@ function settingsSnapshot() {
     totalLevels: MAX_LEVEL,
     totalFeathers: totalFeathers(state.bestFeathers),
     maximumFeathers: MAX_CAMPAIGN_FEATHERS,
-    chapter: state.mode === "campaign"
-      ? chapterForLevel(state.currentLevel).name
-      : "Daily Flock",
+    chapter:
+      state.mode === "campaign"
+        ? chapterForLevel(state.currentLevel).name
+        : state.mode === "remix"
+          ? remixRoute(state.remixRouteId)?.name ?? "Remix Flight"
+          : "Daily Flock",
     chapterProgress: state.mode === "campaign"
       ? chapterProgress(
           state.completedLevels,
           state.currentLevel
         )
       : null,
+    remix: remixProgressSummary(state.remixProgress),
     journal: journalSnapshot().summary
   };
 }
@@ -2333,6 +2869,7 @@ globalThis.addEventListener("paperflock:resume", (event) => {
 });
 
 const saveLoadResult = loadSave();
+const remixLoadResult = loadRemixProgress();
 state.playerStats = recordLaunch(state.playerStats);
 refreshAchievements({ announce: false });
 const restoredCheckpoint = restoreCheckpoint(
@@ -2348,7 +2885,11 @@ logEvent("storage_ready", {
   recovered: saveLoadResult.recovered,
   migrated: saveLoadResult.migrated,
   repaired: saveLoadResult.repaired,
-  legacyMigration: storageMigration
+  safeMode: state.safeMode,
+  legacyMigration: storageMigration,
+  remixSource: remixLoadResult.source,
+  remixRecovered: remixLoadResult.recovered,
+  remixRepaired: remixLoadResult.repaired
 });
 requestAnimationFrame(() => {
   document.documentElement.classList.add("ui-ready");

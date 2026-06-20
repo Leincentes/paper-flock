@@ -1,4 +1,4 @@
-# Paper Flock v1.4.4 — GitHub Pages Deployment
+# Paper Flock v1.6.0 — GitHub Pages Deployment
 
 ## Workflow
 
@@ -17,9 +17,9 @@ creates importable quality evidence from actual job results.
 2. Put the contents of this source package at the repository root.
 3. Use `main` as the default branch.
 4. In **Settings → Pages**, select **GitHub Actions** as the source.
-5. Push the v1.4.4 commit to `main`.
+5. Push the v1.6.0 commit to `main`.
 6. Require all jobs in the release workflow to pass.
-7. Download and retain the v1.4.4 release bundle and quality-evidence artifacts.
+7. Download and retain the v1.6.0 release bundle and quality-evidence artifacts.
 8. Open the URL emitted by the deployment job.
 9. Complete the physical Android and iPhone verification before final approval.
 

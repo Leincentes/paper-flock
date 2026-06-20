@@ -76,7 +76,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: paper-flock-v1.4.4-lint-reports
+          name: paper-flock-v1.6.0-lint-reports
           path: |
             android/app/build/reports/lint-results-debug.html
             android/app/build/reports/lint-results-debug.xml
@@ -85,7 +85,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: paper-flock-v1.4.4-debug-aab
+          name: paper-flock-v1.6.0-debug-aab
           path: android/app/build/outputs/bundle/debug/app-debug.aab
           if-no-files-found: error
 
@@ -140,13 +140,13 @@ jobs:
 
       - name: Rename bundle
         run: |
-          cp android/app/build/outputs/bundle/release/app-release.aab             paper-flock-v1.4.4.aab
-          sha256sum paper-flock-v1.4.4.aab > paper-flock-v1.4.4.aab.sha256
+          cp android/app/build/outputs/bundle/release/app-release.aab             paper-flock-v1.6.0.aab
+          sha256sum paper-flock-v1.6.0.aab > paper-flock-v1.6.0.aab.sha256
 
       - uses: actions/upload-artifact@v4
         with:
-          name: paper-flock-v1.4.4-signed-aab
+          name: paper-flock-v1.6.0-signed-aab
           path: |
-            paper-flock-v1.4.4.aab
-            paper-flock-v1.4.4.aab.sha256
+            paper-flock-v1.6.0.aab
+            paper-flock-v1.6.0.aab.sha256
           if-no-files-found: error

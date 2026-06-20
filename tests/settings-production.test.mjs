@@ -11,6 +11,9 @@ import {
   normalizePlayerSettings,
   validatePlayerBackup
 } from "../src/settings-core.js";
+import {
+  createEnvelope
+} from "../src/storage-player-core.js";
 
 const root = path.resolve(new URL("..", import.meta.url).pathname);
 
@@ -58,16 +61,25 @@ test("player settings normalize sound, haptics, and effects", () => {
 });
 
 test("player backup contains only player-facing storage keys", () => {
+  const validSave = JSON.stringify(
+    createEnvelope({
+      saveVersion: 12,
+      currentLevel: 1
+    })
+  );
   const values = Object.fromEntries(
     PLAYER_STORAGE_KEYS.map(
-      (key, index) => [key, `value-${index}`]
+      (key, index) => [
+        key,
+        index < 2 ? validSave : `value-${index}`
+      ]
     )
   );
   values["paper-flock-quality-evidence"] = "internal";
   values["paper-flock-research"] = "internal";
 
   const backup = createPlayerBackup({
-    buildVersion: "1.4.4",
+    buildVersion: "1.6.0",
     exportedAt: "2026-06-19T00:00:00.000Z",
     storageValues: values
   });
@@ -101,13 +113,25 @@ test("player backup validation rejects internal or unknown data", () => {
 });
 
 test("restore plan replaces player data without touching unrelated storage", () => {
+  const oldSave = JSON.stringify(
+    createEnvelope({
+      saveVersion: 12,
+      currentLevel: 2
+    })
+  );
+  const newSave = JSON.stringify(
+    createEnvelope({
+      saveVersion: 12,
+      currentLevel: 3
+    })
+  );
   const storage = new MemoryStorage({
-    [PLAYER_STORAGE_KEYS[0]]: "old-save",
+    [PLAYER_STORAGE_KEYS[0]]: oldSave,
     "unrelated-key": "keep"
   });
   const backup = createPlayerBackup({
     storageValues: {
-      [PLAYER_STORAGE_KEYS[0]]: "new-save",
+      [PLAYER_STORAGE_KEYS[0]]: newSave,
       [PLAYER_STORAGE_KEYS[2]]: "accessibility"
     }
   });
@@ -119,7 +143,7 @@ test("restore plan replaces player data without touching unrelated storage", () 
   applyPlayerRestorePlan(storage, plan);
   assert.equal(
     storage.getItem(PLAYER_STORAGE_KEYS[0]),
-    "new-save"
+    newSave
   );
   assert.equal(
     storage.getItem(PLAYER_STORAGE_KEYS[2]),
@@ -151,6 +175,7 @@ test("production index loads only player-facing runtime modules", () => {
   );
 
   for (const module of [
+    "diagnostics-ui.js",
     "boot-guard.js",
     "tutorial-player-ui.js",
     "game-player-ui.js",

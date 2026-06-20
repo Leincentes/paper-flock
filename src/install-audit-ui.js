@@ -9,7 +9,7 @@ import {
 } from "./install-audit-core.js";
 import { isIosLike } from "./platform-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 
 const state = {
   installPromptAvailable:

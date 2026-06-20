@@ -7,7 +7,7 @@
 <meta content="#151a32" name="theme-color"/>
 <meta content="no-referrer" name="referrer"/>
 <meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" http-equiv="Content-Security-Policy"/>
-<title>Paper Flock v1.4.4 — Achievement Journal</title>
+<title>Paper Flock v1.6.0 — Remix Flights</title>
 <link href="https://leincentes.github.io/paper-flock/" rel="canonical"/>
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./assets/paper-flock-icon.svg" rel="icon" type="image/svg+xml"/>
@@ -24,6 +24,55 @@
 <span class="ambient-orb ambient-orb-two"></span>
 <span class="ambient-fold ambient-fold-one"></span>
 <span class="ambient-fold ambient-fold-two"></span>
+</div>
+<div
+  aria-hidden="true"
+  class="opening-screen"
+  id="opening-screen"
+  hidden
+>
+  <section
+    aria-describedby="opening-tagline opening-credit"
+    aria-labelledby="opening-title opening-studio"
+    aria-modal="true"
+    class="opening-panel"
+    role="dialog"
+  >
+    <button
+      class="opening-skip"
+      id="opening-skip-button"
+      type="button"
+    >
+      Skip
+    </button>
+    <div aria-hidden="true" class="opening-stars">
+      <span></span><span></span><span></span>
+    </div>
+    <div aria-hidden="true" class="opening-mark">
+      <svg viewBox="0 0 180 126">
+        <path d="M14 78 67 47 88 10 107 49 167 28 131 84 89 114 49 85Z"></path>
+        <path d="M67 47 107 49 89 114M49 85 88 10 131 84"></path>
+      </svg>
+    </div>
+    <p class="opening-studio" id="opening-studio">
+      Gamelo Studio presents
+    </p>
+    <h1 id="opening-title">Paper Flock</h1>
+    <p class="opening-subtitle">A calm origami puzzle</p>
+    <p class="opening-tagline" id="opening-tagline">
+      Find the path. Turn the flock. Let the sky unfold.
+    </p>
+    <p class="opening-credit" id="opening-credit">
+      Created and published by Gamelo Studio
+    </p>
+    <button
+      class="opening-begin"
+      id="opening-begin-button"
+      type="button"
+    >
+      Begin the Flight
+    </button>
+  </section>
 </div>
 <main class="app-shell" id="main-content">
 <header class="hero">
@@ -186,7 +235,7 @@
 </div>
 </section>
 <footer class="app-footer">
-<span>Paper Flock v1.4.4 · Gamelo Studio</span>
+<span>Paper Flock v1.6.0 · Gamelo Studio</span>
 <nav aria-label="Game information and support">
 <a href="./privacy.html">Privacy</a>
 <a href="./terms.html">Terms</a>
@@ -199,5 +248,5 @@
 </footer>
 </main>
 <div aria-hidden="true" class="celebration" id="celebration"></div>
-<script src="./src/boot-guard.js" type="module"></script><script src="./src/tutorial-player-ui.js" type="module"></script><script src="./src/game-player-ui.js" type="module"></script><script src="./src/app-platform-ui.js" type="module"></script><script src="./src/mobile-lifecycle-ui.js" type="module"></script><script src="./src/mobile-viewport-player-ui.js" type="module"></script><script src="./src/accessibility-ui.js" type="module"></script><script src="./src/settings-ui.js" type="module"></script><script src="./src/journal-ui.js" type="module"></script></body>
+<script src="./src/diagnostics-ui.js" type="module"></script><script src="./src/boot-guard.js" type="module"></script><script src="./src/opening-ui.js" type="module"></script><script src="./src/tutorial-player-ui.js" type="module"></script><script src="./src/game-player-ui.js" type="module"></script><script src="./src/remix-ui.js" type="module"></script><script src="./src/app-platform-ui.js" type="module"></script><script src="./src/mobile-lifecycle-ui.js" type="module"></script><script src="./src/mobile-viewport-player-ui.js" type="module"></script><script src="./src/accessibility-ui.js" type="module"></script><script src="./src/settings-ui.js" type="module"></script><script src="./src/journal-ui.js" type="module"></script></body>
 </html>

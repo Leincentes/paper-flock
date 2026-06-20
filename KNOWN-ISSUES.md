@@ -1,10 +1,21 @@
-# Paper Flock v1.4.4 — Known Issues and Release Gates
+# Paper Flock v1.6.0 — Known Issues and Release Gates
 
 ## Sound behavior
 
 - New players and confirmed progress resets start with sound enabled.
 - Existing explicit sound preferences are preserved during upgrade.
 - Browser audio begins only after player interaction and can be disabled in Settings.
+
+## Resolved in v1.6.0
+
+- **PF-MOBILE-LAYOUT:** Narrow phones and compact landscape screens could
+  stretch controls, reduce the board unnecessarily, or leave secondary
+  surfaces behind the More drawer. v1.6.0 introduces named mobile grid areas,
+  a four-action primary bar, grouped secondary navigation, internal overlay
+  scrolling, and a dedicated compact-landscape control rail.
+- **PF-MOBILE-TARGETS:** Several secondary mobile actions were below the
+  44-pixel touch-target objective. v1.6.0 raises production mobile actions and
+  dialog controls to at least 44 CSS pixels.
 
 ## Resolved in v1.4.2
 
@@ -18,7 +29,7 @@ The player-visible register is `known-issues.json` and `known-issues.html`.
 Open release gates:
 
 - GitHub-hosted Chromium, WebKit, Lighthouse, CodeQL, deployment, SBOM, and
-  provenance results must match the v1.4.4 source package.
+  provenance results must match the v1.6.0 source package.
 - Android and iPhone sound, Journal, save, update, and offline checks remain
   required for this candidate.
 - Real-player closed-alpha evidence is still required; simulation is not
@@ -32,7 +43,7 @@ Known product limitations:
   v1.4 because older saves did not store those counters
 
 
-## v1.4.4 external qualification
+## v1.6.0 external qualification
 
 - A signed production AAB requires the publisher-owned upload keystore and
   cannot be generated without those secrets.

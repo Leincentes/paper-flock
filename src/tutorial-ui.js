@@ -19,7 +19,7 @@ import {
   tutorialHint
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const TEST_QUERY_KEYS = Object.freeze([
   "research",
   "visualtest",

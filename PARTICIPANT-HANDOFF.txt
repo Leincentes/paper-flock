@@ -1,4 +1,4 @@
-PAPER FLOCK v1.4.4 CONTROLLED TEST
+PAPER FLOCK v1.6.0 CONTROLLED TEST
 
 Thank you for testing this production candidate.
 

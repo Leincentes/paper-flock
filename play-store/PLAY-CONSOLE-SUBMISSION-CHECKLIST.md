@@ -14,10 +14,10 @@
 - [ ] Generate and securely back up the upload keystore
 - [ ] Add GitHub Actions signing secrets
 - [ ] Run the Android bundle workflow
-- [ ] Download `paper-flock-v1.4.4.aab`
+- [ ] Download `paper-flock-v1.6.0.aab`
 - [ ] Inspect the bundle in Play Console App bundle explorer
 - [ ] Enroll in Play App Signing
-- [ ] Confirm version code `10404`, version name `1.4.4`
+- [ ] Confirm version code `10500`, version name `1.6.0`
 - [ ] Confirm target SDK 36
 - [ ] Confirm only VIBRATE permission is declared
 
@@ -47,6 +47,9 @@
 - [ ] Upload to internal testing first
 - [ ] Install on at least one physical Android phone
 - [ ] Complete backup, offline, update, and Level 11 lesson checks
+- [ ] Verify Settings → Data → Export tester report
+- [ ] Verify local test history can be cleared without changing progress
+- [ ] Verify safe-start mode does not overwrite the stored save
 - [ ] Start closed testing
 - [ ] For a qualifying personal account, retain at least 12 opted-in testers
       continuously for 14 days

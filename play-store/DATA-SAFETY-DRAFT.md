@@ -1,6 +1,6 @@
 # Google Play Data safety draft
 
-This draft matches the v1.4.4 Android manifest and runtime. Recheck it after
+This draft matches the v1.6.0 Android manifest and runtime. Recheck it after
 every SDK, analytics, advertising, account, or network change.
 
 ## Collection and sharing
@@ -22,10 +22,12 @@ The app stores these values only in its private WebView storage:
 - sound, haptic, visual-effect, and theme preferences
 - tutorial completion
 - local recovery copies
+- a bounded local closed-test diagnostic log
 
 These values are not transmitted off the device. Android cloud backup and
-device-transfer backup are disabled in the manifest. A player may explicitly
-export a JSON backup through the Android document picker.
+device-transfer backup are disabled in the manifest. A player may explicitly export a JSON backup or a privacy-safe tester report
+through the Android document picker. Neither file is transmitted by the app;
+the player chooses where to save or share it.
 
 ## SDK review
 

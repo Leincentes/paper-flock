@@ -1,8 +1,29 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.4",
+  "buildVersion": "1.6.0",
   "updatedAt": "2026-06-20",
   "issues": [
+    {
+      "id": "PF-REMIX-FIELD-TEST",
+      "title": "Remix Flights require real-player fairness and replay validation",
+      "severity": "medium",
+      "status": "open",
+      "workaround": "Use the v1.6 closed test to measure modifier comprehension, route completion, retries, abandonment, and voluntary second-route starts before production approval."
+    },
+    {
+      "id": "PF-MOBILE-LAYOUT",
+      "title": "Phone and compact-landscape gameplay layout could stretch controls or hide secondary surfaces",
+      "severity": "high",
+      "status": "resolved-in-1.4.5",
+      "workaround": "Deploy v1.4.5 or later. The mobile layout now uses a board-first named grid, contained overlays, and a dedicated landscape control rail."
+    },
+    {
+      "id": "PF-MOBILE-TARGETS",
+      "title": "Some secondary mobile controls were below the 44-pixel touch-target objective",
+      "severity": "medium",
+      "status": "resolved-in-1.4.5",
+      "workaround": "Deploy v1.4.5 or later. Mobile primary and secondary actions now meet the configured target minimum."
+    },
     {
       "id": "PF-STARTUP-MASTERY-DOM",
       "title": "v1.4.1 could enter startup recovery because the mastery-goal HUD node was absent",
@@ -61,10 +82,10 @@
     },
     {
       "id": "PF-CI-EVIDENCE",
-      "title": "Paper Flock 1.4.4 production approval requires matching CI, device, and alpha-readiness evidence",
+      "title": "Paper Flock 1.6.0 production approval requires matching CI, device, and alpha-readiness evidence",
       "severity": "high",
       "status": "open",
-      "workaround": "Push v1.4.4, require all release and CodeQL jobs to pass, verify Android and iPhone play, then review the simulated-player findings before closed-alpha recruitment."
+      "workaround": "Push v1.6.0, require all release and CodeQL jobs to pass, verify Android and iPhone play, then review the simulated-player findings before closed-alpha recruitment."
     },
     {
       "id": "PF-MOBILE-BROWSER-CHROME",

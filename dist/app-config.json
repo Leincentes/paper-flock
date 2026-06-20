@@ -1,6 +1,6 @@
 {
   "product": "Paper Flock",
-  "buildVersion": "1.4.4",
+  "buildVersion": "1.6.0",
   "releaseChannel": "production",
   "publisherName": "Gamelo Studio",
   "supportEmail": "leincentes@gmail.com",
@@ -11,6 +11,8 @@
   "advertisingEnabled": false,
   "automaticUploads": false,
   "interactiveTutorialAvailable": true,
+  "studioOpeningAvailable": true,
+  "studioOpeningPublisher": "Gamelo Studio",
   "mobileGameplayViewportLock": true,
   "productionSettingsAvailable": true,
   "campaignLevels": 40,
@@ -26,5 +28,14 @@
   "replayGoalRecommendation": true,
   "streaksEnabled": false,
   "expiringRewardsEnabled": false,
-  "soundDefaultEnabled": true
+  "localDiagnosticsAvailable": true,
+  "automaticDiagnosticUploads": false,
+  "closedTestReportExportAvailable": true,
+  "safeStartRecoveryAvailable": true,
+  "soundDefaultEnabled": true,
+  "remixFlightsAvailable": true,
+  "remixPuzzleCount": 12,
+  "remixRouteCount": 4,
+  "remixModifierCount": 3,
+  "remixShareCardsAvailable": true
 }

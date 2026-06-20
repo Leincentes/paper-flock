@@ -1,6 +1,6 @@
 # SPEC-001-Paper-Flock
 
-**Current validation build:** v1.4.4
+**Current validation build:** v1.6.0
 
 ## Background
 
@@ -134,10 +134,6 @@ Export one local JSON event log after each session. Aggregate:
 
 Pair behavioral data with a five-question interview. Do not infer commercial
 retention, monetization, or profitability from a small prototype sample.
-
-## Need Professional Help in Developing Your Architecture?
-
-Please contact me at [sammuti.com](https://sammuti.com) :)
 
 
 ## v0.5 research architecture

@@ -61,7 +61,7 @@ import {
   normalizeTutorialProgress
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const STORAGE_KEY = STORAGE_KEYS.save;
 const EVENT_KEY = STORAGE_KEYS.events;
 const RESEARCH_KEY = STORAGE_KEYS.research;
@@ -2061,7 +2061,7 @@ function exportEventLog() {
 
 function resetProgress() {
   const confirmed = globalThis.confirm(
-    "Reset all local Paper Flock v1.4.4 progress, onboarding, feedback settings, feathers, themes, and test events?"
+    "Reset all local Paper Flock v1.6.0 progress, onboarding, feedback settings, feathers, themes, and test events?"
   );
   if (!confirmed) {
     return;

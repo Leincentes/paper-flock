@@ -5,17 +5,39 @@ import {
   viewportHeightClass
 } from "./mobile-viewport-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const MOBILE_QUERY =
   "(max-width: 760px), (display-mode: standalone)";
 const media = globalThis.matchMedia(MOBILE_QUERY);
+
+const MOBILE_MENU_SECTIONS = Object.freeze([
+  {
+    selector: ".level-nav",
+    label: "Level navigation",
+    description: "Move between unlocked campaign levels."
+  },
+  {
+    selector: ".settings-entry",
+    label: "Player tools",
+    description: "Open Settings or review your Achievement Journal."
+  },
+  {
+    selector: ".mode-actions",
+    label: "Explore",
+    description: "Choose a level, paper theme, or optional Daily Flock."
+  },
+  {
+    selector: ".app-footer",
+    label: "Information",
+    description: "Privacy, support, accessibility, and release details."
+  }
+]);
 
 const state = {
   locked: false,
   menuOpen: false,
   relocated: [],
-  resizeFrame: 0,
-  lastFocused: null
+  resizeFrame: 0
 };
 
 injectViewportInterface();
@@ -25,7 +47,7 @@ synchronizeViewportMode();
 function injectViewportInterface() {
   const controls = document.querySelector(".controls");
   controls?.insertAdjacentHTML(
-    "afterend",
+    "beforeend",
     `
       <button
         class="mobile-game-menu-button"
@@ -34,6 +56,7 @@ function injectViewportInterface() {
         aria-haspopup="dialog"
         aria-controls="mobile-game-menu"
         aria-expanded="false"
+        hidden
       >
         <span aria-hidden="true">☰</span>
         <span>More</span>
@@ -54,27 +77,31 @@ function injectViewportInterface() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-game-menu-title"
+          aria-describedby="mobile-game-menu-help"
         >
           <header class="mobile-game-menu-header">
             <div>
               <span class="mobile-game-menu-kicker">
                 Paper Flock v${BUILD_VERSION}
               </span>
-              <h2 id="mobile-game-menu-title">Game menu</h2>
+              <h2 id="mobile-game-menu-title">More</h2>
             </div>
             <button
               class="mobile-game-menu-close"
               id="mobile-game-menu-close"
               type="button"
               aria-label="Close game menu"
+              data-modal-close
             >
               ×
             </button>
           </header>
 
-          <p class="mobile-game-menu-help">
-            Levels, settings, themes, support, and game information remain
-            available here without making the puzzle screen scroll.
+          <p
+            class="mobile-game-menu-help"
+            id="mobile-game-menu-help"
+          >
+            Levels, Journal, Settings, themes, and support.
           </p>
 
           <div
@@ -120,6 +147,7 @@ function wireViewportInterface() {
       closeMenu();
     }
   });
+  el.content?.addEventListener("click", handleMenuAction);
 
   media.addEventListener?.("change", synchronizeViewportMode);
   globalThis.addEventListener("resize", scheduleLayout);
@@ -141,6 +169,21 @@ function wireViewportInterface() {
       scheduleLayout();
     }
   });
+}
+
+function handleMenuAction(event) {
+  const action = event.target.closest("button, a[href]");
+  if (
+    !action ||
+    action.disabled ||
+    action.getAttribute("aria-disabled") === "true"
+  ) {
+    return;
+  }
+
+  // Let the selected action run, then remove the menu layer so lower
+  // gameplay surfaces such as the level map and Daily Flock are visible.
+  queueMicrotask(closeMenu);
 }
 
 function mobileLike() {
@@ -197,7 +240,9 @@ function enableViewportLock() {
   const el = elements();
   el.html.classList.add("mobile-gameplay-lock");
   el.body.classList.add("mobile-gameplay-lock");
-  el.more.hidden = false;
+  if (el.more) {
+    el.more.hidden = false;
+  }
 
   scheduleLayout();
   globalThis.dispatchEvent(
@@ -223,7 +268,9 @@ function disableViewportLock() {
   el.html.style.removeProperty("--mobile-viewport-top");
   el.html.style.removeProperty("--mobile-viewport-left");
   el.html.style.removeProperty("--mobile-board-size");
-  el.more.hidden = true;
+  if (el.more) {
+    el.more.hidden = true;
+  }
 
   state.locked = false;
   globalThis.dispatchEvent(
@@ -233,41 +280,63 @@ function disableViewportLock() {
   );
 }
 
+function createMenuSection(definition, node) {
+  const section = document.createElement("section");
+  section.className = "mobile-game-menu-section";
+  section.dataset.mobileMenuSection =
+    definition.selector.replace(/^[.#]/, "");
+
+  const heading = document.createElement("div");
+  heading.className = "mobile-game-menu-section-heading";
+  heading.innerHTML = `
+    <h3>${definition.label}</h3>
+    <p>${definition.description}</p>
+  `;
+
+  section.append(heading, node);
+  return section;
+}
+
 function relocateSecondaryInterface() {
   if (state.relocated.length > 0) {
     return;
   }
 
   const content = elements().content;
-  const selectors = [
-    ".level-nav",
-    ".settings-entry",
-    ".mode-actions",
-    ".app-footer"
-  ];
+  if (!content) {
+    return;
+  }
 
-  for (const selector of selectors) {
-    const node = document.querySelector(selector);
+  for (const definition of MOBILE_MENU_SECTIONS) {
+    const node = document.querySelector(definition.selector);
     if (!node || content.contains(node)) {
       continue;
     }
 
     const placeholder = document.createComment(
-      `paper-flock-mobile-placeholder:${selector}`
+      `paper-flock-mobile-placeholder:${definition.selector}`
     );
     node.parentNode.insertBefore(placeholder, node);
+
+    const section = createMenuSection(definition, node);
+    content.append(section);
     state.relocated.push({
       node,
-      placeholder
+      placeholder,
+      section
     });
-    content.append(node);
   }
 }
 
 function restoreSecondaryInterface() {
-  for (const { node, placeholder } of state.relocated) {
+  for (const {
+    node,
+    placeholder,
+    section
+  } of state.relocated) {
     placeholder.parentNode?.insertBefore(node, placeholder);
     placeholder.remove();
+    section.remove();
   }
   state.relocated = [];
 }
@@ -318,7 +387,11 @@ function updateLayout() {
 }
 
 function outerHeight(node) {
-  if (!node || node.hidden) {
+  if (
+    !node ||
+    node.hidden ||
+    getComputedStyle(node).display === "none"
+  ) {
     return 0;
   }
   const rect = node.getBoundingClientRect();
@@ -341,39 +414,66 @@ function verticalPadding(node) {
   );
 }
 
+function compactLandscape(viewport) {
+  return (
+    viewport.width > viewport.height &&
+    viewport.height <= 520
+  );
+}
+
 function fitBoard(viewport) {
   const el = elements();
   if (!state.locked || !el.boardWrap) {
     return;
   }
 
-  const journeyHeight =
-    outerHeight(el.journey) +
-    outerHeight(el.journeyRail) +
-    outerHeight(el.personalBest) +
-    outerHeight(el.masteryGoal);
+  let boardSize;
 
-  const fixedHeight = estimateFixedGameplayHeight({
-    hero: outerHeight(el.hero),
-    hud: outerHeight(el.hud),
-    lesson: outerHeight(el.lesson),
-    journey: journeyHeight,
-    controls: outerHeight(el.controls),
-    moreButton: outerHeight(el.more),
-    shellPadding: verticalPadding(el.shell),
-    cardPadding: verticalPadding(el.card),
-    gaps: 34
-  });
+  if (compactLandscape(viewport)) {
+    const sideRail = Math.max(
+      240,
+      Math.min(340, viewport.width * 0.38)
+    );
+    boardSize = calculateMobileBoardSize({
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
+      horizontalChrome: sideRail + 36,
+      verticalChrome: 28,
+      minimum: 160,
+      maximum: 520
+    });
+  } else {
+    const journeyHeight =
+      outerHeight(el.journey) +
+      outerHeight(el.journeyRail) +
+      outerHeight(el.personalBest) +
+      outerHeight(el.masteryGoal);
 
-  const boardSize = calculateMobileBoardSize({
-    viewportWidth: viewport.width,
-    viewportHeight: viewport.height,
-    horizontalChrome: 46,
-    verticalChrome: fixedHeight,
-    minimum:
-      viewport.height < 590 ? 138 : 160,
-    maximum: 520
-  });
+    const fixedHeight = estimateFixedGameplayHeight({
+      hero: outerHeight(el.hero),
+      hud: outerHeight(el.hud),
+      lesson: outerHeight(el.lesson),
+      journey: journeyHeight,
+      controls: outerHeight(el.controls),
+      moreButton:
+        el.controls?.contains(el.more)
+          ? 0
+          : outerHeight(el.more),
+      shellPadding: verticalPadding(el.shell),
+      cardPadding: verticalPadding(el.card),
+      gaps: 24
+    });
+
+    boardSize = calculateMobileBoardSize({
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
+      horizontalChrome: 40,
+      verticalChrome: fixedHeight,
+      minimum:
+        viewport.height < 590 ? 150 : 170,
+      maximum: 520
+    });
+  }
 
   el.html.style.setProperty(
     "--mobile-board-size",
@@ -387,15 +487,13 @@ function openMenu() {
   }
 
   const el = elements();
-  state.menuOpen = true;
-  state.lastFocused =
-    document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : null;
+  if (!el.overlay || !el.more) {
+    return;
+  }
 
+  state.menuOpen = true;
   el.overlay.hidden = false;
   el.more.setAttribute("aria-expanded", "true");
-  requestAnimationFrame(() => el.close.focus());
 }
 
 function closeMenu() {
@@ -407,14 +505,4 @@ function closeMenu() {
   el.overlay.hidden = true;
   el.more?.setAttribute("aria-expanded", "false");
   state.menuOpen = false;
-
-  if (
-    state.lastFocused &&
-    state.lastFocused.isConnected
-  ) {
-    requestAnimationFrame(() =>
-      state.lastFocused.focus({ preventScroll: true })
-    );
-  }
-  state.lastFocused = null;
 }

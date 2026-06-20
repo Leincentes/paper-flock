@@ -19,7 +19,7 @@ const releaseArchive = argument("release-archive") ??
   path.join(
     root,
     "release-bundle",
-    "paper-flock-v1.4.4-release.zip"
+    "paper-flock-v1.6.0-release.zip"
   );
 
 if (!fs.existsSync(releaseArchive)) {
@@ -34,7 +34,7 @@ const digest = crypto
   .digest("hex");
 
 const evidence = createQualityEvidence({
-  buildVersion: "1.4.4",
+  buildVersion: "1.6.0",
   commitSha:
     process.env.GITHUB_SHA ??
     argument("commit-sha") ??

@@ -21,7 +21,7 @@ import {
   nextParticipantRecommendations
 } from "./field-test-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const ARCHIVE_KEY = STORAGE_KEYS.tactileResearch;
 const PENDING_KEY = STORAGE_KEYS.tactilePending;
 const GAME_SAVE_KEY = STORAGE_KEYS.save;
@@ -179,7 +179,7 @@ function injectInterface() {
           aria-modal="true"
           aria-labelledby="tactile-test-welcome-title"
         >
-          <span class="tactile-test-kicker">Paper Flock v1.4.4</span>
+          <span class="tactile-test-kicker">Paper Flock v1.6.0</span>
           <h2 id="tactile-test-welcome-title">Real-device core-feel test</h2>
           <p id="tactile-test-welcome-copy">
             This mode records anonymous local interaction timing, frame samples,

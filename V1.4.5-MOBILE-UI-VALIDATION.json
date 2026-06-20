@@ -1,0 +1,15 @@
+{
+  "product": "Paper Flock",
+  "buildVersion": "1.4.5",
+  "scope": "mobile-ui-quality",
+  "automatedTestsPassed": 214,
+  "automatedTestsFailed": 0,
+  "mobileUiAuditPassed": true,
+  "mobileUiChecksPassed": 73,
+  "productionControlsInspected": 40,
+  "productionVerificationPassed": true,
+  "saveSchemaVersion": 12,
+  "browserTestsExecutedInThisEnvironment": false,
+  "browserExecutionNote": "Local Chromium terminated because the sandbox GPU process could not start.",
+  "remainingRequiredAction": "Run GitHub-hosted Chromium/WebKit and physical Android mobile UI qualification."
+}

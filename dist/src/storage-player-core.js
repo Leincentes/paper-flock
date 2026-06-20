@@ -6,7 +6,11 @@ export const STORAGE_KEYS = Object.freeze({
   saveBackup: "paper-flock-save-backup",
   orientationDismissed: "paper-flock-orientation-dismissed",
   accessibility: "paper-flock-accessibility",
-  tutorial: "paper-flock-tutorial"
+  tutorial: "paper-flock-tutorial",
+  opening: "paper-flock-opening",
+  diagnostics: "paper-flock-diagnostics",
+  remix: "paper-flock-remix",
+  remixBackup: "paper-flock-remix-backup"
 });
 
 export const LEGACY_STORAGE_KEYS = Object.freeze({

@@ -8,8 +8,8 @@ test("Android package is fixed and targets a current Play SDK", () => {
   const gradle = read("android/app/build.gradle.kts");
   assert.match(gradle, /applicationId = "com\.gamelostudio\.paperflock"/);
   assert.match(gradle, /targetSdk = 36/);
-  assert.match(gradle, /versionCode = 10404/);
-  assert.match(gradle, /versionName = "1\.4\.4"/);
+  assert.match(gradle, /versionCode = 10600/);
+  assert.match(gradle, /versionName = "1\.6\.0"/);
 });
 
 test("Android release has no network or sensitive permissions", () => {
@@ -26,7 +26,7 @@ test("Android wrapper serves packaged assets and blocks in-WebView external navi
   );
   assert.match(activity, /WebViewAssetLoader/);
   assert.match(activity, /appassets\.androidplatform\.net/);
-  assert.match(activity, /PaperFlockAndroid\/1\.4\.4/);
+  assert.match(activity, /PaperFlockAndroid\/1\.6\.0/);
   assert.match(activity, /openExternal\(uri\)/);
 });
 
@@ -85,4 +85,21 @@ test("Android shell uses current predictive-back, result, and inset APIs", () =>
   assert.doesNotMatch(manifest, /android:screenOrientation=/);
   assert.doesNotMatch(theme, /android:statusBarColor/);
   assert.doesNotMatch(theme, /android:navigationBarColor/);
+});
+
+test("native Android bridge can share local Remix result cards safely", () => {
+  const activity = read(
+    "android/app/src/main/java/com/gamelostudio/paperflock/MainActivity.java"
+  );
+  const manifest = read("android/app/src/main/AndroidManifest.xml");
+  const paths = read("android/app/src/main/res/xml/file_paths.xml");
+
+  assert.match(activity, /public void shareImage\(String filename, String dataUrl\)/);
+  assert.match(activity, /FileProvider\.getUriForFile/);
+  assert.match(activity, /Intent\.ACTION_SEND/);
+  assert.match(activity, /FLAG_GRANT_READ_URI_PERMISSION/);
+  assert.match(manifest, /androidx\.core\.content\.FileProvider/);
+  assert.match(manifest, /@xml\/file_paths/);
+  assert.match(paths, /<cache-path/);
+  assert.doesNotMatch(paths, /external-path/);
 });

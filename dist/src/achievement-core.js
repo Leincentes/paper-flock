@@ -353,7 +353,8 @@ export function recordPuzzleCompletion(
   } = {}
 ) {
   const normalized = normalizePlayerStats(stats, { now });
-  const campaign = mode !== "daily";
+  const campaign = mode === "campaign";
+  const daily = mode === "daily";
 
   return {
     ...normalized,
@@ -362,7 +363,7 @@ export function recordPuzzleCompletion(
     campaignCompletions:
       normalized.campaignCompletions + (campaign ? 1 : 0),
     dailyCompletions:
-      normalized.dailyCompletions + (campaign ? 0 : 1),
+      normalized.dailyCompletions + (daily ? 1 : 0),
     cleanCompletions:
       normalized.cleanCompletions + (Number(feathers) === 3 ? 1 : 0),
     totalMoves:

@@ -42,13 +42,19 @@ const topLevelRuntime = Object.freeze([
 ]);
 
 const playerModules = Object.freeze([
+  "src/diagnostics-core.js",
+  "src/diagnostics-ui.js",
   "src/boot-guard.js",
+  "src/opening-core.js",
+  "src/opening-ui.js",
   "src/tutorial-core.js",
   "src/tutorial-player-ui.js",
   "src/game-core.js",
   "src/campaign-core.js",
   "src/achievement-core.js",
+  "src/remix-core.js",
   "src/game-player-ui.js",
+  "src/remix-ui.js",
   "src/progress-core.js",
   "src/experience-core.js",
   "src/mastery-core.js",
@@ -109,6 +115,8 @@ const publicConfig = {
   advertisingEnabled: false,
   automaticUploads: false,
   interactiveTutorialAvailable: true,
+  studioOpeningAvailable: true,
+  studioOpeningPublisher: "Gamelo Studio",
   mobileGameplayViewportLock: true,
   productionSettingsAvailable: true,
   campaignLevels: 40,
@@ -124,7 +132,16 @@ const publicConfig = {
   replayGoalRecommendation: true,
   streaksEnabled: false,
   expiringRewardsEnabled: false,
-  soundDefaultEnabled: true
+  localDiagnosticsAvailable: true,
+  automaticDiagnosticUploads: false,
+  closedTestReportExportAvailable: true,
+  safeStartRecoveryAvailable: true,
+  soundDefaultEnabled: true,
+  remixFlightsAvailable: true,
+  remixPuzzleCount: 12,
+  remixRouteCount: 4,
+  remixModifierCount: 3,
+  remixShareCardsAvailable: true
 };
 
 const publicBuildInfo = {
@@ -139,6 +156,9 @@ const publicBuildInfo = {
   canonicalUrl: String(buildInfo.canonicalUrl),
   supportContactConfigured: true,
   interactiveFirstLaunchTutorial: true,
+  studioOpeningAvailable: true,
+  studioOpeningSkippable: true,
+  studioOpeningReducedMotionSupported: true,
   mobileGameplayViewportLock: true,
   productionSettingsPage: true,
   campaignLevelCount: 40,
@@ -155,7 +175,16 @@ const publicBuildInfo = {
   ethicalReplayGoals: true,
   productionRuntimeClean: true,
   internalToolsIncluded: false,
-  soundDefaultEnabled: true
+  localDiagnosticsAvailable: true,
+  automaticDiagnosticUploads: false,
+  closedTestReportExportAvailable: true,
+  safeStartRecoveryAvailable: true,
+  soundDefaultEnabled: true,
+  remixFlightsAvailable: true,
+  remixPuzzleCount: 12,
+  remixRouteCount: 4,
+  remixModifierCount: 3,
+  remixShareCardsAvailable: true
 };
 
 writeJson("app-config.json", publicConfig);
@@ -165,6 +194,14 @@ writeJson("known-issues.json", {
   buildVersion: String(buildInfo.buildVersion),
   updatedAt: "2026-06-20",
   issues: [
+    {
+      id: "PF-REMIX-FIELD-TEST",
+      title: "Remix Flights require real-player fairness and replay validation",
+      severity: "medium",
+      status: "open",
+      workaround:
+        "Use the v1.6 closed test to measure modifier comprehension, route completion, retries, abandonment, and voluntary second-route starts."
+    },
     {
       id: "PF-LOCAL-ONLY",
       title: "Progress is stored on the current device and browser",
@@ -198,6 +235,14 @@ writeJson("known-issues.json", {
         "Open Settings → Game → Replay how to play."
     },
     {
+      id: "PF-CLOSED-TEST-DIAGNOSTICS",
+      title: "Closed-test diagnostics remain local until exported",
+      severity: "informational",
+      status: "by-design",
+      workaround:
+        "Use Settings → Data → Export tester report when a tester chooses to share a privacy-safe diagnostic summary."
+    },
+    {
       id: "PF-SOUND-DEFAULT",
       title: "Sound defaults to on for new and reset player profiles",
       severity: "informational",
@@ -213,15 +258,36 @@ writeJson("release-notes.json", {
   currentVersion: String(buildInfo.buildVersion),
   releases: [
     {
-      version: "1.4.4",
+      version: "1.6.0",
+      date: "2026-06-20",
+      channel: "closed-test-candidate",
+      changes: [
+        "Added a skippable Gamelo Studio opening for new players, with replay and show-on-launch controls in Settings.",
+        "Added Remix Flights with two branching flights, four routes, and twelve solver-verified puzzles.",
+        "Added Linked Folds, Locked Fold, and Tailwind modifiers with visible explanations.",
+        "Added four unlockable cosmetic fold trails plus the original quiet trail.",
+        "Added local shareable result cards without accounts, uploads, or leaderboards.",
+        "Stored Remix progress in separate recoverable storage included in player backup and reset.",
+        "Preserved the forty-level campaign, Daily Flock, mobile UI, sound defaults, and save schema 12."
+      ]
+    },
+    {
+      version: "1.5.0",
+      date: "2026-06-20",
+      channel: "closed-test-candidate",
+      changes: [
+        "Added privacy-safe rolling diagnostics stored only on the current device.",
+        "Added explicit tester-report export, safe start, guarded backup restore, and Android renderer recovery.",
+        "Retained the v1.4.5 mobile-first layout and save schema 12."
+      ]
+    },
+    {
+      version: "1.4.5",
       date: "2026-06-20",
       channel: "production-candidate",
       changes: [
-        "Enabled sound by default for new players and confirmed progress resets.",
-        "Preserved explicit sound-off preferences from existing saves.",
-        "Added regression tests for sound defaults and preference persistence.",
-        "Added a mechanics-based simulated-player study using the actual campaign boards.",
-        "Kept gameplay rules, achievements, save schema 12, and player progression unchanged."
+        "Rebuilt the mobile layout around a board-first action bar and internally scrolling utility surfaces.",
+        "Enabled sound by default for new players while preserving existing preferences."
       ]
     },
     {
@@ -230,11 +296,7 @@ writeJson("release-notes.json", {
       channel: "production",
       changes: [
         "Added an Achievement Journal with twenty permanent milestones.",
-        "Added retroactive progress recognition for existing players.",
-        "Added lifetime puzzle statistics inside the local recoverable save.",
-        "Added a recommended next goal for campaign, mastery, or Daily Flock play.",
-        "Added accessible unlock notifications and mobile Journal support.",
-        "Kept streaks, expiring rewards, energy, and forced waiting disabled."
+        "Added retroactive progress recognition, lifetime statistics, and ethical next-goal guidance."
       ]
     },
     {
@@ -243,8 +305,7 @@ writeJson("release-notes.json", {
       channel: "production",
       changes: [
         "Added Chapter 2: Twilight Flock with Levels 21–40.",
-        "Added chapter progress, mastery goals, two paper themes, and solver-backed level validation.",
-        "Preserved v1.2 progress and unlocked Level 21 for players who completed Level 20."
+        "Added chapter progress, mastery goals, themes, and solver-backed level validation."
       ]
     },
     {
@@ -252,9 +313,7 @@ writeJson("release-notes.json", {
       date: "2026-06-19",
       channel: "production",
       changes: [
-        "Added the player-facing Settings page.",
-        "Added sound, haptics, effects, themes, accessibility, backup, restore, and reset.",
-        "Separated internal quality tools from the deployable player runtime."
+        "Added player Settings, accessibility controls, backup, restore, and reset."
       ]
     },
     {

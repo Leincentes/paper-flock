@@ -1,5 +1,7 @@
 import {
-  STORAGE_KEYS
+  STORAGE_KEYS,
+  parseEnvelope,
+  storageHealth
 } from "./storage-player-core.js";
 
 export const SETTINGS_SCHEMA_VERSION = 1;
@@ -11,7 +13,15 @@ export const PLAYER_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.saveBackup,
   STORAGE_KEYS.accessibility,
   STORAGE_KEYS.tutorial,
-  STORAGE_KEYS.orientationDismissed
+  STORAGE_KEYS.opening,
+  STORAGE_KEYS.orientationDismissed,
+  STORAGE_KEYS.remix,
+  STORAGE_KEYS.remixBackup
+]);
+
+export const PLAYER_RESET_STORAGE_KEYS = Object.freeze([
+  ...PLAYER_STORAGE_KEYS,
+  STORAGE_KEYS.diagnostics
 ]);
 
 export const DEFAULT_PLAYER_SETTINGS = Object.freeze({
@@ -44,7 +54,7 @@ export function normalizePlayerSettings(value = {}) {
 }
 
 export function createPlayerBackup({
-  buildVersion = "1.4.4",
+  buildVersion = "1.6.0",
   exportedAt = new Date().toISOString(),
   storageValues = {}
 } = {}) {
@@ -101,6 +111,19 @@ export function validatePlayerBackup(payload) {
       if (typeof value !== "string") {
         problems.push(`Player-data value for ${key} must be text.`);
       }
+    }
+
+    const primary = payload.storageValues[STORAGE_KEYS.save];
+    const backup = payload.storageValues[STORAGE_KEYS.saveBackup];
+    const primaryResult =
+      typeof primary === "string" ? parseEnvelope(primary) : null;
+    const backupResult =
+      typeof backup === "string" ? parseEnvelope(backup) : null;
+
+    if (!primaryResult?.valid && !backupResult?.valid) {
+      problems.push(
+        "Backup must contain at least one valid Paper Flock save envelope."
+      );
     }
   }
 
@@ -167,8 +190,46 @@ export function applyPlayerRestorePlan(storage, plan) {
   };
 }
 
+export function applyPlayerRestorePlanSafely(storage, plan) {
+  if (!plan?.valid) {
+    throw new Error("A valid player restore plan is required.");
+  }
+
+  const snapshot = Object.fromEntries(
+    PLAYER_RESET_STORAGE_KEYS.map((key) => [
+      key,
+      storage.getItem(key)
+    ])
+  );
+
+  try {
+    const result = applyPlayerRestorePlan(storage, plan);
+    const health = storageHealth(storage);
+    if (!health.primaryValid && !health.backupValid) {
+      throw new Error(
+        "Restored data did not contain a recoverable save."
+      );
+    }
+    return {
+      ...result,
+      rolledBack: false,
+      storageHealth: health
+    };
+  } catch (error) {
+    for (const key of PLAYER_RESET_STORAGE_KEYS) {
+      const value = snapshot[key];
+      if (typeof value === "string") {
+        storage.setItem(key, value);
+      } else {
+        storage.removeItem(key);
+      }
+    }
+    throw error;
+  }
+}
+
 export function clearPlayerData(storage) {
-  for (const key of PLAYER_STORAGE_KEYS) {
+  for (const key of PLAYER_RESET_STORAGE_KEYS) {
     storage.removeItem(key);
   }
 }

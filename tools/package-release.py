@@ -7,7 +7,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 BUNDLE = ROOT / "release-bundle"
-VERSION = "1.4.4"
+VERSION = "1.6.0"
 
 if not DIST.exists():
     raise SystemExit("Run npm run build first.")
@@ -49,7 +49,7 @@ with zipfile.ZipFile(
     for path in files:
         relative = path.relative_to(DIST).as_posix()
         info = zipfile.ZipInfo(
-            f"paper-flock-v{VERSION}/{relative}",
+            relative,
             fixed_time
         )
         info.compress_type = zipfile.ZIP_DEFLATED
@@ -57,7 +57,7 @@ with zipfile.ZipFile(
         archive.writestr(info, path.read_bytes())
 
     info = zipfile.ZipInfo(
-        f"paper-flock-v{VERSION}/sbom.cdx.json",
+        "sbom.cdx.json",
         fixed_time
     )
     info.compress_type = zipfile.ZIP_DEFLATED

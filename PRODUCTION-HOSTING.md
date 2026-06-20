@@ -1,4 +1,4 @@
-# Paper Flock v1.4.4 — Production Hosting
+# Paper Flock v1.6.0 — Production Hosting
 
 ## Current candidate host
 

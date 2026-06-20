@@ -1,17 +1,54 @@
 {
   "product": "Paper Flock",
-  "currentVersion": "1.4.4",
+  "currentVersion": "1.6.0",
   "releases": [
+    {
+      "version": "1.6.0",
+      "date": "2026-06-20",
+      "channel": "closed-test-candidate",
+      "changes": [
+        "Added a skippable Gamelo Studio opening for new players, with replay and show-on-launch controls in Settings.",
+        "Added Remix Flights with two branching flights, four three-puzzle routes, and twelve solver-verified remix puzzles.",
+        "Added Linked Folds, Locked Fold, and Tailwind modifiers with visible, explained effects.",
+        "Added four unlockable cosmetic fold trails plus the original quiet trail.",
+        "Added local shareable result cards without accounts, uploads, or leaderboards.",
+        "Stored Remix progress in separate recoverable local storage included in player backup and reset.",
+        "Preserved the forty-level campaign, Daily Flock, sound-on default, mobile UI, and save schema 12."
+      ]
+    },
+    {
+      "version": "1.4.5",
+      "date": "2026-06-20",
+      "channel": "production-candidate",
+      "changes": [
+        "Rebuilt the phone gameplay layout around a board-first named grid.",
+        "Placed Undo, Hint, Restart, and More in one stable 48-pixel action bar.",
+        "Grouped secondary controls in a clearer More drawer that closes before opening another surface.",
+        "Raised mobile interactive targets to at least 44 CSS pixels.",
+        "Contained the level map and dialogs within short phone viewports using internal scrolling.",
+        "Added a compact landscape layout with a large board and a two-by-two control rail.",
+        "Added mobile UI audits and browser regressions while preserving save schema 12 and player preferences."
+      ]
+    },
     {
       "version": "1.4.4",
       "date": "2026-06-20",
       "channel": "production-candidate",
       "changes": [
-        "Sound is enabled by default for new players and after a confirmed progress reset.",
-        "Existing players' explicit sound preference is preserved during upgrade.",
-        "Added regression tests for the sound-default and preference-preservation rules.",
-        "Added a mechanics-based simulated-player study using the real campaign boards.",
-        "Kept gameplay rules, save schema 12, achievements, and progression unchanged."
+        "Added the local-content Android application project targeting SDK 36.",
+        "Added Android App Bundle automation, Play Store listing materials, and native backup import and export.",
+        "Added a one-time non-penalizing Level 11 recovery lesson.",
+        "Kept local-first play, no Internet permission, and save schema 12."
+      ]
+    },
+    {
+      "version": "1.4.3",
+      "date": "2026-06-20",
+      "channel": "production-candidate",
+      "changes": [
+        "Enabled sound by default for new and reset player profiles.",
+        "Preserved existing players' explicit sound choices.",
+        "Added mechanics-based player simulation and sound regression coverage."
       ]
     },
     {
@@ -45,7 +82,7 @@
       "date": "2026-06-19",
       "channel": "production",
       "changes": [
-        "Added Chapter 2: Twilight Flock with Levels 21\u201340.",
+        "Added Chapter 2: Twilight Flock with Levels 21–40.",
         "Added chapter progress, completion percentage, and mastery totals.",
         "Added optional mastery guidance using the existing feather system.",
         "Added the Twilight visual atmosphere and two new paper themes.",

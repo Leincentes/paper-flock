@@ -1,6 +1,6 @@
 import {
   PLAYER_STORAGE_KEYS,
-  applyPlayerRestorePlan,
+  applyPlayerRestorePlanSafely,
   clearPlayerData,
   createPlayerBackup,
   createPlayerRestorePlan,
@@ -10,8 +10,11 @@ import {
 import {
   STORAGE_KEYS
 } from "./storage-player-core.js";
+import {
+  normalizeOpeningPreference
+} from "./opening-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const PUBLISHER = "Gamelo Studio";
 const SUPPORT_EMAIL = "leincentes@gmail.com";
 
@@ -19,6 +22,7 @@ const state = {
   game: normalizePlayerSettings(),
   themes: [],
   selectedTheme: "dawn",
+  opening: normalizeOpeningPreference(),
   accessibility: loadAccessibilityPreferences(),
   platform: {
     online: navigator.onLine,
@@ -26,7 +30,13 @@ const state = {
     installAvailable: false,
     updateAvailable: false
   },
-  activeSection: "game"
+  activeSection: "game",
+  diagnostics: {
+    eventCount: 0,
+    firstEventAt: null,
+    lastEventAt: null,
+    counts: {}
+  }
 };
 
 injectSettingsInterface();
@@ -178,6 +188,25 @@ function injectSettingsInterface() {
                 <select id="settings-theme"></select>
               </label>
 
+              <label class="settings-row settings-toggle-row">
+                <span>
+                  <strong>Show studio opening on launch</strong>
+                  <small>Replay the Gamelo Studio introduction each time the game starts.</small>
+                </span>
+                <input
+                  id="settings-opening"
+                  type="checkbox"
+                >
+              </label>
+
+              <button
+                class="settings-action"
+                id="settings-opening-replay-button"
+                type="button"
+              >
+                Replay studio opening
+              </button>
+
               <button
                 class="settings-action"
                 id="settings-tutorial-button"
@@ -291,7 +320,28 @@ function injectSettingsInterface() {
                   accept="application/json,.json"
                   hidden
                 >
+                <button
+                  class="settings-action"
+                  id="settings-test-report-button"
+                  type="button"
+                >
+                  Export tester report
+                </button>
+                <button
+                  class="settings-action"
+                  id="settings-clear-report-button"
+                  type="button"
+                >
+                  Clear local test history
+                </button>
               </div>
+
+              <p
+                class="settings-data-note"
+                id="settings-diagnostic-summary"
+              >
+                No local test events recorded yet.
+              </p>
 
               <button
                 class="settings-danger"
@@ -302,8 +352,9 @@ function injectSettingsInterface() {
               </button>
 
               <p class="settings-data-note">
-                Progress, tutorial completion, and preferences stay on this
-                device unless you export a backup.
+                Progress, tutorial completion, preferences, and the optional
+                rolling test log stay on this device. Nothing is uploaded
+                automatically.
               </p>
             </section>
 
@@ -373,6 +424,10 @@ function elements() {
     haptics: document.querySelector("#settings-haptics"),
     effects: document.querySelector("#settings-effects"),
     theme: document.querySelector("#settings-theme"),
+    opening: document.querySelector("#settings-opening"),
+    openingReplay: document.querySelector(
+      "#settings-opening-replay-button"
+    ),
     tutorial: document.querySelector("#settings-tutorial-button"),
     textSize: document.querySelector("#settings-text-size"),
     contrast: document.querySelector("#settings-contrast"),
@@ -385,6 +440,11 @@ function elements() {
     exportButton: document.querySelector("#settings-export-button"),
     importButton: document.querySelector("#settings-import-button"),
     importInput: document.querySelector("#settings-import-input"),
+    testReport: document.querySelector("#settings-test-report-button"),
+    clearReport: document.querySelector("#settings-clear-report-button"),
+    diagnosticSummary: document.querySelector(
+      "#settings-diagnostic-summary"
+    ),
     reset: document.querySelector("#settings-reset-button"),
     status: document.querySelector("#settings-status")
   };
@@ -411,6 +471,14 @@ function wireSettingsInterface() {
   el.haptics?.addEventListener("change", submitGameSettings);
   el.effects?.addEventListener("change", submitGameSettings);
   el.theme?.addEventListener("change", submitGameSettings);
+  el.opening?.addEventListener(
+    "change",
+    submitOpeningPreference
+  );
+  el.openingReplay?.addEventListener(
+    "click",
+    replayOpening
+  );
 
   el.textSize?.addEventListener(
     "change",
@@ -443,6 +511,8 @@ function wireSettingsInterface() {
     () => el.importInput.click()
   );
   el.importInput?.addEventListener("change", restoreBackup);
+  el.testReport?.addEventListener("click", exportTesterReport);
+  el.clearReport?.addEventListener("click", clearTesterReport);
   el.reset?.addEventListener("click", resetPlayerData);
 
   globalThis.addEventListener(
@@ -456,6 +526,16 @@ function wireSettingsInterface() {
       state.selectedTheme =
         String(detail.selectedTheme ?? "dawn");
       renderGameSettings();
+    }
+  );
+
+  globalThis.addEventListener(
+    "paperflock:opening-state",
+    (event) => {
+      state.opening = normalizeOpeningPreference(
+        event.detail ?? {}
+      );
+      renderOpeningPreference();
     }
   );
 
@@ -480,6 +560,17 @@ function wireSettingsInterface() {
       renderAccessibilitySettings();
     }
   );
+
+  globalThis.addEventListener(
+    "paperflock:diagnostic-state",
+    (event) => {
+      state.diagnostics = {
+        ...state.diagnostics,
+        ...(event.detail ?? {})
+      };
+      renderDiagnosticState();
+    }
+  );
 }
 
 function requestStates() {
@@ -487,12 +578,19 @@ function requestStates() {
     new CustomEvent("paperflock:settings-state-request")
   );
   globalThis.dispatchEvent(
+    new CustomEvent("paperflock:opening-state-request")
+  );
+  globalThis.dispatchEvent(
     new CustomEvent("paperflock:platform-state-request")
   );
   globalThis.dispatchEvent(
     new CustomEvent("paperflock:accessibility-state-request")
   );
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:diagnostic-state-request")
+  );
   renderAccessibilitySettings();
+  renderDiagnosticState();
 }
 
 function openSettings() {
@@ -535,6 +633,7 @@ function renderGameSettings() {
   el.sound.checked = state.game.soundEnabled;
   el.haptics.checked = state.game.hapticsEnabled;
   el.effects.value = state.game.effectsPreference;
+  renderOpeningPreference();
 
   el.theme.replaceChildren();
   for (const theme of state.themes) {
@@ -547,6 +646,34 @@ function renderGameSettings() {
     option.selected = theme.id === state.selectedTheme;
     el.theme.append(option);
   }
+}
+
+function renderOpeningPreference() {
+  const control = elements().opening;
+  if (control) {
+    control.checked = state.opening.showOnLaunch;
+  }
+}
+
+function submitOpeningPreference() {
+  const showOnLaunch = elements().opening?.checked === true;
+  state.opening = {
+    ...state.opening,
+    showOnLaunch
+  };
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:opening-preference-change", {
+      detail: { showOnLaunch }
+    })
+  );
+  setStatus("Opening preference saved.");
+}
+
+function replayOpening() {
+  closeSettings();
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:opening-replay")
+  );
 }
 
 function submitGameSettings() {
@@ -652,7 +779,10 @@ function exportBackup() {
     `paper-flock-v${BUILD_VERSION}-player-backup.json`,
     backup
   );
-  setStatus("Player backup downloaded.");
+  recordDiagnostic("backup_export_requested", {
+    storageKeyCount: Object.keys(backup.storageValues).length
+  });
+  setStatus("Player backup export requested.");
 }
 
 async function restoreBackup(event) {
@@ -681,11 +811,69 @@ async function restoreBackup(event) {
       currentStorageValues(),
       payload
     );
-    applyPlayerRestorePlan(localStorage, plan);
+    applyPlayerRestorePlanSafely(localStorage, plan);
+    recordDiagnostic("backup_restore_success", {
+      encodedBytes: validation.encodedBytes
+    });
     globalThis.location.reload();
-  } catch {
-    setStatus("The selected backup is not valid JSON.");
+  } catch (error) {
+    recordDiagnostic("backup_restore_failed", {
+      message: String(error?.message ?? "invalid backup").slice(0, 120)
+    });
+    setStatus(
+      error instanceof SyntaxError
+        ? "The selected backup is not valid JSON."
+        : "The backup could not be restored. Existing progress was kept."
+    );
   }
+}
+
+function exportTesterReport() {
+  const report =
+    globalThis.PaperFlockDiagnostics?.downloadReport?.();
+  if (!report) {
+    setStatus("The tester report is not available yet.");
+    return;
+  }
+  setStatus(
+    `Tester report export requested with ${report.diagnostics.eventCount} local events.`
+  );
+}
+
+function clearTesterReport() {
+  const confirmed = globalThis.confirm(
+    "Clear the local tester event history? Player progress will not be changed."
+  );
+  if (!confirmed) {
+    return;
+  }
+
+  globalThis.PaperFlockDiagnostics?.clear?.();
+  setStatus("Local tester event history cleared.");
+}
+
+function renderDiagnosticState() {
+  const el = elements();
+  if (!el.diagnosticSummary) {
+    return;
+  }
+
+  const count = Math.max(
+    0,
+    Number(state.diagnostics.eventCount) || 0
+  );
+  el.diagnosticSummary.textContent =
+    count === 0
+      ? "No local test events recorded yet."
+      : `${count} privacy-safe test event${count === 1 ? "" : "s"} stored locally.`;
+}
+
+function recordDiagnostic(name, data = {}) {
+  globalThis.dispatchEvent(
+    new CustomEvent("paperflock:diagnostic", {
+      detail: { name, data }
+    })
+  );
 }
 
 function resetPlayerData() {

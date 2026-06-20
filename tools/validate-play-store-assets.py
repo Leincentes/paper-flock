@@ -65,8 +65,8 @@ gradle = text(ANDROID / "app/build.gradle.kts")
 for required in (
     'applicationId = "com.gamelostudio.paperflock"',
     "targetSdk = 36",
-    "versionCode = 10404",
-    'versionName = "1.4.4"',
+    "versionCode = 10600",
+    'versionName = "1.6.0"',
     'androidx.webkit:webkit:1.16.0',
 ):
     if required not in gradle:
@@ -74,7 +74,7 @@ for required in (
 
 result = {
     "product": "Paper Flock",
-    "version": "1.4.4",
+    "version": "1.6.0",
     "packageName": "com.gamelostudio.paperflock",
     "titleCharacters": len(title),
     "shortDescriptionCharacters": len(short),

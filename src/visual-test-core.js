@@ -49,7 +49,7 @@ export function createVisualSession({
 
   return {
     schemaVersion: 1,
-    buildVersion: "1.4.4",
+    buildVersion: "1.6.0",
     participantCode: code,
     segment: String(segment || "not-specified"),
     sessionId: String(sessionId),

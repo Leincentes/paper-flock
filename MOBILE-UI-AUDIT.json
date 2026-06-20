@@ -1,0 +1,434 @@
+{
+  "product": "Paper Flock",
+  "audit": "mobile-ui",
+  "generatedAt": "2026-06-20T14:30:36.312Z",
+  "checks": [
+    {
+      "name": "production control #undo-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #hint-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #restart-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #mobile-game-menu-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #previous-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #next-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #open-map-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #daily-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #settings-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #journal-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #settings-close-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #journal-close-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #close-map-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #close-map-bottom-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #daily-decline-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #daily-confirm-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #replay-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #continue-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #opening-skip-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #opening-begin-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #tutorial-skip-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #tutorial-continue-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #orientation-dismiss-button exists",
+      "passed": true,
+      "detail": "Missing from the production HTML or injected production UI."
+    },
+    {
+      "name": "production control #opening-skip-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #opening-begin-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #undo-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #hint-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #restart-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #previous-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #next-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #open-map-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #daily-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #replay-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #continue-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #close-map-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #close-map-bottom-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #daily-decline-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #daily-confirm-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-reload is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-restore is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-safe is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-report is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-export is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #boot-recovery-cache is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #tutorial-skip-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #tutorial-hint-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #tutorial-restart-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #tutorial-continue-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #orientation-dismiss-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #mobile-game-menu-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #mobile-game-menu-close is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #accessibility-settings-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #accessibility-settings-close is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #accessibility-reset-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #accessibility-settings-status is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-close-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-game-title is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-opening-replay-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-tutorial-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-install-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-update-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-export-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-import-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-test-report-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-clear-report-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-reset-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #journal-close-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #journal-goal-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #tutorial-replay-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #settings-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "production control #journal-button is referenced",
+      "passed": true,
+      "detail": "The control is declared but no runtime reference was found."
+    },
+    {
+      "name": "studio opening fits mobile viewports",
+      "passed": true,
+      "detail": "The opening must remain usable on short portrait and landscape screens."
+    },
+    {
+      "name": "studio opening controls meet touch-target minimum",
+      "passed": true,
+      "detail": "Opening controls must meet the mobile touch-target requirement."
+    },
+    {
+      "name": "mobile More is part of the primary controls",
+      "passed": true,
+      "detail": "More must share the bottom action bar instead of consuming a separate row."
+    },
+    {
+      "name": "mobile menu actions dismiss the drawer",
+      "passed": true,
+      "detail": "Level map, Daily Flock, Settings, Journal, and navigation must not remain behind the drawer."
+    },
+    {
+      "name": "mobile layout uses named grid areas",
+      "passed": true,
+      "detail": "Named areas prevent hidden rows from stretching controls on short screens."
+    },
+    {
+      "name": "portrait action bar has four equal columns",
+      "passed": true,
+      "detail": "Undo, Hint, Restart, and More should remain in one row."
+    },
+    {
+      "name": "mobile controls meet touch-target minimum",
+      "passed": true,
+      "detail": "Primary controls should be at least 48px and secondary controls at least 44px."
+    },
+    {
+      "name": "compact landscape has dedicated layout",
+      "passed": true,
+      "detail": "Landscape must keep the board and controls visible without stretching."
+    },
+    {
+      "name": "level map is contained above the drawer",
+      "passed": true,
+      "detail": "The map must not remain hidden under More or extend beyond the visual viewport."
+    },
+    {
+      "name": "settings and Journal scroll internally",
+      "passed": true,
+      "detail": "Long mobile dialogs must not scroll the gameplay page."
+    },
+    {
+      "name": "mobile E2E coverage checks controls",
+      "passed": true,
+      "detail": "Missing mobile action-bar regression test."
+    },
+    {
+      "name": "mobile E2E coverage checks menu-to-map navigation",
+      "passed": true,
+      "detail": "Missing regression coverage for the drawer stacking bug."
+    },
+    {
+      "name": "mobile E2E coverage checks touch targets",
+      "passed": true,
+      "detail": "Missing touch-target regression coverage."
+    },
+    {
+      "name": "mobile E2E coverage checks compact landscape",
+      "passed": true,
+      "detail": "Missing landscape regression coverage."
+    }
+  ],
+  "passed": true,
+  "failures": []
+}

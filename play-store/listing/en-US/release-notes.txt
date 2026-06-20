@@ -1,1 +1,1 @@
-Paper Flock arrives on Android with 40 offline puzzles, the Achievement Journal, local backup and restore, sound on by default for new players, and a guided recovery lesson at Level 11. No ads, accounts, energy, or forced waiting.
+New: a skippable Gamelo Studio opening for first-time players, with replay and show-on-launch controls in Settings. Remix Flights with 12 curated puzzles, three visible modifiers, branching three-puzzle routes, cosmetic fold trails, and local shareable result cards. Campaign progress and existing saves remain compatible.

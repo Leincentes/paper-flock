@@ -28,19 +28,29 @@ const css = read("styles.css");
 const worker = read("service-worker.js");
 const buildTool = read("tools/build-release.mjs");
 const settingsUi = read("src/settings-ui.js");
+const diagnosticsUi = read("src/diagnostics-ui.js");
+const diagnosticsCore = read("src/diagnostics-core.js");
+const bootGuard = read("src/boot-guard.js");
+const openingCore = read("src/opening-core.js");
+const openingUi = read("src/opening-ui.js");
 const accessibilityUi = read("src/accessibility-ui.js");
 const journalUi = read("src/journal-ui.js");
 const achievementCore = read("src/achievement-core.js");
 const playerGame = read("src/game-player-ui.js");
+const remixCore = read("src/remix-core.js");
+const remixUi = read("src/remix-ui.js");
 const appConfig = JSON.parse(read("app-config.json"));
 const buildInfo = JSON.parse(read("build-info.json"));
 const releaseNotes = JSON.parse(read("release-notes.json"));
 const knownIssues = JSON.parse(read("known-issues.json"));
 
 const requiredScripts = [
+  "diagnostics-ui.js",
   "boot-guard.js",
+  "opening-ui.js",
   "tutorial-player-ui.js",
   "game-player-ui.js",
+  "remix-ui.js",
   "app-platform-ui.js",
   "mobile-lifecycle-ui.js",
   "mobile-viewport-player-ui.js",
@@ -86,6 +96,25 @@ check(
   "HTML declares the production runtime."
 );
 check(
+  "studio-opening",
+  /Gamelo Studio presents/.test(html) &&
+    /Created and published by Gamelo Studio/.test(html) &&
+    /Begin the Flight/.test(html) &&
+    /opening-skip-button/.test(html) &&
+    /shouldShowOpening/.test(openingCore) &&
+    /paperflock:opening-finished/.test(openingUi) &&
+    appConfig.studioOpeningAvailable === true,
+  "Production runtime provides a skippable, accessible Gamelo Studio opening."
+);
+check(
+  "studio-opening-player-choice",
+  /settings-opening/.test(settingsUi) &&
+    /settings-opening-replay-button/.test(settingsUi) &&
+    /showOnLaunch/.test(openingCore + openingUi),
+  "Players can replay the studio opening or choose to show it on launch."
+);
+
+check(
   "settings-page",
   /class="settings-page"/.test(settingsUi) &&
     /settings-sound/.test(settingsUi) &&
@@ -107,6 +136,22 @@ check(
     /validatePlayerBackup/.test(settingsUi) &&
     /clearPlayerData/.test(settingsUi),
   "Production Settings provides player backup, restore, and reset."
+);
+check(
+  "closed-test-diagnostics",
+  /Export tester report/.test(settingsUi) &&
+    /createClosedTestReport/.test(diagnosticsCore) &&
+    /PaperFlockDiagnostics/.test(diagnosticsUi) &&
+    appConfig.localDiagnosticsAvailable === true &&
+    appConfig.automaticDiagnosticUploads === false,
+  "Production Settings provides local-only closed-test diagnostics and explicit export."
+);
+check(
+  "startup-safe-mode",
+  /Start without changing progress/.test(bootGuard) &&
+    /Restore recovery save/.test(bootGuard) &&
+    /paper-flock-safe-start/.test(bootGuard),
+  "Startup recovery supports recovery-save restore and non-destructive safe start."
 );
 check(
   "dialog-focus",
@@ -144,6 +189,35 @@ check(
   "Journal progression has no streak or expiring-reward pressure."
 );
 check(
+  "remix-flights",
+  appConfig.remixFlightsAvailable === true &&
+    appConfig.remixPuzzleCount === 12 &&
+    appConfig.remixRouteCount === 4 &&
+    appConfig.remixModifierCount === 3 &&
+    /const PUZZLES = Object\.freeze/.test(remixCore) &&
+    /REMIX_FLIGHTS/.test(remixCore) &&
+    /Linked Folds/.test(remixCore) &&
+    /Locked Fold/.test(remixCore) &&
+    /Tailwind/.test(remixCore) &&
+    /remix-overlay/.test(remixUi),
+  "Production runtime includes the twelve-puzzle Remix Flights domain and selector."
+);
+check(
+  "remix-ethical-replay",
+  appConfig.streaksEnabled === false &&
+    appConfig.expiringRewardsEnabled === false &&
+    !/loot box|energy meter|countdown reward/i.test(remixCore + remixUi),
+  "Remix replay remains free of streaks, expiring rewards, energy, and random loot."
+);
+check(
+  "remix-local-share-card",
+  appConfig.remixShareCardsAvailable === true &&
+    /canvas\.width = 1080/.test(remixUi) &&
+    /navigator\.share/.test(remixUi),
+  "Remix result cards are created locally and shared only through a player action."
+);
+
+check(
   "player-game-no-research",
   !/researchActive|participantCode|\?research=1|research-core\.js/.test(
     playerGame
@@ -156,7 +230,11 @@ check(
     /settings-ui\.js/.test(worker) &&
     /journal-ui\.js/.test(worker) &&
     /achievement-core\.js/.test(worker) &&
-    /app-platform-ui\.js/.test(worker),
+    /app-platform-ui\.js/.test(worker) &&
+    /diagnostics-ui\.js/.test(worker) &&
+    /diagnostics-core\.js/.test(worker) &&
+    /opening-core\.js/.test(worker) &&
+    /opening-ui\.js/.test(worker),
   "Service worker caches the player runtime."
 );
 check(
@@ -193,18 +271,18 @@ check(
   "production-gate",
   buildInfo.productionApproved === false &&
     buildInfo.productionGate ===
-      "v1.4.4-ci-evidence-import-and-final-human-signoff-required",
+      "v1.6.0-ci-evidence-import-and-final-human-signoff-required",
   "Production approval remains evidence- and sign-off-gated."
 );
 check(
   "release-notes-current",
-  releaseNotes.currentVersion === "1.4.4",
-  "Current release notes report v1.4.4."
+  releaseNotes.currentVersion === "1.6.0",
+  "Current release notes report v1.6.0."
 );
 check(
   "known-issues-current",
-  knownIssues.buildVersion === "1.4.4",
-  "Known-issues register reports v1.4.4."
+  knownIssues.buildVersion === "1.6.0",
+  "Known-issues register reports v1.6.0."
 );
 check(
   "sound-default",
@@ -254,7 +332,7 @@ for (const file of [
 
 const result = {
   product: "Paper Flock",
-  buildVersion: "1.4.4",
+  buildVersion: "1.6.0",
   passed: failures.length === 0,
   passCount: passes.length,
   failureCount: failures.length,

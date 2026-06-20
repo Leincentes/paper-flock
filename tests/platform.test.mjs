@@ -151,7 +151,7 @@ test("manifest contains current installability and richer-install fields", () =>
   assert.equal(manifest.scope, "./");
   assert.equal(manifest.start_url, "./");
   assert.equal(manifest.display, "standalone");
-  assert.equal(manifest.orientation, "portrait-primary");
+  assert.equal(manifest.orientation, "any");
   assert.ok(manifest.description.length > 30);
   assert.ok(
     manifest.icons.some((icon) => icon.sizes === "192x192")

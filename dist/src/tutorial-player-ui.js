@@ -19,7 +19,7 @@ import {
   tutorialHint
 } from "./tutorial-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const state = {
   progress: loadProgress(),
   session: createTutorialSession("welcome"),
@@ -62,6 +62,15 @@ function queryOptions() {
 }
 
 function initializeTutorial() {
+  if (document.body.classList.contains("opening-active")) {
+    globalThis.addEventListener(
+      "paperflock:opening-finished",
+      initializeTutorial,
+      { once: true }
+    );
+    return;
+  }
+
   const options = queryOptions();
   state.forced = options.force;
 

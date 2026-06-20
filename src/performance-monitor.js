@@ -6,7 +6,7 @@ import {
   evaluatePerformanceSample
 } from "./release-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const MAX_SAMPLES = 30;
 const state = {
   lcp: 0,

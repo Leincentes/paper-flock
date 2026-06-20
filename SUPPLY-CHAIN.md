@@ -1,4 +1,4 @@
-# Paper Flock v1.4.4 — Software Supply Chain
+# Paper Flock v1.6.0 — Software Supply Chain
 
 ## Locked public-registry build
 
@@ -34,8 +34,8 @@ The workflow generates:
 - `release.json`
 - `sbom.cdx.json`
 - `release-checksums.txt`
-- `paper-flock-v1.4.4-release.zip`
-- `paper-flock-v1.4.4-quality-evidence.json`
+- `paper-flock-v1.6.0-release.zip`
+- `paper-flock-v1.6.0-quality-evidence.json`
 
 ## Evidence integrity
 
@@ -46,7 +46,7 @@ Provenance status is taken from the actual `actions/attest` step outcome.
 For a public repository, verify the downloaded archive with GitHub CLI:
 
 ```bash
-gh attestation verify paper-flock-v1.4.4-release.zip -R OWNER/REPOSITORY
+gh attestation verify paper-flock-v1.6.0-release.zip -R OWNER/REPOSITORY
 ```
 
 Also compare the archive against `release-checksums.txt`.

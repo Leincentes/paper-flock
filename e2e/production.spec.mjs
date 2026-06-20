@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import {
   expect,
   test
@@ -62,12 +63,63 @@ async function openJournal(page) {
   ).toBeVisible();
 }
 
+
+async function openRemixPlayerGame(page) {
+  await resetPlayerStorage(page);
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "paper-flock-tutorial",
+      JSON.stringify({
+        schemaVersion: 1,
+        status: "completed",
+        lastStepId: "practice",
+        replayCount: 0
+      })
+    );
+    localStorage.setItem(
+      "paper-flock-save",
+      JSON.stringify({
+        saveVersion: 12,
+        buildVersion: "1.6.0",
+        currentLevel: 6,
+        unlockedLevel: 6,
+        completedLevels: [1, 2, 3, 4, 5],
+        bestFeathers: {
+          1: 3,
+          2: 3,
+          3: 3,
+          4: 2,
+          5: 2
+        },
+        dailyFeathers: {},
+        selectedTheme: "dawn",
+        soundEnabled: true,
+        hapticsEnabled: true,
+        effectsPreference: "minimal"
+      })
+    );
+  });
+  await page.goto("/", {
+    waitUntil: "domcontentloaded"
+  });
+  await waitForAppReady(page);
+}
+
+async function openRemixSelector(page) {
+  const remix = page.locator("#remix-button");
+  if (!(await remix.isVisible())) {
+    await page.locator("#mobile-game-menu-button").click();
+  }
+  await remix.click();
+  await expect(page.locator("#remix-overlay")).toBeVisible();
+}
+
 test("game starts without uncaught page errors", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
   await openReturningPlayerGame(page);
-  await expect(page).toHaveTitle(/Paper Flock v1\.4/);
+  await expect(page).toHaveTitle(/Paper Flock v1\.6/);
   await expect(
     page.locator(".cell:not(.empty)").first()
   ).toBeVisible();
@@ -168,7 +220,7 @@ test("manifest and release metadata are valid production JSON", async ({
   const release = await request.get("/release.json");
   expect(release.ok()).toBeTruthy();
   const releasePayload = await release.json();
-  expect(releasePayload.buildVersion).toBe("1.4.4");
+  expect(releasePayload.buildVersion).toBe("1.6.0");
   expect(releasePayload.releaseChannel).toBe("production");
 
   const config = await request.get("/app-config.json");
@@ -510,6 +562,221 @@ test("mobile More and Settings scroll internally while page stays locked", async
   expect(settingsResult.contentOverflowY).toBe("auto");
 });
 
+
+test("mobile controls stay in one touch-friendly action bar", async ({
+  page,
+  isMobile
+}) => {
+  test.skip(!isMobile, "Mobile viewport test.");
+
+  await page.setViewportSize({
+    width: 360,
+    height: 640
+  });
+  await openReturningPlayerGame(page);
+
+  const result = await page.evaluate(() => {
+    const controls = document.querySelector(".controls");
+    const buttons = [...controls.querySelectorAll("button")]
+      .filter((button) => getComputedStyle(button).display !== "none")
+      .map((button) => {
+        const rect = button.getBoundingClientRect();
+        return {
+          id: button.id,
+          top: rect.top,
+          bottom: rect.bottom,
+          width: rect.width,
+          height: rect.height
+        };
+      });
+
+    return {
+      controlsBottom: controls.getBoundingClientRect().bottom,
+      viewportHeight:
+        window.visualViewport?.height ?? window.innerHeight,
+      buttons
+    };
+  });
+
+  expect(result.buttons.map(({ id }) => id)).toEqual([
+    "undo-button",
+    "hint-button",
+    "restart-button",
+    "mobile-game-menu-button"
+  ]);
+  expect(
+    new Set(result.buttons.map(({ top }) => Math.round(top))).size
+  ).toBe(1);
+  for (const button of result.buttons) {
+    expect(button.height).toBeGreaterThanOrEqual(44);
+    expect(button.width).toBeGreaterThanOrEqual(44);
+  }
+  expect(result.controlsBottom).toBeLessThanOrEqual(
+    result.viewportHeight + 1
+  );
+});
+
+test("mobile menu actions reveal gameplay surfaces instead of staying above them", async ({
+  page,
+  isMobile
+}) => {
+  test.skip(!isMobile, "Mobile viewport test.");
+
+  await openReturningPlayerGame(page);
+  await page.locator("#mobile-game-menu-button").click();
+
+  await expect(page.locator("#mobile-game-menu")).toBeVisible();
+  await expect(
+    page.locator(".mobile-game-menu-section")
+  ).toHaveCount(4);
+
+  await page.locator("#open-map-button").click();
+
+  await expect(page.locator("#mobile-game-menu")).toBeHidden();
+  await expect(page.locator("#level-map")).toBeVisible();
+  await expect(page.locator("#close-map-button")).toBeVisible();
+
+  const containment = await page.evaluate(() => {
+    const overlay = document
+      .querySelector("#level-map")
+      .getBoundingClientRect();
+    const panel = document
+      .querySelector(".level-map-panel")
+      .getBoundingClientRect();
+    const viewportHeight =
+      window.visualViewport?.height ?? window.innerHeight;
+    return {
+      overlayTop: overlay.top,
+      overlayBottom: overlay.bottom,
+      panelTop: panel.top,
+      panelBottom: panel.bottom,
+      viewportHeight
+    };
+  });
+
+  expect(containment.overlayTop).toBeGreaterThanOrEqual(-1);
+  expect(containment.overlayBottom).toBeLessThanOrEqual(
+    containment.viewportHeight + 1
+  );
+  expect(containment.panelTop).toBeGreaterThanOrEqual(-1);
+  expect(containment.panelBottom).toBeLessThanOrEqual(
+    containment.viewportHeight + 1
+  );
+});
+
+test("mobile utility surfaces expose 44-pixel touch targets", async ({
+  page,
+  isMobile
+}) => {
+  test.skip(!isMobile, "Mobile viewport test.");
+
+  await openReturningPlayerGame(page);
+  await page.locator("#mobile-game-menu-button").click();
+
+  const menuTargets = await page.evaluate(() =>
+    [...document.querySelectorAll(
+      "#mobile-game-menu-content button:not(:disabled), " +
+      "#mobile-game-menu-content a[href]"
+    )].map((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        text: element.textContent.trim(),
+        width: rect.width,
+        height: rect.height
+      };
+    })
+  );
+
+  for (const target of menuTargets) {
+    expect(target.height, target.text).toBeGreaterThanOrEqual(44);
+    expect(target.width, target.text).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.locator("#settings-button").click();
+  await expect(page.locator("#mobile-game-menu")).toBeHidden();
+  await expect(page.locator("#settings-page")).toBeVisible();
+
+  const settingsTargets = await page.evaluate(() =>
+    [...document.querySelectorAll(
+      "#settings-page button:not(:disabled), " +
+      "#settings-page select, #settings-page input"
+    )]
+      .filter((element) => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return (
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          rect.width > 0 &&
+          rect.height > 0
+        );
+      })
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          id: element.id,
+          type: element.getAttribute("type"),
+          width: rect.width,
+          height: rect.height
+        };
+      })
+  );
+
+  for (const target of settingsTargets) {
+    if (target.type === "checkbox") {
+      // The whole labelled row is the touch target for checkboxes.
+      continue;
+    }
+    expect(target.height, target.id).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test("compact landscape keeps a large board and non-stretched controls", async ({
+  page,
+  isMobile
+}) => {
+  test.skip(!isMobile, "Mobile viewport test.");
+
+  await page.setViewportSize({
+    width: 844,
+    height: 390
+  });
+  await openReturningPlayerGame(page);
+
+  const result = await page.evaluate(() => {
+    const board = document.querySelector("#board")
+      .getBoundingClientRect();
+    const buttons = [...document.querySelectorAll(
+      ".controls button"
+    )]
+      .filter((button) => getComputedStyle(button).display !== "none")
+      .map((button) => button.getBoundingClientRect());
+
+    return {
+      boardWidth: board.width,
+      boardHeight: board.height,
+      boardBottom: board.bottom,
+      viewportHeight:
+        window.visualViewport?.height ?? window.innerHeight,
+      buttonHeights: buttons.map(({ height }) => height),
+      buttonRows: new Set(
+        buttons.map(({ top }) => Math.round(top))
+      ).size
+    };
+  });
+
+  expect(result.boardWidth).toBeGreaterThanOrEqual(280);
+  expect(result.boardHeight).toBeGreaterThanOrEqual(280);
+  expect(result.boardBottom).toBeLessThanOrEqual(
+    result.viewportHeight + 1
+  );
+  expect(result.buttonRows).toBe(2);
+  for (const height of result.buttonHeights) {
+    expect(height).toBeGreaterThanOrEqual(44);
+    expect(height).toBeLessThanOrEqual(72);
+  }
+});
+
 test("new player sees the tutorial before normal play", async ({
   page
 }) => {
@@ -727,7 +994,7 @@ test("Chapter 2 exposes progress percentage and mastery guidance", async ({
       "paper-flock-save",
       JSON.stringify({
         saveVersion: 11,
-        buildVersion: "1.4.4",
+        buildVersion: "1.6.0",
         currentLevel: 23,
         unlockedLevel: 24,
         completedLevels: [
@@ -893,7 +1160,7 @@ test("recommended Journal goal opens the correct campaign level", async ({
       "paper-flock-save",
       JSON.stringify({
         saveVersion: 12,
-        buildVersion: "1.4.4",
+        buildVersion: "1.6.0",
         currentLevel: 4,
         unlockedLevel: 4,
         completedLevels: [1, 2, 3],
@@ -1007,4 +1274,148 @@ test("production metadata advertises ethical achievement progression", async ({
   expect(build.saveSchemaVersion).toBe(12);
   expect(build.achievementJournal).toBe(true);
   expect(build.ethicalReplayGoals).toBe(true);
+});
+
+
+test("tester report exports a privacy-safe local summary", async ({
+  page
+}) => {
+  await openReturningPlayerGame(page);
+  await openSettings(page);
+  await page.locator('[data-settings-tab="data"]').click();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.locator("#settings-test-report-button").click();
+  const download = await downloadPromise;
+  const downloadPath = await download.path();
+  expect(download.suggestedFilename()).toContain(
+    "closed-test-report.json"
+  );
+  expect(downloadPath).toBeTruthy();
+
+  const report = JSON.parse(
+    fs.readFileSync(downloadPath, "utf8")
+  );
+  expect(report.kind).toBe("closed-test-report");
+  expect(report.buildVersion).toBe("1.6.0");
+  expect(report.diagnostics.eventCount).toBeGreaterThan(0);
+  expect(report.storageValues).toBeUndefined();
+  expect(report.board).toBeUndefined();
+  expect(JSON.stringify(report)).not.toContain(
+    "paper-flock-save"
+  );
+});
+
+test("safe start does not overwrite the recoverable player save", async ({
+  page
+}) => {
+  await openReturningPlayerGame(page);
+  const before = await page.evaluate(() =>
+    localStorage.getItem("paper-flock-save")
+  );
+  expect(before).toBeTruthy();
+
+  await page.evaluate(() => {
+    sessionStorage.setItem("paper-flock-safe-start", "1");
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await waitForAppReady(page);
+
+  await expect(page.locator(".safe-mode-notice")).toBeVisible();
+  await page.locator("#hint-button").click();
+  await page.locator("#restart-button").click();
+
+  const after = await page.evaluate(() =>
+    localStorage.getItem("paper-flock-save")
+  );
+  expect(after).toBe(before);
+});
+
+
+test("Remix selector exposes two branching flights and four routes", async ({
+  page
+}) => {
+  await openRemixPlayerGame(page);
+  await openRemixSelector(page);
+
+  await expect(page.locator(".remix-flight")).toHaveCount(2);
+  await expect(page.locator(".remix-route-card")).toHaveCount(4);
+  await expect(page.locator(".remix-trail-choice")).toHaveCount(5);
+
+  const dimensions = await page.locator("#remix-overlay").evaluate(
+    (overlay) => ({
+      width: overlay.scrollWidth,
+      viewport: overlay.clientWidth
+    })
+  );
+  expect(dimensions.width).toBeLessThanOrEqual(
+    dimensions.viewport + 1
+  );
+});
+
+test("starting a Remix route shows its explained modifier", async ({
+  page
+}) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+
+  await openRemixPlayerGame(page);
+  await openRemixSelector(page);
+  await page
+    .locator(".remix-route-card")
+    .filter({ hasText: "Gentle Thread" })
+    .locator("button")
+    .click();
+
+  await expect(page.locator("#mode-label")).toHaveText("Remix");
+  await expect(page.locator("#level-number")).toHaveText("1/3");
+  await expect(
+    page.locator("#remix-modifier-badge")
+  ).toContainText("Linked Folds");
+  await expect(page.locator(".cell.remix-linked")).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
+
+test("a solver-guided Remix clear persists progress and exposes a result card", async ({
+  page
+}) => {
+  await openRemixPlayerGame(page);
+  await openRemixSelector(page);
+  await page
+    .locator(".remix-route-card")
+    .filter({ hasText: "Gentle Thread" })
+    .locator("button")
+    .click();
+
+  const solution = await page.evaluate(async () => {
+    const {
+      createRemixPuzzle,
+      findRemixSolution
+    } = await import("/src/remix-core.js");
+    const puzzle = createRemixPuzzle("gentle-thread", 0);
+    return findRemixSolution(
+      puzzle.board,
+      puzzle,
+      { nodeLimit: 500000 }
+    ).solution;
+  });
+
+  for (const move of solution) {
+    await page
+      .locator(
+        `.cell[data-row="${move.row}"][data-col="${move.col}"]`
+      )
+      .click();
+    await page.waitForTimeout(110);
+  }
+
+  await expect(page.locator("#completion")).toBeVisible();
+  await expect(page.locator("#remix-share-button")).toBeVisible();
+
+  const progress = await page.evaluate(() => {
+    const raw = localStorage.getItem("paper-flock-remix");
+    return raw ? JSON.parse(raw).payload : null;
+  });
+  expect(progress.completedPuzzles).toContain("linked-01");
+  expect(progress.bestFeathers["linked-01"]).toBeGreaterThan(0);
 });

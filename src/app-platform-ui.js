@@ -1,4 +1,4 @@
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 const IS_ANDROID_WRAPPER = navigator.userAgent.includes("PaperFlockAndroid/");
 const state = {
   deferredPrompt: null,

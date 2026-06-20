@@ -419,7 +419,7 @@ export function evaluateMobileCertification({
 }
 
 export function createInstallReport({
-  buildVersion = "1.4.4",
+  buildVersion = "1.6.0",
   generatedAt = new Date().toISOString(),
   pageUrl = "",
   platform = "",

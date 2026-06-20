@@ -13,7 +13,7 @@ import {
   normalizeOperationalChecks
 } from "./beta-operations-core.js";
 
-const BUILD_VERSION = "1.4.4";
+const BUILD_VERSION = "1.6.0";
 
 const state = {
   config: {},
