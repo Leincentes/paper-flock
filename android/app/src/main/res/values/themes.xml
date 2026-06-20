@@ -7,7 +7,6 @@
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@color/paper_flock_navy</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
         <item name="android:colorAccent">#B94F4F</item>
     </style>
 

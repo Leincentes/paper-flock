@@ -1,0 +1,152 @@
+:root {
+  color-scheme: light;
+  --ink: #2f2b3d;
+  --muted: #686274;
+  --paper: #fff9ec;
+  --accent: #a74642;
+  --navy: #151a32;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px 14px 48px;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(246, 180, 125, 0.35), transparent 38%),
+    linear-gradient(180deg, #151a32, #7183ac);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+main {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px;
+  padding: clamp(20px, 5vw, 42px);
+  background: rgba(255, 249, 236, 0.97);
+  box-shadow: 0 30px 90px rgba(7, 10, 28, 0.35);
+}
+
+header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1, h2 {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+h1 {
+  margin: 5px 0 8px;
+  font-size: clamp(2rem, 8vw, 3.2rem);
+}
+
+h2 {
+  margin-top: 30px;
+  font-size: 1.35rem;
+}
+
+p, li {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+a {
+  color: #7f383c;
+  font-weight: 720;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+  border-top: 1px solid rgba(47, 43, 61, 0.12);
+  padding-top: 18px;
+}
+
+nav a {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #eee3cf;
+  text-decoration: none;
+}
+
+.notice {
+  border-left: 4px solid var(--accent);
+  border-radius: 5px 14px 14px 5px;
+  padding: 12px 14px;
+  background: rgba(167, 70, 66, 0.07);
+}
+
+.issue {
+  margin: 14px 0;
+  border: 1px solid rgba(47, 43, 61, 0.1);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.issue strong, .release strong {
+  display: block;
+  color: var(--ink);
+}
+
+.release {
+  margin: 18px 0;
+  border-left: 3px solid #a74642;
+  padding-left: 15px;
+}
+
+code {
+  overflow-wrap: anywhere;
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: #eee3cf;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+
+:where(a[href], button, input, select, textarea):focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px #342650;
+}
+
+nav a {
+  min-height: 44px;
+}
+
+@media (forced-colors: active) {
+  body,
+  main,
+  .notice,
+  .issue {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  a:focus-visible {
+    outline-color: Highlight;
+    box-shadow: none;
+  }
+}

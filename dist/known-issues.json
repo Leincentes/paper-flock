@@ -1,0 +1,42 @@
+{
+  "product": "Paper Flock",
+  "buildVersion": "1.4.4",
+  "updatedAt": "2026-06-20",
+  "issues": [
+    {
+      "id": "PF-LOCAL-ONLY",
+      "title": "Progress is stored on the current device and browser",
+      "severity": "medium",
+      "status": "open",
+      "workaround": "Use Settings → Data → Export progress backup before changing devices, browsers, or site domains."
+    },
+    {
+      "id": "PF-IOS-INSTALL",
+      "title": "iPhone and iPad installation uses Safari Add to Home Screen",
+      "severity": "low",
+      "status": "platform-limitation",
+      "workaround": "Open Paper Flock in Safari, then use Share → Add to Home Screen."
+    },
+    {
+      "id": "PF-MOBILE-BROWSER-CHROME",
+      "title": "Normal browser tabs may show browser navigation controls",
+      "severity": "low",
+      "status": "platform-limitation",
+      "workaround": "Install Paper Flock to the Home Screen for the most game-like display."
+    },
+    {
+      "id": "PF-TUTORIAL-EXISTING-PLAYERS",
+      "title": "Existing saved players are not interrupted by the tutorial",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Open Settings → Game → Replay how to play."
+    },
+    {
+      "id": "PF-SOUND-DEFAULT",
+      "title": "Sound defaults to on for new and reset player profiles",
+      "severity": "informational",
+      "status": "by-design",
+      "workaround": "Existing explicit choices are preserved. Sound can be disabled in Settings."
+    }
+  ]
+}

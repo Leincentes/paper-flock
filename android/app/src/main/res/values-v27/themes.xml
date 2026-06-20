@@ -4,7 +4,5 @@
         name="Theme.PaperFlock"
         parent="Theme.PaperFlock.Base">
         <item name="android:windowLightNavigationBar">false</item>
-        <item name="android:windowSplashScreenBackground">@color/paper_flock_navy</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
     </style>
 </resources>

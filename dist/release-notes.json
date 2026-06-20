@@ -1,0 +1,67 @@
+{
+  "product": "Paper Flock",
+  "currentVersion": "1.4.4",
+  "releases": [
+    {
+      "version": "1.4.4",
+      "date": "2026-06-20",
+      "channel": "production-candidate",
+      "changes": [
+        "Enabled sound by default for new players and confirmed progress resets.",
+        "Preserved explicit sound-off preferences from existing saves.",
+        "Added regression tests for sound defaults and preference persistence.",
+        "Added a mechanics-based simulated-player study using the actual campaign boards.",
+        "Kept gameplay rules, achievements, save schema 12, and player progression unchanged."
+      ]
+    },
+    {
+      "version": "1.4",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added an Achievement Journal with twenty permanent milestones.",
+        "Added retroactive progress recognition for existing players.",
+        "Added lifetime puzzle statistics inside the local recoverable save.",
+        "Added a recommended next goal for campaign, mastery, or Daily Flock play.",
+        "Added accessible unlock notifications and mobile Journal support.",
+        "Kept streaks, expiring rewards, energy, and forced waiting disabled."
+      ]
+    },
+    {
+      "version": "1.3",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added Chapter 2: Twilight Flock with Levels 21–40.",
+        "Added chapter progress, mastery goals, two paper themes, and solver-backed level validation.",
+        "Preserved v1.2 progress and unlocked Level 21 for players who completed Level 20."
+      ]
+    },
+    {
+      "version": "1.2",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added the player-facing Settings page.",
+        "Added sound, haptics, effects, themes, accessibility, backup, restore, and reset.",
+        "Separated internal quality tools from the deployable player runtime."
+      ]
+    },
+    {
+      "version": "1.1",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Added the first-launch interactive tutorial."
+      ]
+    },
+    {
+      "version": "1.0",
+      "date": "2026-06-19",
+      "channel": "production",
+      "changes": [
+        "Published Paper Flock under Gamelo Studio."
+      ]
+    }
+  ]
+}
