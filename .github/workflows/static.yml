@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Upload provenance-ready release bundle
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: paper-flock-v1.6.0-release-bundle
           path: release-bundle
@@ -104,7 +104,7 @@ jobs:
           retention-days: 30
 
       - name: Upload candidate release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: paper-flock-release-candidate
           path: dist
@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload browser evidence
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: paper-flock-browser-quality
           path: |
@@ -267,7 +267,7 @@ jobs:
             --output=paper-flock-v1.6.0-quality-evidence.json
 
       - name: Upload quality evidence
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: paper-flock-v1.6.0-quality-evidence
           path: paper-flock-v1.6.0-quality-evidence.json
